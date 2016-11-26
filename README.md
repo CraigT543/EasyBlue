@@ -34,7 +34,6 @@ This is an outline of my modifications and where you can find them in my build b
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Sending Appointment Reminders">Sending Appointment Reminders</a><br>
 <a href="#Waiting List Application">Waiting List Application</a><br>
 <a href="#Preview Screen">Preview Screen</a><br>
-<a href="#Modified Header on Frontend for Return to Schedule">Modified Header on Frontend for Return to Schedule</a><br>
 <a href="#Google Sync Modifications">Google Sync Modifications</a><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Front end mods">Front end mods</a><br>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Back end google sync mods">Back end google sync mods</a><br>
@@ -269,25 +268,6 @@ to:
 
 You will also likely have to change the url to your register and log in buttons.  They are now set to: /wordpress/register/ and /wordpress/login/
 
-<h1 id="Modified Header on Frontend for Return to Schedule">Modified Header on Frontend for Return to Schedule</h1>
-I modified the header so that an options for New, Edit, and Cancel are all available when the hash link url is selected in the email notification or when hitting my modified return button after scheduling an appointment.  I also added a menu page to select New, Edit, Cancel options.  The English Language file contains several new fields found between
-
-	//Craig Tucker Mods start
-	//Craig Tucker Mods start end
-
-I added /assets/js/frontend_book.js between the two comments:
-
-	// Mod cancel bar to new/modify/delete - start
-	// Mod cancel bar to new/modify/delete - end
-
-In /assets/css/frontend.css modifications are between these comments:
-
-	/* Return to book mod 1 Craig Tucker start*/
-	/* Return to book mod 1 Craig Tucker end*/
-
-	/* Return to book mod 2 Craig Tucker start*/
-	/* Return to book mod 2 Craig Tucker end*/
-
 <h1 id="Google Sync Modifications">Google Sync Modifications</h1>
 My goal was to accurately reflect recurring appointment information set in google calendar back to Easy!Appointments.  This requires that if you make an appointment recurring in Google Calendar, that you also manually sync that appointment in Easy!Appointments.  Otherwise it will not be reflected in the calendar in EA.  You can automate this with Chron Tab.  I explain how to do that in a text file found in /application/controllers/cli/HowToUseCLI.txt 
 
@@ -461,7 +441,23 @@ timeFormat: 'hh:mm tt',
 I wanted my clients to hit the "Go To Booking Page" and to be able to make more appointments without having to re-enter their personal information.  This is possible if the return url includes the hash for the current appointment.
 
 <h2 id="Modified Header">Modified Header</h2>
-See the section titled "Modified Header on Frontend" regarding adding Delete/New/Modify options on the return to book view.
+I modified the header so that an options for New, Edit, and Cancel are all available when the hash link url is selected in the email notification or when hitting my modified return button after scheduling an appointment.  I also added a menu page to select New, Edit, Cancel options.  The English Language file contains several new fields found between
+
+	//Craig Tucker Mods start
+	//Craig Tucker Mods start end
+
+I added /assets/js/frontend_book.js between the two comments:
+
+	// Mod cancel bar to new/modify/delete - start
+	// Mod cancel bar to new/modify/delete - end
+
+In /assets/css/frontend.css modifications are between these comments:
+
+	/* Return to book mod 1 Craig Tucker start*/
+	/* Return to book mod 1 Craig Tucker end*/
+
+	/* Return to book mod 2 Craig Tucker start*/
+	/* Return to book mod 2 Craig Tucker end*/
 
 <h2 id="Auto Fill Client Data on Return to Book">Auto Fill Client Data on Return to Book</h2>
 In /application/views/appointments/book_success.php I have modified the string for the return button to include the hash of the appointment:
