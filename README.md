@@ -11,7 +11,7 @@ First, a fully booked calender loads a little slow so I have added a <b>loading 
 
 •	<b>Config.php</b>: To avoid problems if you are going to snip pieces of my code, it would probably save you some trouble to use my config.php file because I have a constant that pops up from time to time in my code and if you do not cut it out it will make the program fail.  So if you just use my config.php file, the constant will be in there and you should have no problems with that.
 
-•	<b>File permissions</b>: I run with file permissions set to 755 recursively for all rather than 700.  I was having problems with 700.
+•	<b>File permissions</b>: I run with file permissions set to 755 recursively for folders and 644 for files rather than 700 for all.  I was having problems with 700.
 
 •	<b>My build works inside and outside of WordPress</b>.  Within WordPress you will need to follow my instructions to integrate it.  It is not designed to work with Alex's WP plug in. However, it can work with Alex's plug in if you do not turn on the global function for the WP header and footer in my config.php file.
 
