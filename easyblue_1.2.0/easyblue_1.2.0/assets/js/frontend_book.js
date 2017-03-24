@@ -236,7 +236,7 @@ window.FrontendBook = window.FrontendBook || {};
 		}  				
 
 		function validateWaitinglistCarrier() {
-			if($('#cell-carrier2').val()) 
+			if($('#cell-carrier2').val() || $('#phone-number2').val() == "") 
 			{  
 				return (true)
 			} 
