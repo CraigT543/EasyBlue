@@ -156,7 +156,7 @@ element.style {
 
 							<div align="center" id="select-date" >
 								<figure id="waitpreview" class="item">
-								<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading-dots.gif" /><figcaption class="caption">Loading..</figcaption>
+								<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
 								</figure>
 							</div>
 							<div align="center" style="padding:10px;">
@@ -167,7 +167,7 @@ element.style {
 								<button id="insert-waitinglist" class="btn button-waitinglist btn-primary" 
 									title="Notification of availability for 30 days">
 									<span class="glyphicon glyphicon-time"></span>
-									<?php echo "Waiting List"; ?>
+									<?php echo $this->lang->line('waiting_list'); ?>
 								</button>
                             </div>
 							
@@ -185,7 +185,7 @@ element.style {
 			<div class="modal-content">
 				<div>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3 style= "margin-left:10px;" class="modal-title">Waiting List</h3>
+					<h3 style= "margin-left:10px;" class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
 					<h6 style= "margin-left:20px; margin-right:20px;">By registering here you will be sent daily email or email and text notices for 30 days regarding any availability 
 					I have over the next 60 days. You can renew your place on the waiting list as often as you like.  To be 
 					removed from the list click the link on your email/text message for removal.<br><br>

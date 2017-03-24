@@ -307,9 +307,6 @@
 							<!-- Craig Tucker mod start-->
                             <div class="col-md-6">
 								<div align="center" id="select-date" >
-								<figure id="wait" class="item">
-								<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading-dots.gif" /><figcaption class="caption"><strong>Loading . . .</strong></figcaption>
-								</figure>
 								</div>
                             </div>
 							<!-- Craig Tucker mod end-->
@@ -317,11 +314,14 @@
 							<!--Waiting List Button start
 							Craig Tucker Modification craigtuckerlcsw@gmail.com-->
                             <div class="col-md-6">
+								<figure id="wait" class="item">
+									<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
+								</figure>
 								<div align="center">
 									<button id="insert-waitinglist" class="btn button-waitinglist btn-primary" data-step_index="2"
 										title="Notification of availability for 30 days">
 										<span class="glyphicon glyphicon-time"></span>
-										<?php echo "Waiting List"; ?>
+										<?php echo $this->lang->line('waiting_list'); ?>
 									</button><br><br>
 									 <?php // Available hours are going to be fetched via ajax call. ?>
                                 <div align="center" id="available-hours"></div>
@@ -550,18 +550,16 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" 
 							aria-hidden="true">&times;</button>
-					<h3 class="modal-title">Waiting List</h3>
-					<h6 style= "margin-left:30px; margin-right:30px;">By registering here you will be sent daily email or email and text notices for 30 days regarding any availability 
-					I have over the next 60 days. You can renew your place on the waiting list as often as you like.  To be 
-					removed from the list click the link on your email/text message for removal.<br><br>
-					<u>Regarding Text Notification</u>: If you select to be notified by text message be aware that these messages can be lengthy  if my calendar has many days of availability.
+					<h3 class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
+					<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('waiting_list_msg_top'); ?><br><br>
+					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
 					</h6><br><br>
 				</div>
 				<div class="modal-body">
 					<div class="modal-message alert" style="display: none;"></div>
 					<div class="container-fluid" style= "margin-left:30px; margin-right:30px;">
 						<div class="form-group">
-							<label for="email2" class="control-label"><?php echo $this->lang->line('email'); ?></label>
+							<label for="email2" class="control-label">*<?php echo $this->lang->line('email'); ?></label>
 							<input type="text" id="email2" class="form-control" maxlength="250" />
 						</div>
 						<div class="form-group">
@@ -569,7 +567,7 @@
 									<strong><?php echo $this->lang->line('cell_carrier'); ?></strong>
 								</label>
 								<select id="cell-carrier2" class="col-md-4 form-control">
-										<option disabled selected> -- select -- </option>	 
+										<option disabled selected> <?php echo $this->lang->line('select'); ?> </option>	 
 										<?php 
 									   foreach($cell_services as $carrier) {
 										echo '<option value="' . $carrier['cellurl'] . '">' 

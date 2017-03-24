@@ -300,4 +300,3 @@ $lang['waiting_list_valid_email'] = 'A valid email address is required';
 $lang['waiting_list_valid_phone'] = 'A 10 digit cellphone-number is required';
 $lang['waiting_list_valid_carrier'] = 'A mobile operator is required';
 //Craig Tucker Mods start end
-

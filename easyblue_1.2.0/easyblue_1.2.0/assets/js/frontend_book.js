@@ -201,6 +201,7 @@ window.FrontendBook = window.FrontendBook || {};
             });
 
             // Add the "Any Provider" entry.
+			// Changed to stop showing "Any Provider" set it back to 1 for default behavior
             if ($('#select-provider option').length >= 2) {
                 $('#select-provider').append(new Option('- ' +EALang['any_provider'] + ' -', 'any-provider'));
             }
@@ -221,7 +222,7 @@ window.FrontendBook = window.FrontendBook || {};
 			{  
 				return (true)  
 			}  
-				alert("A valid email address is required")  
+				alert(EALang['waiting_list_valid_email'])  
 				return (false)
 		}
 
@@ -229,10 +230,19 @@ window.FrontendBook = window.FrontendBook || {};
 			if(($('#phone-number2').val() == "") || (/^[\(\)\s\-\+\d]{10,17}$/.test($('#phone-number2').val())))  
 			{  
 				return (true)
-			}  
-				alert("A 10 digit cellphone-number is required")  
+			} 
+				alert(EALang['waiting_list_valid_phone'])  
 				return (false)  
 		}  				
+
+		function validateWaitinglistCarrier() {
+			if($('#cell-carrier2').val()) 
+			{  
+				return (true)
+			} 
+				alert(EALang['waiting_list_valid_carrier'])  
+				return (false)  
+		} 
 		
 		/**
          * Event: Waitinglist Button "Clicked"
@@ -249,7 +259,7 @@ window.FrontendBook = window.FrontendBook || {};
 
 		// process the form
 		$('#save-waitinglist').click(function(event) { 
-		if(validateWaitinglistEmail() && validateWaitinglistPhone()){
+		if(validateWaitinglistEmail() && validateWaitinglistPhone() && validateWaitinglistCarrier()){
 				
 				var postWaiting = new Object();
 				var note = ''

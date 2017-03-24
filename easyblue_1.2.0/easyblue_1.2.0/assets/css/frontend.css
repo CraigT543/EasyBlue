@@ -230,22 +230,15 @@ body {
 }
 
 /*Loading dots mod Craig Tucker start 1*/
-
 #wait.item {
-    vertical-align: top;
-    display: inline-block;
-    text-align: center;
-    width: 200px;	
-	position:absolute;
-	top:49.5%;
-	left:23.5%;
-	padding:2px;	
+  display: flex;
+  align-items: center;
+  justify-content: center
+	}
 
-}
-
-img {	
-    width:180px;
-	height:30px;
+img {
+	width:200px;
+	height:200px;
 }
 
 .caption {
@@ -253,20 +246,14 @@ img {
 }
 
 #waitpreview.item {
-    vertical-align: top;
-    display: inline-block;
-    text-align: center;
-    width: 200px;	
-	position:absolute;
-	top:28.5%;
-	left:30%;
-	padding:2px;	
-	z-index: 950;
-}
+  display: flex;
+  align-items: center;
+  justify-content: center
+	}
 
-img {	
-    width:180px;
-	height:30px;
+img {
+	width:200px;
+	height:200px;
 }
 
 .caption {
