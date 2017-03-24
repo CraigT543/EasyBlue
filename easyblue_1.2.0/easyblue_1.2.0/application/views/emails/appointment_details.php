@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Appointment Details</title>
+    <title><?php echo $this->lang->line('appointment_details_title'); ?></title>
 </head>
 <body style="font: 13px arial, helvetica, tahoma;">
     <div class="email-container" style="width: 650px; border: 1px solid #eee;">
@@ -15,49 +15,49 @@
             <h2>$email_title</h2>
             <p>$email_message</p>
 
-            <h2>Appointment Details</h2>
+            <h2><?php echo $this->lang->line('appointment_details_title'); ?></h2>
             <table id="appointment-details">
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Service</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('service'); ?></td>
                     <td style="padding: 3px;">$appointment_service</td>
                 </tr>
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Provider</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('provider'); ?></td>
                     <td style="padding: 3px;">$appointment_provider</td>
                 </tr>
 				<!--Google Maps Mod Craig Tucker start -->
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Address</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('address'); ?></td>
                     <td style="padding: 3px;"><a href="www.google.com/maps/place/$provider_address">$provider_address</a></td>
 				</tr>
 				<!--Google Maps Mod Craig Tucker end -->
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Start</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('start'); ?></td>
                     <td style="padding: 3px;">$appointment_start_date</td>
                 </tr>
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">End</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('end'); ?></td>
                     <td style="padding: 3px;">$appointment_end_date</td>
                 </tr>
             </table>
 
-             <a href="$appointment_link" style="width: 600px; font-weight: bold;">"Click here to edit, reschedule, or cancel your appointment"</a>
-            <h2>Customer Details</h2>
+             <a href="$appointment_link" style="width: 600px; font-weight: bold;"><?php echo $this->lang->line('edit_reschedule_cancel_appointment'); ?></a>
+            <h2><?php echo $this->lang->line('customer_details_title'); ?></h2>
             <table id="customer-details">
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Name</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('name'); ?></td>
                     <td style="padding: 3px;">$customer_name</td>
                 </tr>
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Email</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('email'); ?></td>
                     <td style="padding: 3px;">$customer_email</td>
                 </tr>
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Phone</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('phone'); ?></td>
                     <td style="padding: 3px;">$customer_phone</td>
                 </tr>
                 <tr>
-                    <td class="label" style="padding: 3px;font-weight: bold;">Address</td>
+                    <td class="label" style="padding: 3px;font-weight: bold;"><?php echo $this->lang->line('address'); ?></td>
                     <td style="padding: 3px;">$customer_address</td>
                 </tr>
             </table>

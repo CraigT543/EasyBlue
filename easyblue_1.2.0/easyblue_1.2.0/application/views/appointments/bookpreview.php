@@ -83,7 +83,7 @@ element.style {
                                 </label>
                                 <select id="select-provider" class="col-md-4 form-control"></select>
                             </div>
-								<label><strong>Select Service</strong></label>
+								<label><strong><?php echo $this->lang->line('select_service'); ?></strong></label>
                                 <select id="select-service" class="col-md-4 form-control">
                                     <?php
                                         // Group services by category, only if there is at least one service
@@ -148,10 +148,10 @@ element.style {
                     // ------------------------------------------------------ ?>
 
 
-	                    <div align="center"><h3 style="text-align: center">Check Availability</h3></div>
+	                    <div align="center"><h3 style="text-align: center"><?php echo $this->lang->line('check_availability'); ?></h3></div>
 
 						<div id="myMessage" align="center";>
-						<h6 style= "margin-left:20px; margin-right:20px;">If days are grey, my schedule is full. If you do see an opening (black), you may register and schedule. Be aware that follow up visits are also based availability you see here.<h6>
+						<h6 style= "margin-left:20px; margin-right:20px;"><?php echo $this->lang->line('check_availability_msg'); ?><h6>
 						</div>
 
 							<div align="center" id="select-date" >
@@ -161,11 +161,11 @@ element.style {
 							</div>
 							<div align="center" style="padding:10px;">
 								<a href="https://<?php	echo $_SERVER['SERVER_NAME'];?>/wordpress/register/" target="_parent" class="btn button-waitinglist btn-primary">
-									Register</a>
+									<?php echo $this->lang->line('register'); ?></a>
 								<a href="https://<?php echo $_SERVER['SERVER_NAME'];?>/wordpress/login/" target="_parent" class="btn button-waitinglist btn-primary">
-                                Log In</a>
+                                <?php echo $this->lang->line('login'); ?></a>
 								<button id="insert-waitinglist" class="btn button-waitinglist btn-primary" 
-									title="Notification of availability for 30 days">
+									title="<?php echo $this->lang->line('check_availability'); ?>">
 									<span class="glyphicon glyphicon-time"></span>
 									<?php echo $this->lang->line('waiting_list'); ?>
 								</button>
@@ -186,11 +186,9 @@ element.style {
 				<div>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h3 style= "margin-left:10px;" class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
-					<h6 style= "margin-left:20px; margin-right:20px;">By registering here you will be sent daily email or email and text notices for 30 days regarding any availability 
-					I have over the next 60 days. You can renew your place on the waiting list as often as you like.  To be 
-					removed from the list click the link on your email/text message for removal.<br><br>
-					<u>Regarding Text Notification</u>: If you select to be notified by text message be aware that these messages can be lengthy  if my calendar has many days of availability.
-					</h6>
+					<h6 style= "margin-left:20px; margin-right:20px;"><?php echo $this->lang->line('waiting_list_msg_top'); ?><br><br>
+					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
+					</h6><br><br>
 				</div>
 				
 					<div class="modal-message alert" style="display: none;"></div>
@@ -204,7 +202,7 @@ element.style {
 									<strong><?php echo $this->lang->line('cell_carrier'); ?></strong>
 								</label>
 								<select id="cell-carrier2" class="col-md-4 form-control">
-										<option disabled selected> -- select -- </option>	 
+										<option disabled selected> <?php echo $this->lang->line('select'); ?> </option>	 
 										<?php 
 									   foreach($cell_services as $carrier) {
 										echo '<option value="' . $carrier['cellurl'] . '">' 

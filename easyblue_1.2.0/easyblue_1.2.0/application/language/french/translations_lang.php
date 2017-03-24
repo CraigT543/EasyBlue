@@ -298,4 +298,10 @@ $lang['waiting_list_msg_bottom'] = 'Si vous choisissez d\'être averti par messa
 $lang['waiting_list_valid_email'] = 'Une adresse email valide est exigée';
 $lang['waiting_list_valid_phone'] = 'Un numéro de cellulaire à 10 chiffres est requis';
 $lang['waiting_list_valid_carrier'] = 'Un opérateur mobile est requis';
+$lang['check_availability'] = 'Vérifier la disponibilité';
+$lang['check_availability_msg'] = 'Si les jours sont gris, l\'horaire est plein. Si vous voyez une ouverture (noire), vous pouvez vous inscrire et planifier. Soyez conscient que les rendez-vous de suivi sont également basés sur la disponibilité que vous voyez ici.';
+$lang['register'] = "Inscription";
+$lang['notification_availability'] = 'Notification de disponibilité pour 30 jours';
+$lang['edit_reschedule_cancel_appointment'] = 'Cliquez ici pour modifier, replanifier ou annuler votre rendez-vous';
+$lang['what_to_do'] = 'Qu\'aimeriez-vous faire?';
 //Craig Tucker Mods start end

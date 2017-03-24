@@ -299,4 +299,10 @@ $lang['waiting_list_msg_bottom'] = 'If you select to be notified by text message
 $lang['waiting_list_valid_email'] = 'A valid email address is required';
 $lang['waiting_list_valid_phone'] = 'A 10 digit cellphone-number is required';
 $lang['waiting_list_valid_carrier'] = 'A mobile operator is required';
+$lang['check_availability'] = 'Check Availability';
+$lang['check_availability_msg'] = 'If days are grey, the schedule is full. If you do see an opening (black), you may register and schedule. Be aware that follow up appointments are also based on availability you see here.';
+$lang['register'] = "Register";
+$lang['notification_availability'] = 'Notification of availability for 30 days';
+$lang['edit_reschedule_cancel_appointment'] = 'Click here to edit, reschedule, or cancel your appointment';
+$lang['what_to_do'] = 'What would you like to do?';
 //Craig Tucker Mods start end

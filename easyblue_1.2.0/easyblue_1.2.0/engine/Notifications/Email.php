@@ -159,7 +159,7 @@ class Email {
 		$mailer->Ical  =  $email_ics;
 		//iCal mods 4 Craig Tucker start
         if (!$mailer->Send()) {
-            throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): ' 
+            throw new \RuntimeException('Email could not be sent. Mailer Error (Line ' . __LINE__ . '): ' 
                     . $mailer->ErrorInfo);
         }
     }
@@ -256,7 +256,7 @@ class Email {
 		$mailer->Ical  =  $email_ics;
 		//iCal mods 8 Craig Tucker end
         if (!$mailer->Send()) {
-            throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): ' 
+            throw new \RuntimeException('Email could not be sent. Mailer Error (Line ' . __LINE__ . '): ' 
                     . $mailer->ErrorInfo);
         }
     }

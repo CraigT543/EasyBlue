@@ -123,14 +123,16 @@
                             // </div>';
 					//Alexe's Original Delete Button end
 						
-					//New, Edit, Delet mod Craig Tucker Start	
+					//New, Edit, Delete mod Craig Tucker Start	
 					$appt_date= date('l, F j, Y, g:i a',strtotime($appointment_data['start_datetime']));
 					
                         echo '
 						
 						
 							<div id="wizard-frame-0" class="wizard-frame" >
-								<h3>What whould you like to do?<h3>
+								<h3>' .
+                                         $this->lang->line('what_to_do') .
+                                '<h3>
 								<div button id="selectNew" class="btn btn-buttonanew btn-primary" value=0 data-step_index="0" class="col-md-6">'. $this->lang->line('new_apt') .'<i class="icon-forward icon-white"></i></button>
 								</div>
 								<br><br>									
@@ -154,7 +156,7 @@
                                 <div class="col-xs-12 col-sm-9">
 									<div class="radiobox" align="center" style="margin-left: 30px;">
 										<div style="float:left; "> 
-											<strong>SELECT:</strong>&nbsp &nbsp  <input type="radio" name="anew-appointment" 
+											<strong>'. $this->lang->line('select') .'</strong>&nbsp &nbsp  <input type="radio" name="anew-appointment" 
 											class="anew-appointment" value="0" >'.$this->lang->line('new_apt').' &nbsp&nbsp;
 										</div>
 										<div style="float:left;">
@@ -249,8 +251,7 @@
                                                 if (count($group) > 0) {
                                                     echo '<optgroup label="' . $group_label . '">';
                                                     foreach($group as $service) {
-                                                        echo 
-														'<option value="' . $service['id'] . '">'
+                                                        echo '<option value="' . $service['id'] . '">'
                                                             . $service['name'] . '</option>';
                                                     }
                                                     echo '</optgroup>';
@@ -319,7 +320,7 @@
 								</figure>
 								<div align="center">
 									<button id="insert-waitinglist" class="btn button-waitinglist btn-primary" data-step_index="2"
-										title="Notification of availability for 30 days">
+										title="<?php echo $this->lang->line('check_availability'); ?>">
 										<span class="glyphicon glyphicon-time"></span>
 										<?php echo $this->lang->line('waiting_list'); ?>
 									</button><br><br>

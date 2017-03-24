@@ -117,7 +117,7 @@
 						<strong><?php echo $this->lang->line('cell_carrier'); ?></strong>
 							</label>
 							<select id="cell-carrier" class="col-md-4 form-control">
-								<option disabled selected value=""> -- select -- </option>
+								<option disabled selected value=""> <?php echo $this->lang->line('select'); ?> </option>
 								<?php 
 								foreach ($customer_form_cellco_options as $id => $cellco) {
 									echo '<option value="' . html_escape($id) . '">' . html_escape($cellco) . '</option>';
