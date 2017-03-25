@@ -331,7 +331,7 @@ window.GeneralFunctions = window.GeneralFunctions || {};
 
         $element.popover({
             placement: 'top',
-            title: 'Select Language',
+            title: EALang['select_language'],
             content: html,
             html: true,
             container: 'body',

@@ -527,7 +527,7 @@
                     // ------------------------------------------------------ ?>
 
                 <div id="frame-footer">
-                    Powered By
+                    <?php echo $this->lang->line('powered_by'); ?>
                     <a href="http://easyappointments.org" target="_blank">Easy!Appointments</a>
                     |
                     <span id="select-language" class="label label-success">
@@ -598,8 +598,8 @@
 							<?php echo $this->lang->line('cancel'); ?>
 						</button>
 					</div>				
+					<em id="form-message" class="text-danger"><?php echo $this->lang->line('fields_are_required'); ?></em>
 			</div>
-            <em id="form-message" class="text-danger"><?php echo $this->lang->line('fields_are_required'); ?></em>
 		</div>								
 	</div>		
 	<!-- MANAGE WAITING LIST Modification End -->	

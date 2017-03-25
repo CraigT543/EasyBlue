@@ -1,6 +1,15 @@
-<?php
-//This was based upon http://glennstovall.com/blog/2013/01/07/writing-cron-jobs-and-command-line-scripts-in-codeigniter/ with modifications for Easy!Appointments by Craig Tucker, 7/18/2014.
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/* ----------------------------------------------------------------------------
+ * A modification of Easy!Appointments - Open Source Web Scheduler
+ * for use with EasyAppointments by A.Tselegidis <alextselegidis@gmail.com>
+ * @link        http://easyappointments.org
+ * this uses portions of Alex's code with modifications by Craig Tucker
+ * craigtuckerlcsw@verizon.net
+ * ---------------------------------------------------------------------------- */
+
+//This was based upon http://glennstovall.com/blog/2013/01/07/writing-cron-jobs-and-command-line-scripts-in-codeigniter/ with modifications for Easy!Appointments by Craig Tucker, 7/18/2014.
+//--NZ-- need to fix once i can bok appointments - look at language logic from cli/WaitingList
 class Reminders extends CI_Controller {
     public function __construct() {
         parent::__construct();
@@ -21,7 +30,7 @@ class Reminders extends CI_Controller {
 
     public function index() {
 		if(!$this->input->is_cli_request()) {
-			echo "This script can only be accessed via the command line" . PHP_EOL;
+			echo 'This script can only be accessed via the command line' . PHP_EOL;
 			return;
 		}
 
@@ -33,20 +42,21 @@ class Reminders extends CI_Controller {
 		$appointment_link = $this->config->base_url().'index.php/appointments/index/';
 		
 		if ($d == "1") {
-			$notice = "One more day until your appointment.";
+			$notice = $this->lang->line('notice_reminder');
 		} else {
-			$notice = $d." more days until your appointment.";
+			$notice = $d . ' ' . $this->lang->line('notice_reminder_days');
 		}
-
+		
 		$msg = '';
 		
 		if(!empty($appointments)) {
+			echo "noticeCUSTOM: " . $notice . PHP_EOL;
 			foreach($appointments as $appointment) {
-				$aptdatetime=date('D g:i a',strtotime($result["start_datetime"]));
+				$aptdatetime=date('D g:i a',strtotime($result['start_datetime']));
 				$startdatetime=date('l, F j, Y, g:i a',strtotime($appointment->start_datetime));
 				$config['mailtype'] = 'text';
 				$this->email->initialize($config);
-				$this->email->set_newline("\r\n");
+				$this->email->set_newline(PHP_EOL);
 				$this->email->to($appointment->customer_email);
 					if (!empty($appointment->customer_cellurl)){
 						$phone = $appointment->customer_phone_number;
@@ -55,21 +65,21 @@ class Reminders extends CI_Controller {
 					}
 				$this->email->from($appointment->provider_email, $company_name);
 				$this->email->subject($notice);
-					$msg .= $company_name."\r\n";
-					$msg .= "REMINDER: Your appointment with ".$appointment->provider_first_name." ".
-						$appointment->provider_last_name." is on ".$startdatetime."\r\n";
-					$msg .= "\r\n";
-					$msg .= "If you have had a good experience, let others know! Please review me at:\r\n";
-					$msg .= "www.healthgrades.com/review/XGVRC\r\n";
-					$msg .= "\r\n";
-					$msg .= "To edit, reschedule, or cancel your appointment please click the following link:\r\n";
-					$msg .= $appointment_link.$appointment->hash."\r\n";
-					$msg .= "\r\n";
-					$msg .="To attend your session on line, log in to www.craigtuckerlcsw.com and go to 'My Appointments'\r\n";
+					$msg .= $company_name . PHP_EOL;
+					$msg .= $this->lang->line('reminder_your_appt_with') . ' ' . $appointment->provider_first_name. ' ' .
+						$appointment->provider_last_name . ' ' .  $this->lang->line('is_on')  . $startdatetime . PHP_EOL;
+					$msg .=  PHP_EOL;
+					$msg .= $this->lang->line('msg_line1') . PHP_EOL;
+					$msg .= $this->lang->line('msg_line2') . PHP_EOL;
+					$msg .=  PHP_EOL;
+					$msg .= $this->lang->line('msg_line3') . PHP_EOL;
+					$msg .= $appointment_link.$appointment->hash . PHP_EOL;
+					$msg .=  PHP_EOL;
+					$msg .= $this->lang->line('msg_line4') . PHP_EOL;
 					
 				$this->email->message($msg);
 				$this->email->send();
-				$msg = "";
+				$msg = '';
 				echo $this->email->print_debugger();  
 			}
 		}

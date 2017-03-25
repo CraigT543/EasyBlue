@@ -415,7 +415,8 @@ class Appointments_Model extends CI_Model {
 		//first delete any earlier entries
 		$emailphone = $waitinglist['notes'];
 		$addresses = explode(";", $emailphone);
-		$email = $addresses[0];
+		$user_lang = $addresses[0];
+		$email = $addresses[1];
 		$this->db->where(array('start_datetime' => NULL));
 		$this->db->like('notes', $email);
 		$this->db->delete('ea_appointments');

@@ -202,9 +202,9 @@ window.FrontendBookApi = window.FrontendBookApi || {};
 		var note = ''
 
 		if($('#cell-carrier2').val() !== "" && $('#phone-number2').val() !== ""){
-		note = $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val();
+		note = EALang['user_lang'] + ";" + $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val() + ";";
 		} else {
-		note = $('#email2').val();
+		note = EALang['user_lang'] + ";" + $('#email2').val() + ";";
 		}
 		
 		postWaiting['appointment'] = {

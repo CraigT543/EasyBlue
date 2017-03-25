@@ -31,57 +31,92 @@ class Waitinglist extends CI_Controller {
 		
     public function index() {
 		if(!$this->input->is_cli_request()) {
-			echo "This script can only be accessed via the command line" . PHP_EOL;
+			echo 'This script can only be accessed via the command line' . PHP_EOL;
 			return;
 		}
 		$this->load->model('user_model');
 		$this->load->model( array('appointments_model'));		  
-
 		$company_name = $this->settings_model->get_setting('company_name');
 		$currentsched = $this->config->base_url();
 		$appointment_link = $this->config->base_url().'index.php/appointments/index/';
-		$msg = "";
+		$msg = '';
 		$waiting_notices = $this->appointments_model->get_waitinglist();		
 
 		if(!empty($waiting_notices)){
 			foreach ($waiting_notices as $notice) {
+				$email_field =NULL;
+				$sms_field =NULL;
+				$this_lang=NULL;
 				$provider_id = $notice->id_users_provider;
 				$provider = $this->user_model->get_user_display_name($provider_id);
 				$pemail = $this->user_model->get_user_email($provider_id);
 				$emailphone = $notice->notes;
-				$addresses = explode(";", $emailphone);
-				$subject = "Waiting List Update";
+				$pos = strrpos($emailphone, ';');
+				if ($pos > 0) {
+					$addresses = explode(';', $emailphone);
+					echo "array_size: " . (sizeof($addresses)-1) . PHP_EOL;					
+					switch (sizeof($addresses)-1) //to remove the trailing ";"
+					{
+						case 1:
+						$this_lang = $addresses[0];
+						break;
+						
+						case 2:
+						$this_lang = $addresses[0];
+						$email_field = $addresses[1];
+						break;
+
+						case 3:
+						$this_lang = $addresses[0];
+						$email_field = $addresses[1];
+						$sms_field = $addresses[2];
+						break;
+						
+						default:
+						$email_field = $addresses[0];
+						break;
+					}
+				}else{
+
+				}
+				echo "lang: " . $this_lang . PHP_EOL;
+				echo "email: " . $email_field . PHP_EOL;
+				echo "sms: " . $sms_field . PHP_EOL;
+					
+				$this->lang->load('translations', $this_lang);
+				
+				$subject = $this->lang->line('waiting_list_update') . ' ' .  $company_name;
 				$availability = $this->availabilitylist($provider_id);
 				$config['mailtype'] = 'text';
 				$this->email->initialize($config);
-				$this->email->set_newline("\r\n");
+				$this->email->set_newline(PHP_EOL);
 				$this->email->from($pemail, $company_name);
-				$this->email->to($addresses[0]);
-				$this->email->bcc($addresses[1]);
+				$this->email->to($email_field);
+				$this->email->bcc($sms_field);
 				$this->email->subject($subject);
 
 				if (empty($availability)){
-					$msg .= strtoupper($company_name)."\r\n";
-					$msg .= "Update: ". $provider ." has no availabilty at this time:\r\n";
-					$msg .= "\r\n";
-					$msg .= "To view the current schedule click here: ".$currentsched." \r\n";
-					$msg .= "\r\n";
-					$msg .= "To remove yourself from the waiting list please click the following link:\r\n";
-					$msg .= $appointment_link.$notice->hash."\r\n";
+					$msg .= strtoupper($company_name).PHP_EOL;
+					$msg .= $this->lang->line('waiting_list_update1') . ' ' . $provider . ' ' . $this->lang->line('waiting_list_no_avail') . PHP_EOL;
+					$msg .= PHP_EOL;
+					$msg .= $this->lang->line('view_current_sched') . ' ' . $currentsched . PHP_EOL;
+					$msg .= PHP_EOL;
+					$msg .= $this->lang->line('remove_from_wl') . PHP_EOL;
+					$msg .= $appointment_link.$notice->hash . PHP_EOL;
 				}else{
-					$msg .= strtoupper($company_name)."\r\n";
-					$msg .= "Update: ". $provider ." has availabilty on the following dates and times:\r\n";
-					$msg .= "\r\n";
-					$msg .=	$availability."\r\n";
-					$msg .= "To make an appointment click here: ".$currentsched." \r\n";
-					$msg .= "\r\n";
-					$msg .= "To remove yourself from the waiting list please click the following link:\r\n";
-					$msg .= $appointment_link.$notice->hash."\r\n";
+					$msg .= strtoupper($company_name) . PHP_EOL;
+					$msg .= $this->lang->line('waiting_list_update1') . ' ' . $provider . ' ' . $this->lang->line('waiting_list_has_avail') . PHP_EOL;
+					$msg .= PHP_EOL;
+					$msg .=	$availability.PHP_EOL;
+					$msg .= $this->lang->line('make_appointment') . ' ' . $currentsched . PHP_EOL;
+					$msg .= PHP_EOL;
+					$msg .= $this->lang->line('remove_from_wl') . PHP_EOL;
+					$msg .= $appointment_link.$notice->hash . PHP_EOL;
 					}
 
 				$this->email->message($msg);
 				$this->email->send();
-				$msg = "";
+				$msg = '';
 				echo $this->email->print_debugger();  
 			}
 		}

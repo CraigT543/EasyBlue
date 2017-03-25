@@ -222,7 +222,10 @@ window.FrontendBook = window.FrontendBook || {};
 			{  
 				return (true)  
 			}  
-				alert(EALang['waiting_list_valid_email'])  
+			    $('.alert').text(EALang['waiting_list_valid_email']);
+                $('.alert').addClass('alert-danger');
+                $('.alert').show();				
+				//alert(EALang['waiting_list_valid_email'])  
 				return (false)
 		}
 
@@ -231,7 +234,10 @@ window.FrontendBook = window.FrontendBook || {};
 			{  
 				return (true)
 			} 
-				alert(EALang['waiting_list_valid_phone'])  
+				$('.alert').text(EALang['waiting_list_valid_phone']);
+                $('.alert').addClass('alert-danger');
+                $('.alert').show();	
+				//alert(EALang['waiting_list_valid_phone'])  
 				return (false)  
 		}  				
 
@@ -239,8 +245,11 @@ window.FrontendBook = window.FrontendBook || {};
 			if($('#cell-carrier2').val() || $('#phone-number2').val() == "") 
 			{  
 				return (true)
-			} 
-				alert(EALang['waiting_list_valid_carrier'])  
+			}
+				$('.alert').text(EALang['waiting_list_valid_carrier']);
+                $('.alert').addClass('alert-danger');
+                $('.alert').show();			
+				//alert(EALang['waiting_list_valid_carrier'])  
 				return (false)  
 		} 
 		
@@ -264,14 +273,10 @@ window.FrontendBook = window.FrontendBook || {};
 				var postWaiting = new Object();
 				var note = ''
 
-
-
-
-
 				if($('#cell-carrier2').val() !== "" && $('#phone-number2').val() !== ""){
-				note = $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val();
+				note = EALang['user_lang'] + ";" + $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val() + ";";
 				} else {
-				note = $('#email2').val();
+				note = EALang['user_lang'] + ";" + $('#email2').val() + ";";
 				}
 
 				FrontendBookApi.registerWaiting();

@@ -108,8 +108,7 @@
                         $('.alert').text(EALang['new_password_sent_with_email']);
                     } else {
                         $('.alert').addClass('alert-danger');
-                        $('.alert').text('The operation failed! Please enter a valid username '
-                                + 'and email address in order to get a new password.');
+                        $('.alert').text(EALang['operation_failed']);
                     }
                 }, 'json');
             });

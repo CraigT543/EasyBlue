@@ -173,7 +173,7 @@
     </div>
 
     <footer>
-        Powered by <a href="http://easyappointments.org">Easy!Appointments</a>
+        <?php echo $this->lang->line('powered_by'); ?> <a href="http://easyappointments.org">Easy!Appointments</a>
     </footer>
 
     <script type="text/javascript">
