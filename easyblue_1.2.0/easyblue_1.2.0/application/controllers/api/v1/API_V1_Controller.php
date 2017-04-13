@@ -35,7 +35,8 @@ class API_V1_Controller extends CI_Controller {
      */
     public function __construct() {
         if (!isset($_SERVER['PHP_AUTH_USER'])) {
-            return $this->_requestAuthentication();
+			$this->_requestAuthentication();
+			return;
         }
 
         parent::__construct();
