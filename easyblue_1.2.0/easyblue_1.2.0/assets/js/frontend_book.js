@@ -3,7 +3,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -30,8 +30,6 @@ window.FrontendBook = window.FrontendBook || {};
      * @type {Boolean}
      */
     exports.manageMode = false;
-	
-	exports.max_date = 60; //MaxDate mod Craig Tucker 1
 	
     /**
      * This method initializes the book appointment page.
@@ -62,18 +60,57 @@ window.FrontendBook = window.FrontendBook || {};
                 classes: 'qtip-green qtip-shadow custom-qtip'
             }
         });
-
+		
+		var show_free_price_currency;
+        show_free_price_currency = GlobalVariables.showFreePriceCurrency;
+		
 		//Notice that no appointments are available on the date selected Craig Tucker start
 		$('#select-date').on('click', function(){ 
 			$('#available-hours').text(EALang['no_available_hours']);
 		});
 		//Notice that no appointments are available on the date selected Craig Tucker end
+
+		var max_date;
+		max_date = GlobalVariables.maxDate; //MaxDate mod Craig Tucker 1
 		
+		var show_any_provider;
+		show_any_provider = GlobalVariables.showAnyProvider;
+
+		var fDaynum;
+		var fDay = GlobalVariables.weekStartson;
+
+		switch(fDay) {
+			case "sunday":
+				fDaynum = 0;
+				break;
+			case "monday":
+				fDaynum = 1;
+				break;
+			case "tuesday":
+				fDaynum = 2;
+				break;
+			case "wednesday":
+				fDaynum = 3;
+				break;
+			case "thursday":
+				fDaynum = 4;
+				break;
+			case "friday":
+				fDaynum = 5;
+				break;
+			case "saturday":
+				fDaynum = 6;
+				break;
+			default:
+				fDaynum = 0;
+				break;
+		}
+		console.log('NZ-frontend_book.js -> fDaynum ' + fDaynum + ' fDay ' + fDay + ' maxDate ' + max_date + ' ShowFreePriceCurrency ' + show_free_price_currency + ' ShowAnyProvider ' + show_any_provider);
         $('#select-date').datepicker({
             dateFormat: 'dd-mm-yy',
-            firstDay: 0, // Sunday
+            firstDay: fDaynum, // Monday
             minDate: 0,
-			maxDate: "+" + FrontendBook.max_date + "d", //MaxDate mod Craig Tucker 2
+			maxDate: "+" + max_date + "d", //MaxDate mod Craig Tucker 2
             defaultDate: Date.today(),
 
             dayNames: [
@@ -201,9 +238,14 @@ window.FrontendBook = window.FrontendBook || {};
             });
 
             // Add the "Any Provider" entry.
-			// Changed to stop showing "Any Provider" set it back to 1 for default behavior
-            if ($('#select-provider option').length >= 2) {
-                $('#select-provider').append(new Option('- ' +EALang['any_provider'] + ' -', 'any-provider'));
+			//Tucker  Changed to stop showing "Any Provider" set it back to 1 for default behavior
+			var show_any_provider;
+			show_any_provider = GlobalVariables.showAnyProvider;
+
+			if (show_any_provider == 'yes'){
+				if ($('#select-provider option').length >= 1) {
+					$('#select-provider').append(new Option('- ' +EALang['any_provider'] + ' -', 'any-provider'));
+				}	
             }
 
 
@@ -271,12 +313,15 @@ window.FrontendBook = window.FrontendBook || {};
 		if(validateWaitinglistEmail() && validateWaitinglistPhone() && validateWaitinglistCarrier()){
 				
 				var postWaiting = new Object();
-				var note = ''
+				var note = '';
+				var lang = '';
 
 				if($('#cell-carrier2').val() !== "" && $('#phone-number2').val() !== ""){
-				note = EALang['user_lang'] + ";" + $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val() + ";";
+					lang = EALang['user_lang'];
+					note = $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val() + ";";
 				} else {
-				note = EALang['user_lang'] + ";" + $('#email2').val() + ";";
+					lang = EALang['user_lang'];
+					note = $('#email2').val() + ";";
 				}
 
 				FrontendBookApi.registerWaiting();
@@ -369,7 +414,7 @@ window.FrontendBook = window.FrontendBook || {};
              *
              * When the user clicks the "Cancel" button this form is going to be submitted. We need
              * the user to confirm this action because once the appointment is cancelled, it will be
-             * delete from the database.
+             * deleted from the database.
              *
              * @param {jQuery.Event} event
              */
@@ -406,13 +451,16 @@ window.FrontendBook = window.FrontendBook || {};
 		$("#selectNew").click(function (event) {
 			FrontendBook.manageMode = false;
 			document.getElementById('cancel-appointment-frame').style.display = 'none';
-
+            // Select Service & Provider
+            //$('#select-service').val(appointment['id_services']).trigger('change');
+            //$('#select-provider').val(appointment['id_users_provider']);
 			$('#select-service').val(); 
 			$('#select-service').trigger('change'); 
 			FrontendBookApi.getAvailableHours($('#select-date').val());// Load the available hours.
 				// Apply Customer's Data
 				$('#last-name').val(GlobalVariables.customerData['last_name']);
 				$('#first-name').val(GlobalVariables.customerData['first_name']);
+				$('#lang').val(EALang['user_lang']);
 				$('#email').val(GlobalVariables.customerData['email']);
 				$('#phone-number').val(GlobalVariables.customerData['phone_number']);
 				$('#cell-carrier').val(GlobalVariables.customerData['id_cellcarrier']);
@@ -436,12 +484,16 @@ window.FrontendBook = window.FrontendBook || {};
 				
 				// hide cancel button if new appointment selected by making style.display = 'none'
 				document.getElementById('cancel-appointment-frame').style.display = 'none';
-				$('#select-service').val(); 
-				$('#select-service').trigger('change'); 
+				// Select Service & Provider
+				$('#select-service').val(appointment['id_services']).trigger('change');
+				$('#select-provider').val(appointment['id_users_provider']);
+				//$('#select-service').val(); 
+				//$('#select-service').trigger('change'); 
 				FrontendBookApi.getAvailableHours($('#select-date').val());// Load the available hours.
 					// Apply Customer's Data
 					$('#last-name').val(GlobalVariables.customerData['last_name']);
 					$('#first-name').val(GlobalVariables.customerData['first_name']);
+					$('#lang').val(EALang['user_lang']);
 					$('#email').val(GlobalVariables.customerData['email']);
 					$('#phone-number').val(GlobalVariables.customerData['phone_number']);
 					$('#cell-carrier').val(GlobalVariables.customerData['id_cellcarrier']);
@@ -558,8 +610,28 @@ window.FrontendBook = window.FrontendBook || {};
                 $('#email').parents('.form-group').addClass('has-error');
                 // $('#email').css('border', '2px solid red');
                 throw EALang['invalid_email'];
-            }
+            } else { 
+				$('#email').parents('.form-group').removeClass('has-error');
+			}
 
+			// Validate phone
+            if (!GeneralFunctions.validatePhone($('#phone-number').val())) {
+                $('#phone-number').parents('.form-group').addClass('has-error');
+                // $('#phone').css('border', '2px solid red');
+                throw EALang['waiting_list_valid_phone'];
+            } else { 
+				$('#phone-number').parents('.form-group').removeClass('has-error');
+			}
+
+			// Validate carrier
+            //if (!GeneralFunctions.validateCarrier($('#cell-carrier').val()), $('#phone-number').val()) {
+            //    $('#cell-carrier').parents('.form-group').addClass('has-error');
+            //    // $('#carrier').css('border', '2px solid red');
+            //    throw EALang['waiting_list_valid_carrier'];
+            //} else { 
+			//	$('#cell-carrier').parents('.form-group').removeClass('has-error');
+			//}
+			
             return true;
         } catch(exc) {
             $('#form-message').text(exc);
@@ -582,12 +654,27 @@ window.FrontendBook = window.FrontendBook || {};
         var selServiceId = $('#select-service').val();
         var servicePrice;
         var serviceCurrency;
+		var show_free_price_currency;
+        show_free_price_currency = GlobalVariables.showFreePriceCurrency;
 
+		
         $.each(GlobalVariables.availableServices, function(index, service) {
             if (service.id == selServiceId) {
-                servicePrice = '<br>' + service.price;
-                serviceCurrency = service.currency;
-                return false; // break loop
+                if (service.price != '' && service.price != null && service.price != 0) {
+                   	servicePrice = '<br>' + service.price;
+					serviceCurrency = service.currency;
+					return false; // break loop
+                } else {
+					if (show_free_price_currency == 'yes') {
+						servicePrice = '<br>' + service.price;
+						serviceCurrency = service.currency;
+						return false; // break loop
+					}else{
+						servicePrice = '';
+						serviceCurrency = ''
+						return false; // break loop
+					}
+                }
             }
         });
 
@@ -607,15 +694,22 @@ window.FrontendBook = window.FrontendBook || {};
         var firstName = GeneralFunctions.escapeHtml($('#first-name').val());
         var lastName = GeneralFunctions.escapeHtml($('#last-name').val());
         var phoneNumber = GeneralFunctions.escapeHtml($('#phone-number').val());
+        var sms = GeneralFunctions.escapeHtml($('#cell-carrier option:selected').text());
         var email = GeneralFunctions.escapeHtml($('#email').val());
         var address = GeneralFunctions.escapeHtml($('#address').val());
         var city = GeneralFunctions.escapeHtml($('#city').val());
         var zipCode = GeneralFunctions.escapeHtml($('#zip-code').val());
+		var lang = EALang['user_lang'];
+		var notes = GeneralFunctions.escapeHtml($('#notes').val());
 
         html =
             '<h4>' + firstName + ' ' + lastName + '</h4>' +
             '<p>' +
+                //EALang['preferred_language'] + ': ' + lang +
+                //'<br/>' +
                 EALang['phone'] + ': ' + phoneNumber +
+                '<br/>' +
+                EALang['sms'] + ': ' + sms +
                 '<br/>' +
                 EALang['email'] + ': ' + email +
                 '<br/>' +
@@ -624,6 +718,8 @@ window.FrontendBook = window.FrontendBook || {};
                 EALang['city'] + ': ' + city +
                 '<br/>' +
                 EALang['zip_code'] + ': ' + zipCode +
+				'<br/>' +
+                EALang['notes'] + ': ' + notes +
             '</p>';
 
         $('#customer-details').html(html);
@@ -637,6 +733,8 @@ window.FrontendBook = window.FrontendBook || {};
 			wp_id: $('#wp-id').val(), //WP mod Craig Tucker 1
             last_name: $('#last-name').val(),
             first_name: $('#first-name').val(),
+			lang: $('#lang').val(),
+			//lang: EALang['user_lang'],
             email: $('#email').val(),
             phone_number: $('#phone-number').val(),
             address: $('#address').val(),
@@ -730,6 +828,7 @@ window.FrontendBook = window.FrontendBook || {};
 			$('#wp-id').val(customer.wp_id); //WP mod Craig Tucker 2
             $('#last-name').val(customer['last_name']);
             $('#first-name').val(customer['first_name']);
+			$('#lang').val(EALang['user_lang']);
             $('#email').val(customer['email']);
             $('#phone-number').val(customer['phone_number']);
             $('#address').val(customer['address']);
@@ -758,7 +857,9 @@ window.FrontendBook = window.FrontendBook || {};
      */
     function _updateServiceDescription(serviceId, $div) {
         var html = '';
-
+		var show_free_price_currency;
+        show_free_price_currency = GlobalVariables.showFreePriceCurrency;
+		
         $.each(GlobalVariables.availableServices, function(index, service) {
             if (service.id == serviceId) { // Just found the service.
                 html = '<strong>' + service.name + ' </strong>';
@@ -772,8 +873,14 @@ window.FrontendBook = window.FrontendBook || {};
                             + ' ' + EALang['minutes'] + '] ';
                 }
 
-                if (service.price != '' && service.price != null) {
-                    html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
+                if (service.price != '' && service.price != null && service.price != 0) {
+                   html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
+                } else {
+					if (show_free_price_currency == 'yes') {
+						html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
+					}else{
+						html += '';
+					}
                 }
 
                 html += '<br>';

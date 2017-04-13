@@ -3,7 +3,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -60,10 +60,39 @@ window.FrontendBook = window.FrontendBook || {};
                 classes: 'qtip-green qtip-shadow custom-qtip'
             }
         });
+		var fDaynum;
+		var fDay = GlobalVariables.weekStartson;
 
+		switch(fDay) {
+			case "sunday":
+				fDaynum = 0;
+				break;
+			case "monday":
+				fDaynum = 1;
+				break;
+			case "tuesday":
+				fDaynum = 2;
+				break;
+			case "wednesday":
+				fDaynum = 3;
+				break;
+			case "thursday":
+				fDaynum = 4;
+				break;
+			case "friday":
+				fDaynum = 5;
+				break;
+			case "saturday":
+				fDaynum = 6;
+				break;
+			default:
+				fDaynum = 0;
+				break;
+		}		
+		console.log('fDaynum ' + fDaynum + ' fDay ' + fDay);
         $('#select-date').datepicker({
             dateFormat: 'dd-mm-yy',
-            firstDay: 1, // Monday
+            firstDay: fDaynum, // Monday
             minDate: 0,
             defaultDate: Date.today(),
 
@@ -255,17 +284,22 @@ window.FrontendBook = window.FrontendBook || {};
 		if(validateWaitinglistEmail() && validateWaitinglistPhone() && validateWaitinglistCarrier()){
 				
 				var postWaiting = new Object();
-				var note = ''
+				var note = '';
+				var lang = '';
 
 				if($('#cell-carrier2').val() !== "" && $('#phone-number2').val() !== ""){
-				note = EALang['user_lang'] + ";" + $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val() + ";";
+					lang = EALang['user_lang'];
+					note = $('#email2').val()  + ";" + $('#phone-number2').val().replace(/[^\d\+]/g,"") + $('#cell-carrier2').val() + ";";
 				} else {
-				note = EALang['user_lang'] + ";" + $('#email2').val() + ";";
+					lang = EALang['user_lang'];
+					note = $('#email2').val() + ";";
 				}
 
 				postWaiting['appointment'] = {
 				'id_users_provider': $('#select-provider').val(),
+				'id_services': $('#select-service').val(),
 				'notes': note,
+				'lang': lang,
 				};
 				
 				$('input[name="csrfToken"]').val(GlobalVariables.csrfToken);
@@ -689,8 +723,10 @@ window.FrontendBook = window.FrontendBook || {};
                             + ' ' + EALang['minutes'] + '] ';
                 }
 
-                if (service.price != '' && service.price != null) {
-                    html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
+                if (service.price != '' && service.price != null && service.price != 0) {
+                   html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
+                } else {
+                    html += '';
                 }
 
                 html += '<br>';

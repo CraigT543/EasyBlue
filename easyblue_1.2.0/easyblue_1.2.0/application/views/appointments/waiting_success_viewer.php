@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<?php
+		$this->CI =& get_instance();
+        $this->CI->load->model('settings_model');
+		$theme_color = $this->CI->settings_model->get_setting('theme_color');
+?>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -15,7 +20,7 @@
     <link rel="stylesheet" type="text/css"
         href="<?php echo base_url('assets/ext/bootstrap/css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" type="text/css"
-        href="<?php echo base_url('assets/css/frontend.css'); ?>">
+        href="<?php echo base_url('assets/css/frontend_' . $theme_color . '.css'); ?>">
 
     <?php
         // ------------------------------------------------------------

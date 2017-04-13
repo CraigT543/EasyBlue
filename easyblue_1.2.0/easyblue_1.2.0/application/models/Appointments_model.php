@@ -5,7 +5,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -433,7 +433,7 @@ class Appointments_Model extends CI_Model {
     }
 
 	public function get_waitinglist() {
-		$where = "book_datetime < DATE_SUB( NOW() , INTERVAL 30 DAY )"; //Delete waiting list records older than 30 days
+		$where = "book_datetime < DATE_SUB( NOW() , INTERVAL 30 DAY )"; //Tucker Delete waiting list records older than 30 days
 		$this->db->where(array('start_datetime' => NULL))->where($where);
 		$this->db->delete('ea_appointments'); 
 		//Get the rest of the records

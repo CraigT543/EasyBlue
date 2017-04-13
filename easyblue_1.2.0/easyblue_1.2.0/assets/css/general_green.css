@@ -3,10 +3,14 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
+ * http://www.color-hex.com/color/EBFAF2
+ * http://www.color-hex.com/color/1E6A40
+ * http://www.color-hex.com/color/123F26
+ * http://www.color-hex.com/color/79E2A8
  * ---------------------------------------------------------------------------- */
 
 body .custom-qtip {
@@ -14,10 +18,10 @@ body .custom-qtip {
     border-radius: 0;
     padding: 10px;
     box-shadow: 1px 1px 3px #767676;
-    background: #EFFDF6;
+    background: #EBFAF2;
     font-size: 12px;
     line-height: 20px;
-    color: #258D53;
+    color: #1E6A40;
 }
 
 body .ui-widget {
@@ -36,13 +40,13 @@ body .ui-dialog .ui-dialog-titlebar-close {
 }
 
 body .ui-draggable .ui-dialog-titlebar {
-    background: #517DAE;
+    background: #1E6A40;
     color: #FFF;
     font-size: 1.5em;
     font-weight: lighter;
     padding: 12px 10px;
     border: none;
-    border-bottom: 4px solid #012448;
+    border-bottom: 4px solid #123F26;
     margin-bottom: 10px;
 }
 
@@ -68,13 +72,13 @@ body .ui-dialog #error-technical {
 }
 
 body .ui-widget.ui-widget-content {
-    border: 1px solid #517DAE;
+    border: 1px solid #1E6A40;
     padding: 0;
 }
 
 body .ui-datepicker .ui-widget-header {
     border: none;
-    background: #517DAE;
+    background: #1E6A40;
     border-radius: 0;
 }
 
@@ -87,7 +91,7 @@ body .ui-datepicker .ui-datepicker-title {
 }
 
 body .ui-datepicker th {
-    background: #517DAE;
+    background: #1E6A40;
     color: #FFF;
 }
 
@@ -99,7 +103,7 @@ body .ui-datepicker td a,
 body .ui-datepicker td span {
     border: none !important;
     background: none !important;
-    color: #012448 !important;
+    color: #123F26 !important;
     text-align: center !important;
     width: 32px;
     height: 32px;
@@ -109,7 +113,7 @@ body .ui-datepicker td span {
 html body .ui-datepicker td a.ui-state-active {
     color: #FFF !important;
     font-weight: bold !important;
-    background: #517DAE !important;
+    background: #1E6A40 !important;
     border-radius: 50px;
     width: 22px;
     height: 22px;
@@ -118,7 +122,7 @@ html body .ui-datepicker td a.ui-state-active {
 }
 
 body .ui-datepicker td a.ui-state-highlight {
-    background: #80E3AD !important;
+    background: #79E2A8 !important;
     border-radius: 67px;
     color: #FFF !important;
     width: 22px;
@@ -131,8 +135,8 @@ body .ui-datepicker td a.ui-state-highlight {
 body .ui-datepicker .ui-datepicker-prev-hover {
     top: 2px !important;
     left: 2px !important;
-    background: #80e1ac;
-    border-color: #80e1ac;
+    background: #79E2A8;
+    border-color: #79E2A8;
     border-radius: 0;
     cursor: pointer;
 }
@@ -140,16 +144,16 @@ body .ui-datepicker .ui-datepicker-prev-hover {
 body .ui-datepicker .ui-datepicker-next-hover {
     top: 2px !important;
     right: 2px !important;
-    background: #80e1ac;
-    border-color: #80e1ac;
+    background: #79E2A8;
+    border-color: #79E2A8;
     border-radius: 0;
     cursor: pointer;
 }
 
 body .ui-datepicker .ui-slider-handle {
     border-radius: none;
-    border-color: #517DAE;
-    background-color: #517DAE;
+    border-color: #1E6A40;
+    background-color: #1E6A40;
 }
 
 .breaks tr:hover td {
@@ -166,7 +170,7 @@ body .ui-datepicker .ui-slider-handle {
 
 li.language:hover {
 	cursor: pointer;
-	color: #005580;
+	color: #123F26;
 }
 
 #select-language {
@@ -176,7 +180,7 @@ li.language:hover {
 }
 
 #select-language.active {
-    box-shadow: 0 0 20px #012448;
+    box-shadow: 0 0 20px #123F26;
 }
 
 #language-list {

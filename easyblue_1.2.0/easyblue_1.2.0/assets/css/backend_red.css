@@ -3,10 +3,13 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
+ * http://www.color-hex.com/color/C3262E
+ * http://www.color-hex.com/color/D5676C
+ * http://www.color-hex.com/color/75161B
  * ---------------------------------------------------------------------------- */
 
 /**
@@ -20,8 +23,8 @@ root {
 /* BACKEND GENERAL ELEMENTS
    -------------------------------------------------------------------- */
 #header {
-    background-color: #85A4C6;
-    border-bottom: 4px solid #4D657E;
+    background-color: #C3262E;
+    border-bottom: 4px solid #D5676C;
     box-shadow: none;
     border-radius: 0;
     margin-bottom: 15px;
@@ -66,12 +69,12 @@ root {
 }
 
 #header #header-menu .menu-item:hover:not(.active) {
-    background-color: #305F8E;
+    background-color: #75161B;
 }
 
 #header #header-menu .active {
     color: #C5FFD6;
-    background: #517DAE;
+    background: #C3262E;
 }
 
 #footer {
@@ -142,8 +145,8 @@ body .modal .modal-title {
 
 body .modal-header {
     padding: 12px 15px;
-    background: #85A4C6;
-    border-bottom: 4px solid #4D657E;
+    background: #C3262E;
+    border-bottom: 4px solid #D5676C;
 }
 
 body .modal-header h3 {
@@ -236,7 +239,7 @@ body legend {
 
 .backend-page .filter-records .results .entry.selected {
     background-color: #F4F4F4;
-    border-right: 5px solid #85A4C6;
+    border-right: 5px solid #C3262E;
 }
 
 .backend-page .filter-records .results hr {
@@ -391,7 +394,7 @@ body legend {
 }
 
 #existing-customers-list div:hover {
-    background: #3DD481;
+    background: #FF6347;
     font-weight: bold;
     color: #FFF;
     cursor: pointer;
@@ -623,7 +626,7 @@ body .form-horizontal .controls {
 
 #users-page #providers .switch-view .current {
     color: #FFF;
-    background: #85A4C6;
+    background: #C3262E;
 }
 
 #users-page #providers .details-view,

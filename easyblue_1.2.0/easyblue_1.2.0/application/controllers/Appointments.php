@@ -5,7 +5,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -65,11 +65,16 @@ class Appointments extends CI_Controller {
         $this->load->model('settings_model');
 
         try {
-			$cell_services  	 = $this->cellcarrier_model->get_cellcarriers(); //Craig Tucker cell carrier modification
-            $available_services  = $this->services_model->get_available_services();
-            $available_providers = $this->providers_model->get_available_providers();
-            $company_name        = $this->settings_model->get_setting('company_name');
-            $date_format         = $this->settings_model->get_setting('date_format');
+			$cell_services  	 		= $this->cellcarrier_model->get_cellcarriers(); //Craig Tucker cell carrier modification
+            $available_services  		= $this->services_model->get_available_services();
+            $available_providers 		= $this->providers_model->get_available_providers();
+            $company_name        		= $this->settings_model->get_setting('company_name');
+            $date_format         		= $this->settings_model->get_setting('date_format');
+            $time_format         		= $this->settings_model->get_setting('time_format');
+            $week_starts_on      		= $this->settings_model->get_setting('week_starts_on');
+            $max_date            		= $this->settings_model->get_setting('max_date');
+            $show_free_price_currency 	= $this->settings_model->get_setting('show_free_price_currency');
+            $show_any_provider 			= $this->settings_model->get_setting('show_any_provider');
 
 			// Remove the data that are not needed inside the $available_providers array.
 			foreach ($available_providers as $index=>$provider) {
@@ -130,15 +135,20 @@ class Appointments extends CI_Controller {
 
             // Load the book appointment view.
             $view = array (
-				'cell_services'			=> $cell_services,  //Craig Tucker cell carrier modification
-                'available_services'    => $available_services,
-                'available_providers'   => $available_providers,
-                'company_name'          => $company_name,
-                'manage_mode'           => $manage_mode,
-				'date_format'           => $date_format,
-                'appointment_data'      => $appointment,
-                'provider_data'         => $provider,
-                'customer_data'         => $customer
+				'cell_services'				=> $cell_services,  //Craig Tucker cell carrier modification
+                'available_services'    	=> $available_services,
+                'available_providers'   	=> $available_providers,
+                'company_name'          	=> $company_name,
+                'manage_mode'           	=> $manage_mode,
+				'date_format'           	=> $date_format,
+				'time_format'           	=> $time_format,
+				'week_starts_on'        	=> $week_starts_on,
+				'max_date'        			=> $max_date,
+				'show_free_price_currency'	=> $show_free_price_currency,
+				'show_any_provider'			=> $show_any_provider,
+                'appointment_data'      	=> $appointment,
+                'provider_data'         	=> $provider,
+                'customer_data'         	=> $customer
             );
         } catch(Exception $exc) {
             $view['exceptions'][] = $exc;
@@ -466,10 +476,10 @@ class Appointments extends CI_Controller {
 					$provider_link = new Url(site_url('backend/index/' . $appointment['hash']));
 					//Notification Mod 3 Craig Tucker end
 
-					$provider_title = new Text($this->lang->line('appointment_added_to_your_plan'));
+                    $provider_title = new Text($this->lang->line('appointment_added_to_your_plan'));
                     $provider_message = new Text($this->lang->line('appointment_link_description'));
 
-				} else {
+                } else {
                     $customer_title = new Text($this->lang->line('appointment_changes_saved'));
                     $customer_message = new Text('');
 
@@ -562,10 +572,10 @@ class Appointments extends CI_Controller {
 				}
 				
 				//MaxDate mod Craig Tucker 2 start
-				if ($current_date > new DateTime(date('Y-m-d 00:00:00', strtotime('+'.$max_date.'days')))) { // Dates past maxDate become immediately unavailable.
-					$unavailable_dates[] = $current_date->format('Y-m-d');
-					continue;
-				}
+				//if ($current_date > new DateTime(date('Y-m-d 00:00:00', strtotime('+'.$max_date.'days')))) { // Dates past maxDate become immediately unavailable.
+				//	$unavailable_dates[] = $current_date->format('Y-m-d');
+				//	continue;
+				//}
 				//MaxDate mod Craig Tucker 2 end
 
 				$empty_periods = $this->_get_provider_available_time_periods($provider_id,
@@ -866,7 +876,7 @@ class Appointments extends CI_Controller {
 		foreach ($empty_periods as $period) {
 			$start_hour = new DateTime($selected_date . ' ' . $period['start']);
 			$end_hour = new DateTime($selected_date . ' ' . $period['end']);
-            $interval = $availabilities_type === AVAILABILITIES_TYPE_FIXED ? (int)$service_duration : 60;
+            $interval = $availabilities_type === AVAILABILITIES_TYPE_FIXED ? (int)$service_duration : $this->settings_model->get_setting('interval_time');
 
 			//Availabilities Type Mod Craig Tucker start
 			if ($availabilities_type === AVAILABILITIES_TYPE_Q30){  
@@ -898,11 +908,13 @@ class Appointments extends CI_Controller {
 
 			$current_hour = $start_hour;
 			$diff = $current_hour->diff($end_hour);
-
 			while (($diff->h * 60 + $diff->i) >= intval($service_duration)) {
 				//Time format-- Military 'H:i' AM/PM 'h:i a'
-				$available_hours[] = $current_hour->format('h:i a');
-				
+				if ($this->settings_model->get_setting('time_format') == '24HR') {
+					$available_hours[] = $current_hour->format('H:i');
+				} else {
+					$available_hours[] = $current_hour->format('h:i a');
+				}				
 				$current_hour->add(new DateInterval('PT' . $interval . 'M'));
 				$diff = $current_hour->diff($end_hour);
 			}
@@ -925,6 +937,9 @@ class Appointments extends CI_Controller {
 
 		$available_hours = array_values($available_hours);
 		//sort($available_hours, SORT_STRING );
+		usort($available_hours, function($a, $b) {
+			return (strtotime($a)>strtotime($b));
+		});
 		$available_hours = array_values($available_hours);
 
 		return $available_hours;
@@ -959,10 +974,10 @@ class Appointments extends CI_Controller {
 
         $available_hours = array_values($available_hours);
 		//sort($available_hours, SORT_STRING );
+		usort($available_hours, function($a, $b) {
+			return (strtotime($a)>strtotime($b));
+		});
 		$available_hours = array_values($available_hours);
-		
-
-		
     }
 	//Waiting list functions start 
 	//Craig Tucker, craigtuckerlcsw@gmail
@@ -981,6 +996,8 @@ class Appointments extends CI_Controller {
 
 	public function book_waiting(){
 		$this->load->view('appointments/waiting_success');//return to book view
+		$this->load->model('settings_model');
+
 	}
 	//Waiting list functions start end 	
 }

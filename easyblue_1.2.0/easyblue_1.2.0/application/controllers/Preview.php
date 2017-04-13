@@ -5,7 +5,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -836,7 +836,7 @@ class Preview extends CI_Controller {
 		foreach ($empty_periods as $period) {
 			$start_hour = new DateTime($selected_date . ' ' . $period['start']);
 			$end_hour = new DateTime($selected_date . ' ' . $period['end']);
-            $interval = $availabilities_type === AVAILABILITIES_TYPE_FIXED ? (int)$service_duration : 15;
+            $interval = $availabilities_type === AVAILABILITIES_TYPE_FIXED ? (int)$service_duration : $this->settings_model->get_setting('interval_time');
 
 			$current_hour = $start_hour;
 			$diff = $current_hour->diff($end_hour);
@@ -918,6 +918,8 @@ class Preview extends CI_Controller {
 
 	public function book_waiting(){
 		$this->load->view('appointments/waiting_success');//return to book view
+		$this->load->model('settings_model');
+
 	}
 	//Waiting list functions start end 	
 }

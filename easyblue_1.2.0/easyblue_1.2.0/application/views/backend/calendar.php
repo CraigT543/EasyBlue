@@ -39,6 +39,8 @@
         'baseUrl'               : <?php echo json_encode($base_url); ?>,
         'bookAdvanceTimeout'    : <?php echo $book_advance_timeout; ?>,
         'dateFormat'            : <?php echo json_encode($date_format); ?>,
+        'timeFormat'            : <?php echo json_encode($time_format); ?>,
+        'weekStartson'          : <?php echo json_encode($week_starts_on); ?>,
         'editAppointment'       : <?php echo json_encode($edit_appointment); ?>,
         'customers'             : <?php echo json_encode($customers); ?>,
         'secretaryProviders'    : <?php echo json_encode($secretary_providers); ?>,

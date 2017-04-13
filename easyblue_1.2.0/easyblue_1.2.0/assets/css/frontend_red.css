@@ -3,10 +3,15 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
+ * http://www.color-hex.com/color/EDBDC0
+ * http://www.color-hex.com/color/C3262E
+ * http://www.color-hex.com/color/75161B
+ * http://www.color-hex.com/color/D5676C
+ * http://www.color-hex.com/color/c03039
  * ---------------------------------------------------------------------------- */
 
 root {
@@ -19,7 +24,7 @@ body {
 }
 
 body {
-    background-color: #DFE7F2;
+    background-color: #EDBDC0;
 }
 
 #main {
@@ -46,8 +51,8 @@ body {
 #book-appointment-wizard #header {
     padding: 5px;
     height: 90px;
-    background: #517DAE;
-    border-bottom: 4px solid #012448;
+    background: #C3262E;
+    border-bottom: 4px solid #75161B;
 }
 
 #book-appointment-wizard #company-name {
@@ -104,7 +109,7 @@ body {
     padding: 1px;
     margin-right: 10px;
     margin-top: 9px;
-    border: 3px solid #4D657E;
+    border: 3px solid #D5676C;
 }
 
 #book-appointment-wizard .book-step strong {
@@ -123,11 +128,11 @@ body {
     padding: 1px;
     margin-right: 10px;
     margin-top: 3px;
-    border: 3px solid #4D657E;
+    border: 3px solid #D5676C;
 }
 
 #book-appointment-wizard .active-step strong {
-    color: #4D657E;
+    color: #D5676C;
     font-size: 18px;
 }
 
@@ -150,12 +155,12 @@ body {
 
 #book-appointment-wizard #available-hours .available-hour:hover {
     font-weight: bold;
-    background-color: #DFE7F2;
+    background-color: #EDBDC0;
     cursor: pointer;
 }
 
 #book-appointment-wizard #available-hours .selected-hour {
-    color: #0088cc;
+    color: #c03039;
     font-weight: bold;
 }
 
@@ -214,7 +219,7 @@ body {
 }
 
 #book-appointment-wizard .captcha-title .glyphicon-refresh:hover {
-    color: #012448;
+    color: #75161B;
 }
 
 #book-appointment-wizard .captcha-image {
@@ -237,8 +242,8 @@ body {
 	}
 
 img {
-	width:200px;
-	height:200px;
+	width:64px;
+	height:64px;
 }
 
 .caption {
@@ -252,8 +257,8 @@ img {
 	}
 
 img {
-	width:200px;
-	height:200px;
+	width:64px;
+	height:64px;
 }
 
 .caption {
@@ -425,7 +430,7 @@ img {
     .popover .popover-content #language-list .language {
         margin: 10px 0;
     }
-	
+
     /**
      * BOOK SUCCESS
      */
@@ -440,6 +445,7 @@ img {
     #message-frame #message-icon,
     #success-frame #success-icon {
         width: 64px;
+		height: 64px;
         display: block;
         margin: auto;
         float: none !important;
@@ -461,9 +467,6 @@ img {
     .ui-dialog .ui-dialog-title {
         font-size: 1.2em;
     }
-	
-
-	
 }
 
 	/*Loading dots mod Craig Tucker start 3*/

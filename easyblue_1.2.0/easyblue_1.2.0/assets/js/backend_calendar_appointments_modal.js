@@ -3,7 +3,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.2.0
@@ -164,8 +164,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             }
 
             $dialog.find('#start-datetime').val(GeneralFunctions.formatDate(start, GlobalVariables.dateFormat, true));
-            $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start.addMinutes(serviceDuration),
-                    GlobalVariables.dateFormat, true));
+            $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start.addMinutes(serviceDuration),GlobalVariables.dateFormat, true));
 
             // Display modal form.
             $dialog.find('.modal-header h3').text(EALang['new_appointment_title']);
@@ -386,7 +385,36 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             default:
                 throw new Error('Invalid GlobalVariables.dateFormat value.');
         }
+		var fDaynum;
+		var fDay = GlobalVariables.weekStartson;
 
+		switch(fDay) {
+			case "sunday":
+				fDaynum = 0;
+				break;
+			case "monday":
+				fDaynum = 1;
+				break;
+			case "tuesday":
+				fDaynum = 2;
+				break;
+			case "wednesday":
+				fDaynum = 3;
+				break;
+			case "thursday":
+				fDaynum = 4;
+				break;
+			case "friday":
+				fDaynum = 5;
+				break;
+			case "saturday":
+				fDaynum = 6;
+				break;
+			default:
+				fDaynum = 0;
+				break;
+		}		
+		console.log('NZ-backend_calendar_appointments_modal.js -> fDaynum ' + fDaynum + ' fDay ' + fDay);
         $dialog.find('#start-datetime').datetimepicker({
             dateFormat: dateFormat,
             //timeFormat: 'hh:mm tt', //Craig Tucker am/pm mod 1
@@ -413,7 +441,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             timeText: EALang['time'],
             hourText: EALang['hour'],
             minuteText: EALang['minutes'],
-            firstDay: 0
+            firstDay: fDaynum // Monday
         });
         $dialog.find('#start-datetime').datetimepicker('setDate', startDatetime);
 
@@ -443,7 +471,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             timeText: EALang['time'],
             hourText: EALang['hour'],
             minuteText: EALang['minutes'],
-            firstDay: 0
+            firstDay: fDaynum // Monday
         });
         $dialog.find('#end-datetime').datetimepicker('setDate', endDatetime);
     };

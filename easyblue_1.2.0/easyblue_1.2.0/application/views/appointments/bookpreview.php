@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<?php
+	$this->load->model('settings_model');			
+	$theme_color = $this->settings_model->get_setting('theme_color');
+?>
 <html>
  
 <head>
@@ -46,11 +50,11 @@ element.style {
     <link
         rel="stylesheet"
         type="text/css"
-        href="<?php echo base_url('assets/css/frontend.css'); ?>">
+        href="<?php echo base_url('assets/css/frontend_' . $theme_color . '.css'); ?>">
     <link
         rel="stylesheet"
         type="text/css"
-        href="<?php echo base_url('assets/css/general.css'); ?>">
+        href="<?php echo base_url('assets/css/general_' . $theme_color . '.css'); ?>">
 
 <body>
 
@@ -186,7 +190,7 @@ element.style {
 				<div>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h3 style= "margin-left:10px;" class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
-					<h6 style= "margin-left:20px; margin-right:20px;"><?php echo $this->lang->line('waiting_list_msg_top'); ?><br><br>
+					<h6 style= "margin-left:20px; margin-right:20px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?><br><br>
 					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
 					</h6><br><br>
 				</div>

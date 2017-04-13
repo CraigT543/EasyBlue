@@ -6,7 +6,7 @@ class Reminders_model extends CI_Model {
 	public function get_days_appointments($day) {
 		$day_start = date('Y-m-d 00:00:00', $day);
 		$day_end = date('Y-m-d 23:59:59', $day);
-			return $this->db->select('e.id, 
+			return $this->db->select('e.id AS appt_id, 
 				e.start_datetime, 
 				e.end_datetime, 
 				e.hash, 
@@ -14,7 +14,12 @@ class Reminders_model extends CI_Model {
 				u1.first_name AS customer_first_name, 
 				u1.last_name AS customer_last_name, 
 				u1.email AS customer_email, 
-				u1.phone_number AS customer_phone_number, 
+				u1.address AS customer_address, 
+				u1.city AS customer_city, 
+				u1.zip_code AS customer_zip_code, 
+				u1.phone_number AS customer_phone_number,
+				u1.notes AS customer_notes,	
+				u1.lang AS customer_lang,					
 				u2.first_name AS provider_first_name, 
 				u2.last_name AS provider_last_name, 
 				u2.email AS provider_email, 

@@ -5,7 +5,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -62,6 +62,8 @@ class Backend extends CI_Controller {
         $view['active_menu'] = PRIV_APPOINTMENTS;
         $view['book_advance_timeout'] = $this->settings_model->get_setting('book_advance_timeout');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
+        $view['week_starts_on'] = $this->settings_model->get_setting('week_starts_on');
         $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['available_providers'] = $this->providers_model->get_available_providers();
         $view['available_services'] = $this->services_model->get_available_services();
@@ -120,6 +122,8 @@ class Backend extends CI_Controller {
         $view['active_menu'] = PRIV_CUSTOMERS;
         $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
+        $view['week_starts_on'] = $this->settings_model->get_setting('week_starts_on');
         $view['customers'] = $this->customers_model->get_batch();
         $view['available_providers'] = $this->providers_model->get_available_providers();
         $view['available_services'] = $this->services_model->get_available_services();
@@ -159,6 +163,8 @@ class Backend extends CI_Controller {
         $view['active_menu'] = PRIV_SERVICES;
         $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
+        $view['week_starts_on'] = $this->settings_model->get_setting('week_starts_on');
         $view['services'] = $this->services_model->get_batch();
         $view['categories'] = $this->services_model->get_all_categories();
         $this->set_user_data($view);
@@ -191,6 +197,8 @@ class Backend extends CI_Controller {
         $view['active_menu'] = PRIV_USERS;
         $view['company_name'] = $this->settings_model->get_setting('company_name');
         $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
+        $view['week_starts_on'] = $this->settings_model->get_setting('week_starts_on');
         $view['admins'] = $this->admins_model->get_batch();
         $view['providers'] = $this->providers_model->get_batch();
         $view['secretaries'] = $this->secretaries_model->get_batch();

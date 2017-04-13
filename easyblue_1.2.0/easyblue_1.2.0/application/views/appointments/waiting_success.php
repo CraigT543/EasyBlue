@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<?php
+		$this->CI =& get_instance();
+        $this->CI->load->model('settings_model');
+		$theme_color = $this->CI->settings_model->get_setting('theme_color');
+?>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -15,7 +20,7 @@
     <link rel="stylesheet" type="text/css"
         href="<?php echo base_url('assets/ext/bootstrap/css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" type="text/css"
-        href="<?php echo base_url('assets/css/frontend.css'); ?>">
+        href="<?php echo base_url('assets/css/frontend_' . $theme_color . '.css'); ?>">
 
     <?php
         // ------------------------------------------------------------
@@ -72,17 +77,13 @@
         src="https://apis.google.com/js/client.js"></script>
 
     <?php
-        // ------------------------------------------------------------
+        // ------------------------------------------------------------ 
         // CUSTOM PAGE JS
         // ------------------------------------------------------------ ?>
 
     <script type="text/javascript">
         var GlobalVariables = {
             'csrfToken'         : <?php echo json_encode($this->security->get_csrf_hash()); ?>,
-            'appointmentData'   : <?php echo json_encode($appointment_data); ?>,
-            'providerData'      : <?php echo json_encode($provider_data); ?>,
-            'serviceData'       : <?php echo json_encode($service_data); ?>,
-            'companyName'       : <?php echo '"' . $company_name . '"'; ?>,
             'googleApiKey'      : <?php echo '"' . Config::GOOGLE_API_KEY . '"'; ?>,
             'googleClientId'    : <?php echo '"' . Config::GOOGLE_CLIENT_ID . '"'; ?>,
             'googleApiScope'    : 'https://www.googleapis.com/auth/calendar'
@@ -101,4 +102,4 @@
 
     <?php google_analytics_script(); ?>
 </body>
-</html>
+</html> 

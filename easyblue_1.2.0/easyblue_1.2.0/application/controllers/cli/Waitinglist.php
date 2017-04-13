@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
 
 /* ----------------------------------------------------------------------------
  * A modification of Easy!Appointments - Open Source Web Scheduler
@@ -7,7 +7,13 @@
  * this uses portions of Alex's code with modifications by Craig Tucker
  * craigtuckerlcsw@verizon.net
  * ---------------------------------------------------------------------------- */
+//namespace EA\Engine\Notifications; 
 
+//use \EA\Engine\Types\Text;
+//use \EA\Engine\Types\NonEmptyText;
+//use \EA\Engine\Types\Url;
+//use \EA\Engine\Types\Email as EmailAddress;
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * User Controller 
  *
@@ -35,12 +41,37 @@ class Waitinglist extends CI_Controller {
 			return;
 		}
 		$this->load->model('user_model');
+		$this->load->model('services_model');
 		$this->load->model( array('appointments_model'));		  
 		$company_name = $this->settings_model->get_setting('company_name');
+		$company_link = $this->settings_model->get_setting('company_link');
+		$time_format = $this->settings_model->get_setting('time_format');
+		$date_format = $this->settings_model->get_setting('date_format');
+		$max_date = $this->settings_model->get_setting('max_date');
 		$currentsched = $this->config->base_url();
 		$appointment_link = $this->config->base_url().'index.php/appointments/index/';
 		$msg = '';
+		$email_message = '';
 		$waiting_notices = $this->appointments_model->get_waitinglist();		
+		$theme_color = $this->settings_model->get_setting('theme_color');
+		switch($theme_color) {
+			case 'green':
+				$background_color='#1E6A40';
+				$border_bottom='#123F26';
+				break;
+			case 'blue':
+				$background_color='#517DAE';
+				$border_bottom='#012448';
+				break;
+			case 'red':
+				$background_color='#C3262E';
+				$border_bottom='#75161B';
+				break;
+			default:
+				$background_color='#1E6A40';
+				$border_bottom='#123F26';
+				break;
+		}
 
 		if(!empty($waiting_notices)){
 			foreach ($waiting_notices as $notice) {
@@ -50,7 +81,19 @@ class Waitinglist extends CI_Controller {
 				$provider_id = $notice->id_users_provider;
 				$provider = $this->user_model->get_user_display_name($provider_id);
 				$pemail = $this->user_model->get_user_email($provider_id);
+				$appointment_service_id = $notice->id_services;
+				$appointment_service = $this->services_model->get_value('name', $appointment_service_id);
+				$appointment_price = $this->services_model->get_value('price', $appointment_service_id);
+				$appointment_currency = $this->services_model->get_value('currency', $appointment_service_id);
+				$appointment_price_currency = $appointment_price . ' ' . $appointment_currency;
+				$provider_street = $this->user_model->get_value('address', $provider_id);
+				$provider_city = $this->user_model->get_value('city', $provider_id);
+				$provider_state = $this->user_model->get_value('state', $provider_id);
+				$provider_zip_code = $this->user_model->get_value('zip_code', $provider_id);
+				$provider_address = $provider_street.', '.$provider_city.', '.$provider_state.' '.$provider_zip_code; 
 				$emailphone = $notice->notes;
+				$this_lang = $notice->lang;
+				
 				$pos = strrpos($emailphone, ';');
 				if ($pos > 0) {
 					$addresses = explode(';', $emailphone);
@@ -58,22 +101,16 @@ class Waitinglist extends CI_Controller {
 					switch (sizeof($addresses)-1) //to remove the trailing ";"
 					{
 						case 1:
-						$this_lang = $addresses[0];
+						$email_field = $addresses[0];
 						break;
 						
 						case 2:
-						$this_lang = $addresses[0];
-						$email_field = $addresses[1];
-						break;
-
-						case 3:
-						$this_lang = $addresses[0];
-						$email_field = $addresses[1];
-						$sms_field = $addresses[2];
+						$email_field = $addresses[0];
+						$sms_field = $addresses[1];
 						break;
 						
 						default:
-						$email_field = $addresses[0];
+						$this_lang = $addresses[0];
 						break;
 					}
 				}else{
@@ -82,37 +119,97 @@ class Waitinglist extends CI_Controller {
 				echo "lang: " . $this_lang . PHP_EOL;
 				echo "email: " . $email_field . PHP_EOL;
 				echo "sms: " . $sms_field . PHP_EOL;
+				echo "time_format: " . $time_format . PHP_EOL;
+				echo "date_format: " . $date_format . PHP_EOL;
+				echo "max_date: " . $max_date . PHP_EOL;
 					
 				$this->lang->load('translations', $this_lang);
 				
 				$subject = $this->lang->line('waiting_list_update') . ' ' .  $company_name;
 				$availability = $this->availabilitylist($provider_id);
-				$config['mailtype'] = 'text';
+				$config['mailtype'] = 'html';
 				$this->email->initialize($config);
 				$this->email->set_newline(PHP_EOL);
 				$this->email->from($pemail, $company_name);
 				$this->email->to($email_field);
 				$this->email->bcc($sms_field);
 				$this->email->subject($subject);
+				$email_message .= $provider . ' ' . $this->lang->line('waiting_list_has_avail') . '<br>';
+				$email_message .= '<br>';
+				if (!empty($availability)){
+					$email_message .= $availability.'<br>';
+					$email_message .= $this->lang->line('make_appointment') . '<br>';
+					$email_message .= '<a href="' . $currentsched . '" style="text-decoration: none;">' . $currentsched . '</a>' . '<br>';
+				}
+				$email_message .= '<br>';
+				$email_message .= $this->lang->line('remove_from_wl') . '<br>';
+				$email_message .= '<a href="' . $appointment_link.$notice->hash . '" style="text-decoration: none;">' . $appointment_link.$notice->hash . '</a>' . '<br>';
+				$email_message .= '<br>';
 
-				if (empty($availability)){
-					$msg .= strtoupper($company_name).PHP_EOL;
-					$msg .= $this->lang->line('waiting_list_update1') . ' ' . $provider . ' ' . $this->lang->line('waiting_list_no_avail') . PHP_EOL;
-					$msg .= PHP_EOL;
-					$msg .= $this->lang->line('view_current_sched') . ' ' . $currentsched . PHP_EOL;
-					$msg .= PHP_EOL;
-					$msg .= $this->lang->line('remove_from_wl') . PHP_EOL;
-					$msg .= $appointment_link.$notice->hash . PHP_EOL;
-				}else{
-					$msg .= strtoupper($company_name) . PHP_EOL;
-					$msg .= $this->lang->line('waiting_list_update1') . ' ' . $provider . ' ' . $this->lang->line('waiting_list_has_avail') . PHP_EOL;
-					$msg .= PHP_EOL;
-					$msg .=	$availability.PHP_EOL;
-					$msg .= $this->lang->line('make_appointment') . ' ' . $currentsched . PHP_EOL;
-					$msg .= PHP_EOL;
-					$msg .= $this->lang->line('remove_from_wl') . PHP_EOL;
-					$msg .= $appointment_link.$notice->hash . PHP_EOL;
-					}
+				$msg .= '<html>';
+				$msg .= '<head>';
+				$msg .= '    <title>' . $subject . '</title>';
+				$msg .= '</head>';
+				$msg .= '<body style="font: 13px arial, helvetica, tahoma;">';
+				$msg .= '    <div class="email-container" style="width: 650px; border: 1px solid #eee;">';
+				$msg .= '        <div id="header" style="background-color: ' . $background_color . '; border-bottom: 4px solid ' . $border_bottom . ';';
+				$msg .= '                height: 45px; padding: 10px 15px;">';
+				$msg .= '            <strong id="logo" style="color: white; font-size: 20px;';
+				$msg .= '                    text-shadow: 1px 1px 1px #8F8888; margin-top: 10px; display: inline-block">';
+				$msg .= '                    ' . $company_name . '</strong>';
+				$msg .= '        </div>';
+				$msg .= '        <div id="content" style="padding: 10px 15px;">';
+				$msg .= '            <h2>' . $subject . '</h2>';
+				$msg .= '            <h2>' . $this->lang->line('appointment_details_title') . '</h2>';
+				$msg .= '            <table id="appointment-details">';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('service') . '</td>';
+				$msg .= '                    <td style="padding: 3px;">' . $appointment_service . '</td>';
+				$msg .= '                </tr>';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('provider') . '</td>';
+				$msg .= '                    <td style="padding: 3px;">' . $provider . '</td>';
+				$msg .= '                </tr>';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('price') . '</td>';
+				$msg .= '                    <td style="padding: 3px;">' . $appointment_price_currency . '</td>';
+				$msg .= '                </tr>';
+				$msg .= '				 <!--Google Maps Mod Craig Tucker start -->';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('address') . '</td>';
+				$msg .= '                    <td style="padding: 3px;"><a href="www.google.com/maps/place/' . $provider_address . '">' . $provider_address . '</a></td>';
+				$msg .= '				 </tr>';
+				$msg .= '				 <!--Google Maps Mod Craig Tucker end -->';
+				$msg .= '            </table>';
+				$msg .= '            <h2>' . $this->lang->line('customer_details_title') . '</h2>';
+				$msg .= '            <table id="customer-details">';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('email') . '</td>';
+				$msg .= '                    <td style="padding: 3px;">' . $email_field . '</td>';
+				$msg .= '                </tr>';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('phone') . '</td>';
+				$msg .= '                    <td style="padding: 3px;">' . $sms_field . '</td>';
+				$msg .= '                </tr>';
+				$msg .= '            </table>';
+				$msg .= '            <h2>' . $this->lang->line('waiting_list_details_title') . '</h2>';
+				$msg .= '            <table id="waitinglist-details">';
+				$msg .= '                <tr>';
+				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;"></td>';
+				$msg .= '                    <td style="padding: 3px;">' . $email_message . '</td>';
+				$msg .= '                </tr>';
+				$msg .= '            </table>';
+				$msg .= '        </div>';
+				$msg .= '        <div id="footer" style="padding: 10px; text-align: center; margin-top: 10px;';
+				$msg .= '                border-top: 1px solid #EEE; background: #FAFAFA;">';
+				$msg .= '            ' . $this->lang->line('powered_by') . '';
+				$msg .= '            <a href="http://easyappointments.org" style="text-decoration: none;">Easy!Appointments</a>';
+				$msg .= '            |';
+				$msg .= '            <a href="' . $company_link . '" style="text-decoration: none;">' . $company_name . '</a>';
+				$msg .= '        </div>';
+				$msg .= '    </div>';
+				$msg .= '</body>';
+				$msg .= '</html>';
 
 				$this->email->message($msg);
 				$this->email->send();
@@ -126,6 +223,7 @@ class Waitinglist extends CI_Controller {
         $this->load->model('providers_model');
         $this->load->model('appointments_model');
         $this->load->model('settings_model');
+		$time_format = $this->settings_model->get_setting('time_format');
         
         $empty_periods = $this->get_provider_available_time_periods($selected_date, $provider_id);
 
@@ -141,15 +239,15 @@ class Waitinglist extends CI_Controller {
 
                 $minutes = $start_hour->format('i');
 
-                if ($minutes % 30 != 0) {
+                if ($minutes % 15 != 0) {
                     // Change the start hour of the current space in order to be
                     // on of the following: 00, 15, 30, 45.
-                    if ($minutes < 30) {
-                    //    $start_hour->setTime($start_hour->format('H'), 15);
-                    //} else if ($minutes < 30) {
+                    if ($minutes < 15) {
+                        $start_hour->setTime($start_hour->format('H'), 15);
+                    } else if ($minutes < 30) {
                         $start_hour->setTime($start_hour->format('H'), 30);
-                    //} else if ($minutes < 45) {
-                     //   $start_hour->setTime($start_hour->format('H'), 45);
+                    } else if ($minutes < 45) {
+                        $start_hour->setTime($start_hour->format('H'), 45);
                     } else {
                         $start_hour->setTime($start_hour->format('H') + 1, 00);
                     }
@@ -159,7 +257,11 @@ class Waitinglist extends CI_Controller {
                 $diff = $current_hour->diff($end_hour);
 				//intval() is the default duration to search for availability
                 while (($diff->h * 60 + $diff->i) >= intval(60)) {
-                    $available_hours[] = $current_hour->format('g:ia');
+					if ($time_format == '24HR')	{
+						$available_hours[] = $current_hour->format('H:i');
+					}else{
+						$available_hours[] = $current_hour->format('g:i a');
+					}
                     $current_hour->add(new DateInterval("PT60M"));
                     $diff = $current_hour->diff($end_hour);
                 }
@@ -275,33 +377,57 @@ class Waitinglist extends CI_Controller {
     }
 
 	public function availabilitylist($provider_id){
+		$max_date = $this->settings_model->get_setting('max_date');
+		$date_format = $this->settings_model->get_setting('date_format');
+		$time_format = $this->settings_model->get_setting('time_format');
 		$availabilitylist = "";
 		// Start date
 		$date = date('d-m-Y',strtotime('+1 days')); //to change the days out strtotime e.g.('+2 days')
 		// End date
-		$end_date = date('d-m-Y',strtotime('+60 days')); //to change the days out strtotime e.g('+2 days')
+		$end_date = date('d-m-Y',strtotime('+' . $max_date . 'days')); //to change the days out strtotime e.g('+2 days')
 		
 		while (strtotime($date) <= strtotime($end_date)) {
-			$dateview=date('m/d/Y, l',strtotime($date));
+			$longDay = $this->lang->line(strtolower(date('l',strtotime($date))));
+			//echo "longDay: " . $longDay . PHP_EOL;
+			switch($date_format) {
+				case 'DMY':
+					$dateview=date('d/m/Y, ',strtotime($date));
+					$dateview=$dateview . $longDay;
+					break;
+				case 'MDY':
+					$dateview=date('m/d/Y, ',strtotime($date));
+					$dateview=$dateview . $longDay;
+					break;
+				case 'YMD':
+					$dateview=date('Y/m/d, ',strtotime($date));
+					$dateview=$dateview . $longDay;
+					break;
+				default:
+					$dateview=date('Y/m/d, ',strtotime($date));
+					$dateview=$dateview . $longDay;
+					break;
+			}			
+			
 			$availabehours=$this->get_available_hours($date, $provider_id);
 			if (!empty($availabehours)) {
 				$availableslots = $this->get_available_hours($date, $provider_id);
 
-				$foundAm = false;
-				$foundPm = false;
-				foreach( $availableslots as $index => $timeSlot ) {
-					if( strpos( $timeSlot, "am" ) !== false && $foundAm === false ) {
-							$foundAm = true;
-							continue;
-					} else if( strpos( $timeSlot, "pm" ) !== false && $foundPm === false ) {
-							$foundPm = true;
-							continue;
-					}
-					 $availableslots[$index] = trim( str_replace( array( "am", "pm" ) , "", $timeSlot ) );
-				}
+				//$foundAm = false;
+				//$foundPm = false;
+				//foreach( $availableslots as $index => $timeSlot ) {
+				//	if( strpos( $timeSlot, "am" ) !== false && $foundAm === false ) {
+				//			$foundAm = true;
+				//			continue;
+				//	} else if( strpos( $timeSlot, "pm" ) !== false && $foundPm === false ) {
+				//			$foundPm = true;
+				//			continue;
+				//	}
+				//	 $availableslots[$index] = trim( str_replace( array( "am", "pm" ) , "", $timeSlot ) );
+				//}
 				
 				$cstimes = implode(", ", $availableslots);
-				$daysandslots = $dateview.": ".$cstimes."\n\n";
+				$daysandslots = $dateview.": ".$cstimes. PHP_EOL . PHP_EOL . '<br>';
+				//echo "daysandslots: " . $daysandslots . PHP_EOL; 
 				$availabilitylist .= $daysandslots;
 			}
 			$date = date ('d-m-Y', strtotime("+1 day", strtotime($date)));

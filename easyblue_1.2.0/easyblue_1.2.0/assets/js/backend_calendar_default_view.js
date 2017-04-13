@@ -3,7 +3,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2016, Alex Tselegidis
+ * @copyright   Copyright (c) 2013 - 2017, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.2.0
@@ -1017,14 +1017,43 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 
 
         var defaultView = window.innerWidth < 468 ? 'agendaDay' : 'agendaWeek';
+		var fDaynum;
+		var fDay = GlobalVariables.weekStartson;
 
+		switch(fDay) {
+			case "sunday":
+				fDaynum = 0;
+				break;
+			case "monday":
+				fDaynum = 1;
+				break;
+			case "tuesday":
+				fDaynum = 2;
+				break;
+			case "wednesday":
+				fDaynum = 3;
+				break;
+			case "thursday":
+				fDaynum = 4;
+				break;
+			case "friday":
+				fDaynum = 5;
+				break;
+			case "saturday":
+				fDaynum = 6;
+				break;
+			default:
+				fDaynum = 0;
+				break;
+		}		
 
+		console.log('NZ-backend_calendar_default_view.js -> fDaynum ' + fDaynum + ' fDay ' + fDay);
         // Initialize page calendar
         $('#calendar').fullCalendar({
             defaultView: defaultView,
             height: _getCalendarHeight(),
             editable: true,
-            firstDay: 0, // Sunday
+            firstDay: fDaynum, // Monday
             slotMinutes: 30,
             snapMinutes: 15,
             axisFormat: 'HH:mm',

@@ -13,7 +13,8 @@
 	</script> <?php	
 	get_header();
 	}
-
+	$this->load->model('settings_model');			
+	$theme_color = $this->settings_model->get_setting('theme_color');
  ?> 
  <!-- WP Mod 1 Craig Tucker end -->
  
@@ -49,11 +50,11 @@
     <link
         rel="stylesheet"
         type="text/css"
-        href="<?php echo base_url('assets/css/frontend.css'); ?>">
+        href="<?php echo base_url('assets/css/frontend_' . $theme_color . '.css'); ?>">
     <link
         rel="stylesheet"
         type="text/css"
-        href="<?php echo base_url('assets/css/general.css'); ?>">
+        href="<?php echo base_url('assets/css/general_' . $theme_color . '.css'); ?>">
     <?php
         // ------------------------------------------------------------
         // WEBPAGE FAVICON
@@ -124,7 +125,47 @@
 					//Alexe's Original Delete Button end
 						
 					//New, Edit, Delete mod Craig Tucker Start	
-					$appt_date= date('l, F j, Y, g:i a',strtotime($appointment_data['start_datetime']));
+					//Tucker $appt_date= date('l, F j, Y, g:i a',strtotime($appointment_data['start_datetime']));
+					//Time format-- Military 'H:i' AM/PM 'h:i a'
+					$this->load->model('settings_model');			
+					$time_format = $this->settings_model->get_setting('time_format');
+					$date_format = $this->settings_model->get_setting('date_format');
+		
+						switch($date_format) {
+							case 'DMY':
+								$dateview='d/m/Y';
+								break;
+							case 'MDY':
+								$dateview='m/d/Y';
+								break;
+							case 'YMD':
+								$dateview='Y/m/d';
+								break;
+							default:
+								$dateview='Y/m/d';
+								break;
+						}			
+				
+						switch($time_format) {
+							case '24HR':
+								$timeview=' H:i';
+								break;
+							case 'AM/PM':
+								$timeview='g:i a';
+								break;
+							default:
+								$timeview=' H:i';
+								break;
+						}			
+			
+					$longDay = $this->lang->line(strtolower(date('l',strtotime($appointment_data['start_datetime']))));
+					$date_field = date($dateview,strtotime($appointment_data['start_datetime']));
+					$time_field = date($timeview,strtotime($appointment_data['start_datetime']));
+					if ($time_format == '24HR') {				
+						$appt_date = $date_field . $time_field;
+					} else {
+						$appt_date = $longDay . ', ' . $date_field . $time_field;
+					}			
 					
                         echo '
 						
@@ -147,7 +188,7 @@
 										. '/index.php/appointments/cancel/' . $appointment_data['hash'] . '" >
 									<input type="hidden" name="csrfToken" value="' . $this->security->get_csrf_hash() . '" />
 									<textarea name="cancel_reason" style="display:none"></textarea>
-									<button id="cancel-appointment" style="color:white; background-color:red;" class="btn btn-default">' .$this->lang->line('apointent_cancelation') . ' </button>
+									<button id="cancel-appointment" style="color:white; background-color:red;" class="btn btn-default">' . $this->lang->line('apointent_cancelation') . ' </button>
 								</form>
 							</div>								
 						
@@ -166,14 +207,13 @@
 									</div> 
                                 </div>
 								<div >
-                                    <form id="cancel-appointment-form" method="post"
-                                            action="' . $this->config->item('base_url')
-                                            . '/index.php/appointments/cancel/' . $appointment_data['hash'] . '">
-                                        <input type="hidden" name="csrfToken" value="' . $this->security->get_csrf_hash() . '" />
-                                        <textarea name="cancel_reason" style="display:none"></textarea>
-                                        <button id="cancel-appointment" style="color:white; background-color:red;" class="btn btn-default">' .
-                                                $this->lang->line('apointent_cancelation') . '</button>
-                                    </form>
+									<form id="cancel-appointment-form" method="post"
+											action="' . $this->config->item('base_url')
+											. '/index.php/appointments/cancel/' . $appointment_data['hash'] . '" >
+										<input type="hidden" name="csrfToken" value="' . $this->security->get_csrf_hash() . '" />
+										<textarea name="cancel_reason" style="display:none"></textarea>
+										<button id="cancel-appointment" style="color:white; background-color:red;" class="btn btn-default">' . $this->lang->line('apointent_cancelation') . ' </button>
+									</form>
                                 </div>
                             </div>';
 					//New, Edit, Delete mod Craig Tucker End 		
@@ -370,6 +410,7 @@
 									
 									<!-- WP Mod 2 Craig Tucker start -->
 									<input type="hidden" id="wp-id" value="<?php if (Config::WP_HEADER_FOOTER== TRUE) { echo $current_user->ID;}?>" /> 
+									<input type="hidden" id="lang" value="<?php echo $this->session->userdata('language');?>" /> 
                                     <label for="first-name" class="control-label"><?php echo $this->lang->line('first_name'); ?> *</label>
                                     <input type="text" id="first-name" class="required form-control" maxlength="100" 
 									value="<?php if (Config::WP_HEADER_FOOTER== TRUE) { echo $current_user->user_firstname;} ?>" />
@@ -417,7 +458,7 @@
 											<strong><?php echo $this->lang->line('cell_carrier'); ?></strong>
 									</label>
 									<select id="cell-carrier" class="col-md-4 form-control">
-											<option value=""> -- select -- </option>	 
+											<option value=""><?php echo $this->lang->line('select'); ?></option>	 
 											<?php 
 										   foreach($cell_services as $carrier) {
 											//WP integration code start    
@@ -552,7 +593,7 @@
 					<button type="button" class="close" data-dismiss="modal" 
 							aria-hidden="true">&times;</button>
 					<h3 class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
-					<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('waiting_list_msg_top'); ?><br><br>
+					<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?><br><br>
 					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
 					</h6><br><br>
 				</div>
@@ -611,15 +652,20 @@
 
     <script type="text/javascript">
         var GlobalVariables = {
-            availableServices   : <?php echo json_encode($available_services); ?>,
-            availableProviders  : <?php echo json_encode($available_providers); ?>,
-            baseUrl             : <?php echo json_encode($this->config->item('base_url')); ?>,
-            manageMode          : <?php echo ($manage_mode) ? 'true' : 'false'; ?>,
-            dateFormat          : <?php echo json_encode($date_format); ?>,
-            appointmentData     : <?php echo json_encode($appointment_data); ?>,
-            providerData        : <?php echo json_encode($provider_data); ?>,
-            customerData        : <?php echo json_encode($customer_data); ?>,
-            csrfToken           : <?php echo json_encode($this->security->get_csrf_hash()); ?>
+            availableServices   	: <?php echo json_encode($available_services); ?>,
+            availableProviders  	: <?php echo json_encode($available_providers); ?>,
+            baseUrl             	: <?php echo json_encode($this->config->item('base_url')); ?>,
+            manageMode          	: <?php echo ($manage_mode) ? 'true' : 'false'; ?>,
+            dateFormat          	: <?php echo json_encode($date_format); ?>,
+            timeFormat          	: <?php echo json_encode($time_format); ?>,
+            weekStartson        	: <?php echo json_encode($week_starts_on); ?>,
+            maxDate        			: <?php echo json_encode($max_date); ?>,
+            showFreePriceCurrency	: <?php echo json_encode($show_free_price_currency); ?>,
+            showAnyProvider			: <?php echo json_encode($show_any_provider); ?>,
+            appointmentData     	: <?php echo json_encode($appointment_data); ?>,
+            providerData        	: <?php echo json_encode($provider_data); ?>,
+            customerData        	: <?php echo json_encode($customer_data); ?>,
+            csrfToken           	: <?php echo json_encode($this->security->get_csrf_hash()); ?>
         };
 
         var EALang = <?php echo json_encode($this->lang->language); ?>;
