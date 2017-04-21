@@ -349,4 +349,4 @@ $lang['green'] = 'Green';
 $lang['blue'] = 'Blue';
 $lang['red'] = 'Red';
 $lang['waiting_list_details_title'] = 'Waiting List Details';
-//Craig Tucker Mods start end 
+//Craig Tucker Mods start end
