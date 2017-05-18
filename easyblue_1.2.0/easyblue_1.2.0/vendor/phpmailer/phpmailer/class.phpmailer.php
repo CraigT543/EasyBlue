@@ -160,7 +160,11 @@ class PHPMailer
      * Options: "mail", "sendmail", or "smtp".
      * @var string
      */
+<<<<<<< HEAD
     public $Mailer = 'mail';
+=======
+    public $Mailer = 'smtp';
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * The path to the sendmail program.
@@ -223,14 +227,22 @@ class PHPMailer
      * Hosts will be tried in order.
      * @var string
      */
+<<<<<<< HEAD
     public $Host = 'localhost';
+=======
+    public $Host = 'smtp.gmail.com';
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * The default SMTP server port.
      * @var integer
      * @TODO Why is this needed when the SMTP class takes care of it?
      */
+<<<<<<< HEAD
     public $Port = 25;
+=======
+    public $Port = 587;
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * The SMTP HELO of the message.
@@ -246,7 +258,11 @@ class PHPMailer
      * Options: '', 'ssl' or 'tls'
      * @var string
      */
+<<<<<<< HEAD
     public $SMTPSecure = '';
+=======
+    public $SMTPSecure = 'tls';
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * Whether to enable TLS encryption automatically if a server supports it,
@@ -263,7 +279,11 @@ class PHPMailer
      * @see PHPMailer::$Username
      * @see PHPMailer::$Password
      */
+<<<<<<< HEAD
     public $SMTPAuth = false;
+=======
+    public $SMTPAuth = true;
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * Options array passed to stream_context_create when connecting via SMTP.
@@ -275,13 +295,21 @@ class PHPMailer
      * SMTP username.
      * @var string
      */
+<<<<<<< HEAD
     public $Username = '';
+=======
+    public $Username = 'craig@craigtuckerlcsw.com';
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * SMTP password.
      * @var string
      */
+<<<<<<< HEAD
     public $Password = '';
+=======
+    public $Password = 'yJ0k05TwCWhhjlwQvX8Z';
+>>>>>>> 00eae138bbac3b8468de75988aaf2e5b3c7ff49e
 
     /**
      * SMTP auth type.
