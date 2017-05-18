@@ -66,15 +66,17 @@ class Appointments extends CI_Controller {
 
         try {
 			$cell_services  	 		= $this->cellcarrier_model->get_cellcarriers(); //Craig Tucker cell carrier modification
-            $available_services  		= $this->services_model->get_available_services();
-            $available_providers 		= $this->providers_model->get_available_providers();
-            $company_name        		= $this->settings_model->get_setting('company_name');
-            $date_format         		= $this->settings_model->get_setting('date_format');
+            $available_services  = $this->services_model->get_available_services();
+            $available_providers = $this->providers_model->get_available_providers();
+            $company_name        = $this->settings_model->get_setting('company_name');
+            $date_format         = $this->settings_model->get_setting('date_format');
             $time_format         		= $this->settings_model->get_setting('time_format');
             $week_starts_on      		= $this->settings_model->get_setting('week_starts_on');
             $max_date            		= $this->settings_model->get_setting('max_date');
             $show_free_price_currency 	= $this->settings_model->get_setting('show_free_price_currency');
             $show_any_provider 			= $this->settings_model->get_setting('show_any_provider');
+			$show_minimal_details		= $this->settings_model->get_setting('show_minimal_details');
+			$conf_notice				= $this->settings_model->get_setting('conf_notice');
 
 			// Remove the data that are not needed inside the $available_providers array.
 			foreach ($available_providers as $index=>$provider) {
@@ -136,19 +138,21 @@ class Appointments extends CI_Controller {
             // Load the book appointment view.
             $view = array (
 				'cell_services'				=> $cell_services,  //Craig Tucker cell carrier modification
-                'available_services'    	=> $available_services,
-                'available_providers'   	=> $available_providers,
-                'company_name'          	=> $company_name,
-                'manage_mode'           	=> $manage_mode,
-				'date_format'           	=> $date_format,
+                'available_services'    => $available_services,
+                'available_providers'   => $available_providers,
+                'company_name'          => $company_name,
+                'manage_mode'           => $manage_mode,
+				'date_format'           => $date_format,
 				'time_format'           	=> $time_format,
 				'week_starts_on'        	=> $week_starts_on,
 				'max_date'        			=> $max_date,
 				'show_free_price_currency'	=> $show_free_price_currency,
 				'show_any_provider'			=> $show_any_provider,
-                'appointment_data'      	=> $appointment,
-                'provider_data'         	=> $provider,
-                'customer_data'         	=> $customer
+                'appointment_data'      => $appointment,
+                'provider_data'         => $provider,
+                'customer_data'         => $customer,
+				'show_minimal_details'		=> $show_minimal_details,
+				'conf_notice'				=> $conf_notice
             );
         } catch(Exception $exc) {
             $view['exceptions'][] = $exc;
@@ -244,11 +248,24 @@ class Appointments extends CI_Controller {
 
 				$send_customer = filter_var($this->settings_model->get_setting('customer_notifications'),
 						FILTER_VALIDATE_BOOLEAN);
+				$clientnotification = $this->settings_model->get_setting('conf_notice');
 
-				if ($send_customer === TRUE) {
-					$email->sendDeleteAppointment($appointment, $provider,
-							$service, $customer, $company_settings, new Email($customer['email']),
-							new Text($_POST['cancel_reason']));
+				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+					$go_customer = TRUE;
+				}
+				
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==1)) {
+					$go_customer = TRUE;
+				}
+
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==0)) {
+					$go_customer = FALSE;
+				}
+				
+				if ($go_customer === TRUE) {
+							$email->sendDeleteAppointment($appointment, $provider,
+									$service, $customer, $company_settings, new Email($customer['email']),
+									new Text($_POST['cancel_reason']));
 				}
 
             } catch(Exception $exc) {
@@ -496,12 +513,27 @@ class Appointments extends CI_Controller {
 				$provider_link = new Url(site_url('backend/index/' . $appointment['hash']));
 				$send_customer = filter_var($this->settings_model->get_setting('customer_notifications'),
 						FILTER_VALIDATE_BOOLEAN);
+						
+				$clientnotification = $this->settings_model->get_setting('conf_notice');		
 
-				if ($send_customer === TRUE) {
-					$email->sendAppointmentDetails($appointment, $provider,
-							$service, $customer,$company_settings, $customer_title,
-							$customer_message, $customer_link, new Email($customer['email']));
+				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+					$go_customer = TRUE;
 				}
+				
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==1)) {
+					$go_customer = TRUE;
+				}
+				
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==0)) {
+					$go_customer = FALSE;
+				}
+				
+				
+				if ($go_customer === TRUE) {
+						$email->sendAppointmentDetails($appointment, $provider,
+								$service, $customer,$company_settings, $customer_title,
+								$customer_message, $customer_link, new Email($customer['email']));
+				}						
 
 				$send_provider = filter_var($this->providers_model ->get_setting('notifications', $provider['id']),
 						FILTER_VALIDATE_BOOLEAN);
@@ -916,7 +948,12 @@ class Appointments extends CI_Controller {
 					$available_hours[] = $current_hour->format('h:i a');
 				}				
 				$current_hour->add(new DateInterval('PT' . $interval . 'M'));
+				//Break here added by Craig Tucker
 				$diff = $current_hour->diff($end_hour);
+			    if ($diff->invert == 1) {  
+				 break;
+				}
+				//end break Craig Tucker
 			}
 		}
 

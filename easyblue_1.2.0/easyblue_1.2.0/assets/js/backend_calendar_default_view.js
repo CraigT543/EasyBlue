@@ -1047,6 +1047,18 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 				break;
 		}		
 
+		var timeFormat;
+        switch(GlobalVariables.timeFormat) {
+            case 'AM/PM':
+                timeFormat = 'hh:mm tt';
+                break;
+            case '24HR':
+                timeFormat = 'HH:mm';
+                break;
+            default:
+                throw new Error('Invalid GlobalVariables.timeFormat value.');
+        }	
+
 		console.log('NZ-backend_calendar_default_view.js -> fDaynum ' + fDaynum + ' fDay ' + fDay);
         // Initialize page calendar
         $('#calendar').fullCalendar({
@@ -1056,8 +1068,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             firstDay: fDaynum, // Monday
             slotMinutes: 30,
             snapMinutes: 15,
-            axisFormat: 'HH:mm',
-            timeFormat: 'HH:mm{ - HH:mm}',
+            axisFormat: timeFormat,
+            timeFormat: timeFormat + '{ -'+ timeFormat + '}',
             allDayText: EALang['all_day'],
             columnFormat: columnFormat,
             titleFormat: {

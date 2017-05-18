@@ -30,7 +30,7 @@ window.FrontendBook = window.FrontendBook || {};
      * @type {Boolean}
      */
     exports.manageMode = false;
-
+	
     /**
      * This method initializes the book appointment page.
      *
@@ -42,7 +42,6 @@ window.FrontendBook = window.FrontendBook || {};
     exports.initialize = function(bindEventHandlers, manageMode) {
         bindEventHandlers = bindEventHandlers || true;
         manageMode = manageMode || false;
-
 
         if (window.console === undefined) {
             window.console = function() {}; // IE compatibility
@@ -60,6 +59,22 @@ window.FrontendBook = window.FrontendBook || {};
                 classes: 'qtip-green qtip-shadow custom-qtip'
             }
         });
+		
+		var show_free_price_currency;
+        show_free_price_currency = GlobalVariables.showFreePriceCurrency;
+		
+		//Notice that no appointments are available on the date selected Craig Tucker start
+		$('#select-date').on('click', function(){ 
+			$('#available-hours').text(EALang['no_available_hours']);
+		});
+		//Notice that no appointments are available on the date selected Craig Tucker end
+
+		var max_date;
+		max_date = GlobalVariables.maxDate; //MaxDate mod Craig Tucker 1
+		
+		var show_any_provider;
+		show_any_provider = GlobalVariables.showAnyProvider;
+
 		var fDaynum;
 		var fDay = GlobalVariables.weekStartson;
 
@@ -88,12 +103,13 @@ window.FrontendBook = window.FrontendBook || {};
 			default:
 				fDaynum = 0;
 				break;
-		}		
-		console.log('fDaynum ' + fDaynum + ' fDay ' + fDay);
+		}
+		console.log('NZ-frontend_book.js -> fDaynum ' + fDaynum + ' fDay ' + fDay + ' maxDate ' + max_date + ' ShowFreePriceCurrency ' + show_free_price_currency + ' ShowAnyProvider ' + show_any_provider);
         $('#select-date').datepicker({
             dateFormat: 'dd-mm-yy',
             firstDay: fDaynum, // Monday
             minDate: 0,
+			maxDate: "+" + max_date + "d", //MaxDate mod Craig Tucker 2
             defaultDate: Date.today(),
 
             dayNames: [
@@ -122,8 +138,10 @@ window.FrontendBook = window.FrontendBook || {};
 
             onChangeMonthYear: function(year, month, instance) {
                 var currentDate = new Date(year, month - 1, 1);
+				
                 FrontendBookApi.getUnavailableDates($('#select-provider').val(), $('#select-service').val(),
                         currentDate.toString('yyyy-MM-dd'));
+						
             }
         });
 
@@ -183,12 +201,14 @@ window.FrontendBook = window.FrontendBook || {};
      * This method binds the necessary event handlers for the book appointments page.
      */
     function _bindEventHandlers() {
+
         /**
          * Event: Selected Provider "Changed"
          *
          * Whenever the provider changes the available appointment date - time periods must be updated.
          */
         $('#select-provider').change(function() {
+			FrontendBook.googleSync(); //Craig Tucker googleSync mod 1
             FrontendBookApi.getUnavailableDates($(this).val(), $('#select-service').val(),
                     $('#select-date').datepicker('getDate').toString('yyyy-MM-dd'));
             FrontendBook.updateConfirmFrame();
@@ -218,10 +238,17 @@ window.FrontendBook = window.FrontendBook || {};
             });
 
             // Add the "Any Provider" entry.
-            if ($('#select-provider option').length >= 1) {
-                $('#select-provider').append(new Option('- ' +EALang['any_provider'] + ' -', 'any-provider'));
+			//Tucker  Changed to stop showing "Any Provider" set it back to 1 for default behavior
+			var show_any_provider;
+			show_any_provider = GlobalVariables.showAnyProvider;
+
+			if (show_any_provider == 'yes'){
+				if ($('#select-provider option').length >= 1) {
+					$('#select-provider').append(new Option('- ' +EALang['any_provider'] + ' -', 'any-provider'));
+				}	
             }
 
+			FrontendBook.googleSync(); //Craig Tucker googleSync mod 2
             FrontendBookApi.getUnavailableDates($('#select-provider').val(), $(this).val(),
                     $('#select-date').datepicker('getDate').toString('yyyy-MM-dd'));
             FrontendBook.updateConfirmFrame();
@@ -295,61 +322,33 @@ window.FrontendBook = window.FrontendBook || {};
 					note = $('#email2').val() + ";";
 				}
 
-				postWaiting['appointment'] = {
-				'id_users_provider': $('#select-provider').val(),
-				'id_services': $('#select-service').val(),
-				'notes': note,
-				'lang': lang,
-				};
-				
-				$('input[name="csrfToken"]').val(GlobalVariables.csrfToken);
-				$('input[name="post_waiting"]').val(JSON.stringify(postWaiting));		
-				
-				var formData = jQuery.parseJSON($('input[name="post_waiting"]').val());
+				FrontendBookApi.registerWaiting();
 
-				var postData = {
-					'csrfToken': GlobalVariables.csrfToken,
-					'post_data': formData,
-				};
-
-				var postUrl = GlobalVariables.baseUrl + '/index.php/appointments/ajax_register_waiting'; 
-				$layer = $('<div/>');
-
-				$.ajax({
-					url: postUrl,
-					method: 'post',
-					data: postData,
-					beforeSend: function(jqxhr, settings) {
-						$layer
-							.appendTo('body')
-							.css({
-								'background': 'white',
-								'position': 'fixed',
-								'top': '0',
-								'left': '0',
-								'height': '100vh',
-								'width': '100vw',
-								'opacity': '0.5'
-							});
-					}
-				})
-				.done(function(response) {
-					if (!GeneralFunctions.handleAjaxExceptions(response)) {
-						return false;
-					}
-					window.location.replace(GlobalVariables.baseUrl
-						+ '/index.php/appointments/book_waiting');
-				})
-				.fail(function(jqxhr, textStatus, errorThrown) {
-					GeneralFunctions.ajaxFailureHandler(jqxhr, textStatus, errorThrown);
-				})
-				.always(function() {
-					$layer.remove();
-				})
 			}
 		});
-		//Waiting List Functions end		
+		//Waiting List Functions end
 
+		/**
+         * Event: Authorization Button "Clicked"
+         */
+		 
+        $('#insert-authorization').click(function() {
+			if (!_validateCustomerForm()) {
+				return; // Validation failed, do not continue.
+			} else {			
+				var $dialog = $('#manage-authorization');
+				$dialog.modal('show');
+				$('.modal-content').css('display','block');
+				
+				var myVar = setInterval(myClassFunction, 300);
+
+				function myClassFunction() {
+					$('#conf-notice').hasClass('required');
+				};
+			}
+        });
+		
+		
         /**
          * Event: Next Step Button "Clicked"
          *
@@ -383,9 +382,14 @@ window.FrontendBook = window.FrontendBook || {};
                 if (!_validateCustomerForm()) {
                     return; // Validation failed, do not continue.
                 } else {
+					var $dialog = $('#manage-authorization');
                     FrontendBook.updateConfirmFrame();
+					$dialog.modal('hide');
+					$("#wizard-frame-3").hide();
+					
                 }
             }
+
 
             // Display the next step tab (uses jquery animation effect).
             var nextTabIndex = parseInt($(this).attr('data-step_index')) + 1;
@@ -425,16 +429,18 @@ window.FrontendBook = window.FrontendBook || {};
             FrontendBook.updateConfirmFrame();
         });
 
+		
         if (FrontendBook.manageMode) {
             /**
              * Event: Cancel Appointment Button "Click"
              *
              * When the user clicks the "Cancel" button this form is going to be submitted. We need
              * the user to confirm this action because once the appointment is cancelled, it will be
-             * delete from the database.
+             * deleted from the database.
              *
              * @param {jQuery.Event} event
              */
+			 
             $('#cancel-appointment').click(function(event) {
                 var dialogButtons = {};
                 dialogButtons['OK'] = function() {
@@ -445,19 +451,58 @@ window.FrontendBook = window.FrontendBook || {};
                     $('#cancel-appointment-form textarea').val($('#cancel-reason').val());
                     $('#cancel-appointment-form').submit();
                 };
+				//Craig Tucker has removed the pop up for cacelation infavor of a landing page with options.
+                // dialogButtons[EALang['cancel']] = function() {
+                    // $('#message_box').dialog('close');
+                // };
 
-                dialogButtons[EALang['cancel']] = function() {
-                    $('#message_box').dialog('close');
-                };
+                // GeneralFunctions.displayMessageBox(EALang['cancel_appointment_title'],
+                        // EALang['write_appointment_removal_reason'], dialogButtons);
 
-                GeneralFunctions.displayMessageBox(EALang['cancel_appointment_title'],
-                        EALang['write_appointment_removal_reason'], dialogButtons);
-
-                $('#message_box').append('<textarea id="cancel-reason" rows="3"></textarea>');
-                $('#cancel-reason').css('width', '100%');
-                return false;
+                // $('#message_box').append('<textarea id="cancel-reason" rows="3"></textarea>');
+                // $('#cancel-reason').css('width', '100%');
+                // return false;
+				// end craig tucker edit.
             });
-        }
+			
+			
+			$("#selectNew").click(function (event) {
+				FrontendBook.manageMode = false;
+				
+				document.getElementById('cancel-appointment-frame').style.display = 'none';
+
+				FrontendBookApi.getAvailableHours($('#select-date').val());// Load the available hours.
+					// Apply Customer's Data
+					$('#last-name').val(GlobalVariables.customerData['last_name']);
+					$('#first-name').val(GlobalVariables.customerData['first_name']);
+					$('#lang').val(EALang['user_lang']);
+					$('#email').val(GlobalVariables.customerData['email']);
+					$('#phone-number').val(GlobalVariables.customerData['phone_number']);
+					$('#cell-carrier').val(GlobalVariables.customerData['id_cellcarrier']); //Craig Tucker Mod
+					$('#wp-id').val(GlobalVariables.customerData['wp_id']); //Craig Tucker Mod
+					$('#address').val(GlobalVariables.customerData['address']);
+					$('#city').val(GlobalVariables.customerData['city']);
+					$('#zip-code').val(GlobalVariables.customerData['zip_code']);
+					$('#conf-notice').val(GlobalVariables.customerData['notifications']); //Craig Tucker Mod
+
+					
+				FrontendBook.updateConfirmFrame();
+				var nextTabIndex = 1;	
+				$(this).parents().eq(1).hide('fade', function() {    
+					$('.active-step').removeClass('active-step');
+					$('#step-' + nextTabIndex).addClass('active-step');
+					$('#wizard-frame-' + nextTabIndex).show('fade');
+					
+				});			
+			});			
+		}
+
+
+			// Mod cancel bar to new/modify/delete - start
+			//Craig Tucker, craigtuckerlcsw@gmail
+			
+			
+		// Mod cancel bar to new/modify/delete - end
 
         /**
          * Event: Book Appointment Form "Submit"
@@ -481,13 +526,20 @@ window.FrontendBook = window.FrontendBook || {};
             $('.captcha-image').attr('src', GlobalVariables.baseUrl + '/index.php/captcha?' + Date.now());
         });
 
-
         $('#select-date').on('mousedown', '.ui-datepicker-calendar td', function(event) {
             setTimeout(function() {
                 FrontendBookApi.applyPreviousUnavailableDates(); // New jQuery UI version will replace the td elements.
             }, 300); // There is no draw event unfortunately.
         })
     };
+
+	//Google sync prior to viewing the calendar C. Tucker --Start	
+	exports.googleSync = function() {
+		var getUrl = GlobalVariables.baseUrl + '/index.php/google/sync/' + $('#select-provider').val();
+		jQuery.get(getUrl,console.log('Google sync successful'),'json');
+	}
+	//Google sync prior to viewing the calendar C. Tucker --End	
+
 
     /**
      * This function validates the customer's data input. The user cannot continue
@@ -517,8 +569,20 @@ window.FrontendBook = window.FrontendBook || {};
                 $('#email').parents('.form-group').addClass('has-error');
                 // $('#email').css('border', '2px solid red');
                 throw EALang['invalid_email'];
-            }
+            } else { 
+				$('#email').parents('.form-group').removeClass('has-error');
+			}
 
+			// Validate phone
+            if (!GeneralFunctions.validatePhone($('#phone-number').val())) {
+                $('#phone-number').parents('.form-group').addClass('has-error');
+                // $('#phone').css('border', '2px solid red');
+                throw EALang['waiting_list_valid_phone'];
+            } else { 
+				$('#phone-number').parents('.form-group').removeClass('has-error');
+			}
+
+			
             return true;
         } catch(exc) {
             $('#form-message').text(exc);
@@ -533,7 +597,7 @@ window.FrontendBook = window.FrontendBook || {};
     exports.updateConfirmFrame = function() {
         // Appointment Details
         var selectedDate = $('#select-date').datepicker('getDate');
-
+		var notices = GeneralFunctions.escapeHtml($('#conf-notice option:selected').text()); //mod Craig Tucker
         if (selectedDate !== null) {
             selectedDate = GeneralFunctions.formatDate(selectedDate, GlobalVariables.dateFormat);
         }
@@ -541,12 +605,30 @@ window.FrontendBook = window.FrontendBook || {};
         var selServiceId = $('#select-service').val();
         var servicePrice;
         var serviceCurrency;
-
+		var show_free_price_currency;
+        show_free_price_currency = GlobalVariables.showFreePriceCurrency;
+		if (GeneralFunctions.show_minimal_details == 'no'){
+			var html = $('#select-service option:selected').text();
+			$('#appointment-service').html(html);
+		}
+		
         $.each(GlobalVariables.availableServices, function(index, service) {
             if (service.id == selServiceId) {
-                servicePrice = '<br>' + service.price;
-                serviceCurrency = service.currency;
-                return false; // break loop
+                if (service.price != '' && service.price != null && service.price != 0) {
+                   	servicePrice = '<br>' + service.price;
+					serviceCurrency = service.currency;
+					return false; // break loop
+                } else {
+					if (show_free_price_currency == 'yes') {
+						servicePrice = '<br>' + service.price;
+						serviceCurrency = service.currency;
+						return false; // break loop
+					}else{
+						servicePrice = '';
+						serviceCurrency = ''
+						return false; // break loop
+					}
+                }
             }
         });
 
@@ -560,31 +642,53 @@ window.FrontendBook = window.FrontendBook || {};
                 + '</strong>' +
             '</p>';
 
-        $('#appointment-details').html(html);
+		$('#appointment-details').html(html);
+	
+        var html2 =
+            '<h4>' + $('#select-service option:selected').text() + '</h4>' +
+            '<p>'
+                + '<strong class="text-primary">'
+                    + $('#select-provider option:selected').text() + '<br>'
+                    + selectedDate + ' ' +  $('.selected-hour').text()
+                    + servicePrice + ' ' + serviceCurrency + '</strong><br/>'
+					+ '<b>' + EALang['notice_auth'] 
+					+ ':</b> "<i>' + notices + '</i>"' +
+				'</p>';
+			
+        $('#appointment-details2').html(html2);
+		
 
         // Customer Details
         var firstName = GeneralFunctions.escapeHtml($('#first-name').val());
         var lastName = GeneralFunctions.escapeHtml($('#last-name').val());
         var phoneNumber = GeneralFunctions.escapeHtml($('#phone-number').val());
-        var email = GeneralFunctions.escapeHtml($('#email').val());
+        var sms = GeneralFunctions.escapeHtml($('#cell-carrier option:selected').text());  //mod Bullmoose20
+		var email = GeneralFunctions.escapeHtml($('#email').val());
         var address = GeneralFunctions.escapeHtml($('#address').val());
         var city = GeneralFunctions.escapeHtml($('#city').val());
         var zipCode = GeneralFunctions.escapeHtml($('#zip-code').val());
+		var lang = EALang['user_lang'];
+		var notes = GeneralFunctions.escapeHtml($('#notes').val());
 
         html =
             '<h4>' + firstName + ' ' + lastName + '</h4>' +
             '<p>' +
+                //EALang['preferred_language'] + ': ' + lang +
+                //'<br/>' +
                 EALang['phone'] + ': ' + phoneNumber +
                 '<br/>' +
+                EALang['sms'] + ': ' + sms +
+                '<br/>' +
                 EALang['email'] + ': ' + email +
+				'<br/>'+
+				EALang['address'] + ': ' + address +
                 '<br/>' +
-                EALang['address'] + ': ' + address +
+                EALang['city'] + ': ' + city + '<br/>' +
+                EALang['zip_code'] + ': ' + zipCode + 
                 '<br/>' +
-                EALang['city'] + ': ' + city +
-                '<br/>' +
-                EALang['zip_code'] + ': ' + zipCode +
-            '</p>';
-
+                EALang['notes'] + ': ' + notes +
+            '</p>';			
+			
         $('#customer-details').html(html);
 
         // Update appointment form data for submission to server when the user confirms
@@ -592,21 +696,27 @@ window.FrontendBook = window.FrontendBook || {};
         var postData = {};
 
         postData['customer'] = {
+		    id_cellcarrier: $('#cell-carrier').val(), //Craig Tucker Cell Modification 1
+			wp_id: $('#wp-id').val(), //WP mod Craig Tucker 1
+			notifications: $('#conf-notice').val(),  //mod Craig Tucker
             last_name: $('#last-name').val(),
             first_name: $('#first-name').val(),
+			lang: $('#lang').val(),
+			//lang: EALang['user_lang'],
             email: $('#email').val(),
             phone_number: $('#phone-number').val(),
             address: $('#address').val(),
             city: $('#city').val(),
-            zip_code: $('#zip-code').val(),
-		    id_cellcarrier: $('#cell-carrier').val(), //Craig Tucker Modification
-			wp_id: $('#wp-id').val()
+            zip_code: $('#zip-code').val()
         };
 
         postData['appointment'] = {
             start_datetime: $('#select-date').datepicker('getDate').toString('yyyy-MM-dd')
-                                    + ' ' + $('.selected-hour').text() + ':00',
-            end_datetime: _calcEndDatetime(),
+		//AM/PM Modification 1 start
+			//ORIGINAL         + ' ' + $('.selected-hour').text() + ':00',
+            + ' ' + Date.parse((($('.selected-hour').text()) ? $('.selected-hour').text() : '00:00')).toString('HH:mm') + ':00',									
+		//AM/PM Modification 1 end
+		    end_datetime: _calcEndDatetime(),
             notes: $('#notes').val(),
             is_unavailable: false,
             id_users_provider: $('#select-provider').val(),
@@ -642,7 +752,12 @@ window.FrontendBook = window.FrontendBook || {};
 
         // Add the duration to the start datetime.
         var startDatetime = $('#select-date').datepicker('getDate').toString('dd-MM-yyyy')
-                + ' ' + $('.selected-hour').text();
+		
+		//AM/PM Modification 2 start
+        //ORIGINAL        + ' ' + $('.selected-hour').text();
+		+ ' ' + Date.parse((($('.selected-hour').text()) ?$('.selected-hour').text() : '00:00')).toString('HH:mm'),
+		//AM/PM Modification 2 end
+		
         startDatetime = Date.parseExact(startDatetime, 'dd-MM-yyyy HH:mm');
         var endDatetime = undefined;
 
@@ -677,12 +792,14 @@ window.FrontendBook = window.FrontendBook || {};
             FrontendBookApi.getAvailableHours($('#select-date').val());
 
             // Apply Customer's Data
+            $('#cell-carrier').val(customer['id_cellcarrier']); //Craig Tucker Cell Modification 2
+			$('#wp-id').val(customer.wp_id); //WP mod Craig Tucker 2
+			$('#conf-notice').val(customer['notifications']); //Craig Tucker -- client notification option.
             $('#last-name').val(customer['last_name']);
             $('#first-name').val(customer['first_name']);
+			$('#lang').val(EALang['user_lang']);
             $('#email').val(customer['email']);
             $('#phone-number').val(customer['phone_number']);
-            $('#cell-carrier').val(customer['id_cellcarrier']); //Craig Tucker modification
-			$('#wp-id').val(customer['wp_id']);
             $('#address').val(customer['address']);
             $('#city').val(customer['city']);
             $('#zip-code').val(customer['zip_code']);
@@ -709,7 +826,9 @@ window.FrontendBook = window.FrontendBook || {};
      */
     function _updateServiceDescription(serviceId, $div) {
         var html = '';
-
+		var show_free_price_currency;
+        show_free_price_currency = GlobalVariables.showFreePriceCurrency;
+		
         $.each(GlobalVariables.availableServices, function(index, service) {
             if (service.id == serviceId) { // Just found the service.
                 html = '<strong>' + service.name + ' </strong>';
@@ -726,7 +845,11 @@ window.FrontendBook = window.FrontendBook || {};
                 if (service.price != '' && service.price != null && service.price != 0) {
                    html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
                 } else {
-                    html += '';
+					if (show_free_price_currency == 'yes') {
+						html += '[' + EALang['price'] + ' ' + service.price + ' ' + service.currency  + ']';
+					}else{
+						html += '';
+					}
                 }
 
                 html += '<br>';

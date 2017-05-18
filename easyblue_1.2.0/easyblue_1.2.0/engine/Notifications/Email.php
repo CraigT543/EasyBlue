@@ -165,7 +165,17 @@ class Email {
 						$borderbottom='#123F26';
 						break;
 				}
-        $replaceArray = array(
+				
+		$detailsyn = $ci->settings_model->get_setting('show_minimal_details');
+		if ($detailsyn == 'no') {
+			$summaryline = $service['name'];
+			$showhide = '<div style="display:block">';
+		} else {
+			$summaryline = $provider['first_name'] . ' ' . $provider['last_name'] . ' ' . $this->framework->lang->line('appointment');
+			$showhide = '<div style="display:none">';
+		}
+
+		$replaceArray = array(
 		
 			//Notification Mod 1 Craig Tucker start
             '$provider_address'	=> $provider['address'].', '.$provider['city'].', '.$provider['state'].' '.$provider['zip_code'],
@@ -196,6 +206,8 @@ class Email {
             '$customer_city' => $customer['city'],
             '$customer_zip_code' => $customer['zip_code'],
             '$appt_notes_field' => $appointment['notes'],
+			'$summaryical' => $summaryline,
+			'$limitdetails' => $showhide,
 
             // Translations
             'Appointment Details' => $this->framework->lang->line('appointment_details_title'),
@@ -269,9 +281,6 @@ class Email {
     public function sendDeleteAppointment(array $appointment, array $provider,
                                           array $service, array $customer, array $company, EmailAddress $recipientEmail,
                                           Text $reason) {
-
-								   
-
 
         // Prepare email template data. 
 			//AM/PM long date mod Craig Tucker, start
@@ -349,6 +358,15 @@ class Email {
 						break;
 				}
 
+		$detailsyn = $ci->settings_model->get_setting('show_minimal_details');
+		if ($detailsyn == 'no') {
+			$summaryline = $service['name'];
+			$showhide = '<div style="display:block">';
+		} else {
+			$summaryline = $provider['first_name'] . ' ' . $provider['last_name'] . ' ' . $this->framework->lang->line('appointment');
+			$showhide = '<div style="display:none">';
+		}
+				
         $replaceArray = array(
 			'$background_color' => $bgcolor,
 			'$border_bottom' => $borderbottom,
@@ -370,7 +388,9 @@ class Email {
             '$customer_zip_code' => $customer['zip_code'],
             '$appt_notes_field' => $appointment['notes'],
             '$reason' => $reason->get(),
+			'$limitdetails' => $showhide,
 			//Notification Mod 2 Craig Tucker start
+
             '$provider_address'	=> $provider['address'].', '.$provider['city'].', '.$provider['state'].' '.$provider['zip_code'], 
 			//Notification Mod 2 Craig Tucker end
 			//iCal mods 5 Craig Tucker start
@@ -475,8 +495,6 @@ class Email {
         $html = file_get_contents(__DIR__ . '/../../application/views/emails/new_password.php');
         $html = $this->_replaceTemplateVariables($replaceArray, $html);
 
-
-
         $mailer = $this->_createMailer();
         $mailer->From = $company['company_email'];
         $mailer->FromName = $company['company_name'];
@@ -490,6 +508,26 @@ class Email {
         }
     }
 
+    /**
+	* Server Notifications to Administrator
+	* Mod by Craig Tucker for tracking crontab sync
+	*/
+	
+    public function syncComplete($startsynctime, $endsynctime, $synctype){
+		$ci = & get_instance();
+		$ci->load->model('settings_model');			
+
+        $mailer = $this->_createMailer();
+        $mailer->SetFrom($ci->settings_model->get_setting('google_sync_from'), 'Easy!Appointment Sync');
+        $mailer->AddAddress($ci->settings_model->get_setting('google_sync_to'));
+        $mailer->Subject = $synctype.' Sync Completed';
+		$mailer->Body = $synctype.' Sync started '.$startsynctime.', completed '.$endsynctime;
+        if (!$mailer->Send()) {
+            throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): ' 
+                . $mailer->ErrorInfo);
+        }		
+	}
+	
     /**
      * Create PHP Mailer Instance
      *

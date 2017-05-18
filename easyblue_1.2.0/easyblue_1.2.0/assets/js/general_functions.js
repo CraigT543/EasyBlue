@@ -421,8 +421,20 @@ window.GeneralFunctions = window.GeneralFunctions || {};
      * @return {String} Returns the formatted date string.
      */
     exports.formatDate = function(date, dateFormatSetting, addHours) {
+		var timeFormat;
+        switch(GlobalVariables.timeFormat) {
+            case 'AM/PM':
+                timeFormat = 'hh:mm tt';
+                break;
+            case '24HR':
+                timeFormat = 'HH:mm';
+                break;
+            default:
+                'HH:mm';
+        }	
+		
         var format, result;
-        var hours = addHours ? ' HH:mm' : '';
+        var hours = addHours ? ' ' +  timeFormat : '';
 
         switch(dateFormatSetting) {
             case 'DMY':

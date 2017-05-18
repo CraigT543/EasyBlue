@@ -180,40 +180,34 @@
 								<div button type="button" id="button-next-0" class="btn button-next btn-primary" 
 								data-step_index="0" class="col-md-6">'. $this->lang->line('change_apt') .'<i class="icon-forward icon-white"></i></button>
 								</div> 
-								<br><strong><h5><div id="select-service"></div></h5></strong>
+								<br><strong><h5><div id="appointment-service"></div></h5></strong>
 								<h6>'.$appt_date.'</h6><br>
 								
 								<form id="cancel-appointment-form" method="post"
 										action="' . $this->config->item('base_url')
 										. '/index.php/appointments/cancel/' . $appointment_data['hash'] . '" >
 									<input type="hidden" name="csrfToken" value="' . $this->security->get_csrf_hash() . '" />
-									<textarea name="cancel_reason" style="display:none"></textarea>
 									<button id="cancel-appointment" style="color:white; background-color:red;" class="btn btn-default">' . $this->lang->line('apointent_cancelation') . ' </button>
+									<h6>' . $this->lang->line('write_appointment_removal_reason') . '</h6>
+									<textarea name="cancel_reason" required></textarea>
 								</form>
 							</div>								
 						
 						
                             <div id="cancel-appointment-frame" class="row">
                                 <div class="col-xs-12 col-sm-9">
-									<div class="radiobox" align="center" style="margin-left: 30px;">
-										<div style="float:left; "> 
-											<strong>'. $this->lang->line('select') .'</strong>&nbsp &nbsp  <input type="radio" name="anew-appointment" 
-											class="anew-appointment" value="0" >'.$this->lang->line('new_apt').' &nbsp&nbsp;
-										</div>
-										<div style="float:left;">
-											<input type="radio" name="anew-appointment" class="anew-appointment" 
-											value="1" checked>'.$this->lang->line('change_apt').'<br>'.$appt_date.'
-										</div>
+									<div align="center" style="margin-left: 30px;">
+										<h6>'.$this->lang->line('change_apt').'<br>'.$appt_date.'<h6>
 									</div> 
                                 </div>
 								<div >
-									<form id="cancel-appointment-form" method="post"
-											action="' . $this->config->item('base_url')
-											. '/index.php/appointments/cancel/' . $appointment_data['hash'] . '" >
-										<input type="hidden" name="csrfToken" value="' . $this->security->get_csrf_hash() . '" />
-										<textarea name="cancel_reason" style="display:none"></textarea>
-										<button id="cancel-appointment" style="color:white; background-color:red;" class="btn btn-default">' . $this->lang->line('apointent_cancelation') . ' </button>
-									</form>
+                                    <form id="update-appointment-form" method="post"
+                                            action="' . $this->config->item('base_url')
+                                            . '/index.php/appointments/index/' . $appointment_data['hash'] . '">
+                                    <input type="hidden" name="csrfToken" value="' . $this->security->get_csrf_hash() . '" />
+
+                                    <button id="return_to_start" style="color:white; background-color:red;" class="btn btn-default">'. $this->lang->line('return_to_start') .'</button>
+                                    </form>
                                 </div>
                             </div>';
 					//New, Edit, Delete mod Craig Tucker End 		
@@ -291,7 +285,8 @@
                                                 if (count($group) > 0) {
                                                     echo '<optgroup label="' . $group_label . '">';
                                                     foreach($group as $service) {
-                                                        echo '<option value="' . $service['id'] . '">'
+                                                        echo 
+														'<option value="' . $service['id'] . '">'
                                                             . $service['name'] . '</option>';
                                                     }
                                                     echo '</optgroup>';
@@ -348,6 +343,9 @@
 							<!-- Craig Tucker mod start-->
                             <div class="col-md-6">
 								<div align="center" id="select-date" >
+								<figure id="wait" class="item">
+									<img src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
+								</figure>
 								</div>
                             </div>
 							<!-- Craig Tucker mod end-->
@@ -355,9 +353,6 @@
 							<!--Waiting List Button start
 							Craig Tucker Modification craigtuckerlcsw@gmail.com-->
                             <div class="col-md-6">
-								<figure id="wait" class="item">
-									<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
-								</figure>
 								<div align="center">
 									<button id="insert-waitinglist" class="btn button-waitinglist btn-primary" data-step_index="2"
 										title="<?php echo $this->lang->line('check_availability'); ?>">
@@ -494,24 +489,74 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="notes" class="control-label"><?php echo $this->lang->line('notes'); ?></label>
-                                    <textarea id="notes" maxlength="500" class="form-control" rows="3"></textarea>
+                                    <textarea id="notes" maxlength="500" class="form-control" rows="2"></textarea>
                                 </div>
                             </div>
 
                             <em id="form-message" class="text-danger"><?php echo $this->lang->line('fields_are_required'); ?></em>
-                        </div>
+							<!-- MANAGE AUTHORIZATION Modification Start
+							Craig Tucker, craigtuckerlcsw@gmail.com	 -->
+							<div id="manage-authorization" class="modal fade" >
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h3 class="modal-title"><?php echo $this->lang->line('conf_title'); ?></h3>
+											<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_text1'); ?><br><br>
+											<ul>
+												<li><?php echo $this->lang->line('conf_bullet1'); ?></li>
+												<li><?php echo $this->lang->line('conf_bullet2'); ?></li>
+												<li><?php echo $this->lang->line('conf_bullet3'); ?></li>
+											</ul>
+										<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_text2'); ?><br><br>
+										</div>
+										<div class="modal-body">
+			                                <div class="form-group">
+												<label for="conf-notice" class="control-label"><strong><?php echo $this->lang->line('notice_auth'); ?></strong></label>
+												<select id="conf-notice" class="form-control" ?>
+													<option value="" <?php if (Config::WP_HEADER_FOOTER== FALSE):?> selected <?php endif; ?> > 
+													<?php echo $this->lang->line('select'); ?></option>	 
+													<option value="1" <?php if ((Config::WP_HEADER_FOOTER== TRUE) && ($current_user->notifications == 1)):?> selected <?php endif; ?> >
+													<?php echo $this->lang->line('notice_auth_y'); ?></option>
+													<option value="0" <?php if ((Config::WP_HEADER_FOOTER== TRUE) && ($current_user->notifications == 0)):?> selected <?php endif; ?> >
+													<?php echo $this->lang->line('notice_auth_n'); ?></option>
+												</select><br><br>
+											</div>	
+										</div>
+										<div class="modal-footer">
+											<button id="cancel-authorization" class="btn" data-dismiss="modal">
+												<?php echo $this->lang->line('cancel'); ?>
+											</button>				
+											<button type="button" id="button-next-3" class="btn button-next btn-primary altval" 
+													data-step_index="3">
+												<?php echo $this->lang->line('next'); ?>
+												<span class="glyphicon glyphicon-forward"></span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- MANAGE AUTHORIZATION Modification End -->	
+						</div>
                     </div>
-
+					
                     <div class="command-buttons">
                         <button type="button" id="button-back-3" class="btn button-back btn-default"
                                 data-step_index="3"><span class="glyphicon glyphicon-backward"></span>
                             <?php echo $this->lang->line('back'); ?>
                         </button>
+					
+					<?php if ($conf_notice == 'yes'): ?>
+						<button id="insert-authorization" class="btn btn-primary" >
+							<?php echo $this->lang->line('next'); ?>
+							<span class="glyphicon glyphicon-forward"></span>
+						</button><br><br>						
+					<?php else : ?>	
                         <button type="button" id="button-next-3" class="btn button-next btn-primary"
                                 data-step_index="3">
                             <?php echo $this->lang->line('next'); ?>
                             <span class="glyphicon glyphicon-forward"></span>
                         </button>
+					<?php endif; ?>	
                     </div>
                 </div>
 
@@ -524,7 +569,13 @@
                     <div class="frame-container">
                         <h3 class="frame-title"><?php echo $this->lang->line('step_four_title'); ?></h3>
                         <div class="frame-content row">
-                            <div id="appointment-details" class="col-xs-12 col-sm-6"></div>
+                            <div 
+							<?php if ($conf_notice == 'yes'): ?>
+								id="appointment-details2"
+							<?php else : ?>	
+								id="appointment-details"
+							<?php endif; ?>	
+							class="col-xs-12 col-sm-6"></div>
                             <div id="customer-details" class="col-xs-12 col-sm-6"></div>
                         </div>
                         <?php if ($this->settings_model->get_setting('require_captcha') === '1'): ?>
@@ -590,8 +641,6 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" 
-							aria-hidden="true">&times;</button>
 					<h3 class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
 					<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?><br><br>
 					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
@@ -645,6 +694,9 @@
 	</div>		
 	<!-- MANAGE WAITING LIST Modification End -->	
 	
+
+		
+	
     <?php
         // ------------------------------------------------------------
         // GLOBAL JAVASCRIPT VARIABLES
@@ -665,7 +717,9 @@
             appointmentData     	: <?php echo json_encode($appointment_data); ?>,
             providerData        	: <?php echo json_encode($provider_data); ?>,
             customerData        	: <?php echo json_encode($customer_data); ?>,
-            csrfToken           	: <?php echo json_encode($this->security->get_csrf_hash()); ?>
+            csrfToken           	: <?php echo json_encode($this->security->get_csrf_hash()); ?>,
+			show_minimal_details	: <?php echo json_encode($show_minimal_details); ?>,
+			confNotice				: <?php echo json_encode($conf_notice); ?>
         };
 
         var EALang = <?php echo json_encode($this->lang->language); ?>;
@@ -719,14 +773,18 @@
 		$(document).ready(function(){
 			$(document).ajaxStart(function(){
 				$("#wait").css("display", "block");
+				$(".ui-datepicker").css("opacity", ".2");
 			});
 			$(document).ajaxComplete(function(){
 				$("#wait").css("display", "none");
+				$(".ui-datepicker").css("opacity", "1");
 			});
 			$("button").click(function(){
 				$("#txt").load("demo_ajax_load.asp");
 			});
 		});
+		
+
 		<!-- Craig Tucker mod end 2-->
 	
     </script>

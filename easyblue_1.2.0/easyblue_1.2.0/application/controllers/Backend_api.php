@@ -213,6 +213,8 @@ class Backend_api extends CI_Controller {
         	$this->load->model('services_model');
         	$this->load->model('customers_model');
         	$this->load->model('settings_model');
+			
+			$go_customer = null;
 
             // :: SAVE CUSTOMER CHANGES TO DATABASE
             if (isset($_POST['customer_data'])) {
@@ -322,8 +324,22 @@ class Backend_api extends CI_Controller {
                 $provider_link = new Url(site_url('backend/index/' . $appointment['hash']));
 
                 $send_customer = $this->settings_model->get_setting('customer_notifications');
+				
+				$clientnotification = $this->settings_model->get_setting('conf_notice');
 
-				if ((bool)$send_customer === TRUE) {
+				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+					$go_customer = TRUE;
+				}
+				
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==1)) {
+					$go_customer = TRUE;
+				}
+
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==0)) {
+					$go_customer = FALSE;
+				}
+
+				if ((bool)$go_customer === TRUE) {
                     $email->sendAppointmentDetails($appointment, $provider,
                             $service, $customer, $company_settings, $customer_title,
                             $customer_message, $customer_link, new Email($customer['email']));
@@ -364,6 +380,8 @@ class Backend_api extends CI_Controller {
      * @param int $_POST['appointment_id'] The appointment id to be deleted.
      */
     public function ajax_delete_appointment() {
+		$go_customer = null;
+		
         try {
             if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE) {
                 throw new Exception('You do not have the required privileges for this task.');
@@ -426,8 +444,21 @@ class Backend_api extends CI_Controller {
                 }
 
                 $send_customer = $this->settings_model->get_setting('customer_notifications');
+				$clientnotification = $this->settings_model->get_setting('conf_notice');
 
-				if ((bool)$send_customer === TRUE) {
+				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+					$go_customer = TRUE;
+				}
+				
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==1)) {
+					$go_customer = TRUE;
+				}
+
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==0)) {
+					$go_customer = FALSE;
+				}
+				
+				if ((bool)$go_customer === TRUE) {
                     $email->sendDeleteAppointment($appointment, $provider,
                             $service, $customer, $company_settings, new Email($customer['email']),
                             new Text($_POST['delete_reason']));

@@ -35,7 +35,7 @@ $lang['appointment_removed_from_schedule'] = 'The following appointment was remo
 $lang['appointment_details_was_sent_to_you'] = 'An email with the appointment details has been sent to you.';
 $lang['add_to_google_calendar'] = 'Add to Google Calendar';
 $lang['appointment_booked'] = 'Your appointment has been successfully booked!';
-$lang['thank_you_for_appointment'] = 'Thank you for making an appointment. Please save this email for a record of your appointment. Make changes at any time by clicking this link.';
+$lang['thank_you_for_appointment'] = 'Thank you for making an appointment. Please save this email for a record of your appointment. Make changes at any time by clicking the link below.';
 $lang['appointment_details_title'] = 'Appointment Details';
 $lang['customer_details_title'] = 'Customer Details';
 $lang['service'] = 'Service';
@@ -279,19 +279,26 @@ $lang['availabilities_type'] = 'Availabilities Type';
 $lang['flexible'] = 'Flexible';
 $lang['fixed'] = 'Fixed';
 $lang['attendants_number'] = 'Attendants Number';
+
 //Craig Tucker Mods start
-$lang['apointent_cancelation'] = 'Cancel Appointment';
-$lang['cell_carrier'] = 'For text reminders, select your mobile provider:';
-$lang['waitinglist_registered'] = 'Waiting List';
-$lang['waitinglist_details'] = 'You have been added to the waiting list for the next 30 days. To un-subscribe use the un-subscribe link included on your email notices.	';
-$lang['return_to_book'] = 'Return to Booking';
-$lang['waitinglist_canceled_title'] = 'Waiting List Cancelled';
-$lang['waitinglist_cancelled'] = 'You have been successfully taken off of the waiting list.';
+
+//Return to Book Landing Screen
+$lang['what_to_do'] = 'What would you like to do?';
 $lang['new_apt'] = 'Add New Appointment';
 $lang['change_apt'] = 'Modify Current Appointment For:';
-$lang['wp_id'] = 'Wordpress ID';
-$lang['Q15'] = 'On the quarter';
-$lang['Q30'] = 'On the half';
+$lang['apointent_cancelation'] = 'Cancel Appointment';
+$lang['return_to_start'] = 'Return to Start';
+
+$lang['select_language'] = 'Select Language';
+$lang['preferred_language'] = 'Preferred Language';
+$lang['user_lang']= 'english';
+$lang['cell_carrier'] = 'For text reminders, select your mobile provider:';
+$lang['return_to_book'] = 'Return to Booking';
+$lang['powered_by']= 'Powered by';
+$lang['operation_failed']= 'The operation failed! Please enter a valid username and email address in order to get a new password.';
+$lang['sms'] = 'SMS';
+
+//Waiting List Pannel Frontend
 $lang['waiting_list'] = 'Waiting List';
 $lang['waiting_list_msg_top1'] = 'By registering here you will be sent daily email or email and text notices for 30 days regarding any availability I have over the next ';
 $lang['waiting_list_msg_top2'] = 'days. You can renew your place on the waiting list as often as you like.  To be removed from the list click the link on your email/text message for removal.';
@@ -300,37 +307,39 @@ $lang['waiting_list_msg_bottom'] = 'If you select to be notified by text message
 $lang['waiting_list_valid_email'] = 'A valid email address is required';
 $lang['waiting_list_valid_phone'] = 'A 10 digit cellphone-number is required';
 $lang['waiting_list_valid_carrier'] = 'A mobile operator is required';
+$lang['waitinglist_registered'] = 'Waiting List';
+$lang['waitinglist_details'] = 'You have been added to the waiting list for the next 30 days. To un-subscribe use the un-subscribe link included on your email notices.	';
+$lang['waitinglist_canceled_title'] = 'Waiting List Cancelled';
+$lang['waitinglist_cancelled'] = 'You have been successfully taken off of the waiting list.';
+
+//Waiting List Notice
+$lang['waiting_list_update'] = 'Waiting List Update from';
+$lang['waiting_list_update1'] = 'Update:'; 
+$lang['waiting_list_no_avail'] = 'has no availabilty at this time.';
+$lang['view_current_sched'] = 'View the current schedule here:';
+$lang['make_appointment'] = 'To make an appointment click here:';
+$lang['remove_from_wl'] = 'To remove yourself from the waiting list click here:';
+$lang['del_waiting'] = 'Delete me from the waiting list';
+$lang['waiting_list_has_avail'] = 'has availabilty on the following dates and times:';
+
+//Preview Screen
 $lang['check_availability'] = 'Check Availability';
 $lang['check_availability_msg'] = 'If days are grey, the schedule is full. If you do see an opening (black), you may register and schedule. Be aware that follow up appointments are also based on availability you see here.';
 $lang['register'] = "Register";
 $lang['notification_availability'] = 'Notification of availability for 30 days';
-$lang['edit_reschedule_cancel_appointment'] = 'Click here to edit, reschedule, or cancel the appointment';
-$lang['what_to_do'] = 'What would you like to do?';
-$lang['waiting_list_update'] = 'Waiting List Update from';
-$lang['waiting_list_update1'] = 'Update:'; 
-$lang['waiting_list_no_avail'] = 'has no availabilty at this time:';
-$lang['view_current_sched'] = 'To view the current schedule click here:';
-$lang['remove_from_wl'] = 'To remove yourself from the waiting list please click the following link:';
-$lang['waiting_list_has_avail'] = 'has availabilty on the following dates and times:';
-$lang['make_appointment'] = 'To make an appointment click here:';
-$lang['select_language'] = 'Select Language';
-$lang['user_lang']= 'english';
-$lang['notice_reminder']= 'One more day until your appointment.';
-$lang['notice_reminder_days']= 'more days until your appointment.';
-$lang['reminder_your_appt_with']= 'REMINDER: Your appointment with'; 
-$lang['is_on']= 'is on'; 
-$lang['msg_line1']= 'If you have had a good experience, let others know! Please give me feedback at:'; 
-$lang['msg_line2']= 'www.healthgrades.com/review/XGVRC:'; 
-$lang['msg_line3']= 'To edit, reschedule, or cancel the appointment please click the following link:';
-$lang['msg_line4']= 'To attend your session on line, log in to www.craigtuckerlcsw.com and go to "My Appointments"';
-$lang['powered_by']= 'Powered by';
-$lang['operation_failed']= 'The operation failed! Please enter a valid username and email address in order to get a new password.';
+$lang['book_now'] = 'Book Appointment Now';
+$lang['view_now'] = 'Open Schedule Now';
+
+//Settings Page
+$lang['wp_id'] = 'Wordpress ID';
+$lang['Q15'] = 'On the quarter';
+$lang['Q30'] = 'On the half';
 $lang['max_date']= 'Maximum Days Out';
 $lang['max_date_hint']= 'This setting allows you to ensure people do not book appointments too many days into the future';
 $lang['time_format'] = 'Time Format';
 $lang['time_format_hint'] = 'Change the time display format (AM/PM or 24hr).';
 $lang['interval_time'] = 'Time Interval For Fixed Appointments';
-$lang['interval_time_hint'] = 'If your appointments are typically 1 hour then enter 60 here';
+$lang['interval_time_hint'] = 'Default time interval for date picker and waiting list.  If your appointments are typically 1 hour then enter 60 here.';
 $lang['week_starts_on'] = 'Week starts on:';
 $lang['week_starts_on_hint'] = 'Week starts on Monday or week starts on Sunday';
 $lang['show_free_price_currency'] = 'Show Price of service when set to 0';
@@ -341,12 +350,42 @@ $lang['yes'] = 'Yes';
 $lang['no'] = 'No';
 $lang['reminder_days_out'] = 'Appointment Reminders';
 $lang['reminder_days_out_hint'] = 'This is a comma delimited list of integers in days that you want to send reminders on. Example: 1,3 means that at 1 day and at 3 days prior to the appointment, the attendee will receive the reminder.';
-$lang['sms'] = 'SMS';
-$lang['preferred_language'] = 'Preferred Language';
 $lang['theme_color'] = 'Choose a theme color';
 $lang['theme_color_hint'] = 'This will change the overall color scheme for the application';
 $lang['green'] = 'Green';
 $lang['blue'] = 'Blue';
 $lang['red'] = 'Red';
-$lang['waiting_list_details_title'] = 'Waiting List Details';
+$lang['show_minimal_details'] = 'Show minimal details in notifications.';
+$lang['conf_notice'] = 'Show Confidentiality Notice and Agreement';
+$lang['conf_notice_hint'] = 'The client is given the option to refuse notifications and reminders.';
+$lang['google_sync_notice'] = 'Email me notification of successful Google-Sync';
+$lang['google_sync_notice_hint'] = 'If yes, an email notification will be sent of successful Google-Sync';
+$lang['google_sync_from'] = 'Google-Sync "from" email';
+$lang['google_sync_from_hint'] = 'The address from wich you will be sending the google sync notice.';
+$lang['google_sync_to'] = 'Google-Sync "to" email';
+$lang['google_sync_to_hint'] = 'The address to wich you will be sending the google sync notice';
+
+//Appointment Reminders
+$lang['edit_reschedule_cancel_appointment'] = 'Click here to edit, reschedule, or cancel the appointment';
+$lang['notice_reminder']= 'One more day until your appointment.';
+$lang['notice_reminder_days']= 'more days until your appointment.';
+$lang['reminder_your_appt_with']= 'REMINDER: Your appointment with'; 
+$lang['is_on']= 'is on'; 
+$lang['msg_line1']= ''; //Text line
+$lang['url_line1']= ''; //URL line
+$lang['msg_line2']= ''; //Text line
+$lang['url_line2']= ''; //URL line
+
+//Text for the Confidentiality Notice and Authorization Pannel for Frontend
+$lang['conf_title'] = 'Confidentiality Notice';
+$lang['conf_text1'] = 'Text and email are non-secure methods for transmition of personal health care information. It is higly recommended that you use personal email and SMS/MMS addresses only. Do not use addresses associated with work accounts. Individuals who have access to your email and SMS/MMS accounts will also have access to the following information about your care:';
+$lang['conf_bullet1'] = '<b>Information related to the scheduling of meetings or other appointment dates and times</b> (not to include the type of session or purpose of our meeting).';
+$lang['conf_bullet2'] = '<b>Information related to appointment billing and payment amounts due</b> (not to include any financial or claims-related identifiers including, but not limited to, credit card numbers, insurance plan numbers, diagnosis codes, or procedure codes.)';
+$lang['conf_bullet3'] = '<b>Notices of communication on the secure message board from this site</b>. All online communication with Mr. Tucker should be done on his secure message board rather than through email or text.  Replies to you will will be in an email that will only state the following "You have received a new message, follow this link to view it:';
+$lang['conf_text2'] = 'You may refuse email and sms notices and reminders and still book appointments.  However if you refuse notifications, you will need to regularly check the message board for any general notices regarding your care.  If reminders and notifications are refused, you can still see upcomming appointments, and book, cancel, and reschedule appointments through the website.';
+$lang['notice_auth'] = 'Email/SMS Notice/Reminder Authorization';
+$lang['notice_auth_y'] = 'I want to recieve email/sms notices and appointment reminders';
+$lang['notice_auth_n'] = 'Do not send me sms/email notices and appointment reminders';
+
+
 //Craig Tucker Mods start end

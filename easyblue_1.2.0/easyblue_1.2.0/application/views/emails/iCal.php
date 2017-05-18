@@ -14,8 +14,8 @@ TRANSP:OPAQUE
 SEQUENCE:0
 UID: $appointment_link
 DTSTAMP: $icaldatestamp
-DESCRIPTION: $company_link $customer_name. $email_message  $appointment_link
-SUMMARY: $appointment_service
+DESCRIPTION: $customer_name. $email_message  $appointment_link
+SUMMARY: $summaryical
 PRIORITY:5
 CLASS:PUBLIC
 END:VEVENT

@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `ea_cellcarrier` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE IF NOT EXISTS `ea_roles` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(256) DEFAULT NULL,
@@ -87,7 +88,6 @@ CREATE TABLE IF NOT EXISTS `ea_settings` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
 
-
 CREATE TABLE IF NOT EXISTS `ea_users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `lang` varchar(256) DEFAULT NULL,
@@ -104,6 +104,8 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
   `id_roles` bigint(20) unsigned NOT NULL,
   `id_cellcarrier` bigint(20) DEFAULT NULL,
   `wp_id` bigint(20) DEFAULT NULL,
+  `notifications` tinyint(4) DEFAULT '0',
+  `conf_notice` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `id_roles` (`id_roles`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=84 ;
@@ -125,6 +127,9 @@ CREATE TABLE IF NOT EXISTS `ea_user_settings` (
   PRIMARY KEY (`id_users`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `migrations` (
+  `version` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `ea_appointments`
   ADD CONSTRAINT `ea_appointments_ibfk_2` FOREIGN KEY (`id_users_customer`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -154,13 +159,3 @@ ALTER TABLE `ea_user_settings`
   ADD CONSTRAINT `ea_user_settings_ibfk_1` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
-INSERT INTO `ea_roles` (`id`, `name`, `slug`, `is_admin`, `appointments`, `customers`, `services`, `users`, `system_settings`, `user_settings`) VALUES
-(1, 'Administrator', 'admin', 1, 15, 15, 15, 15, 15, 15),
-(2, 'Provider', 'provider', 0, 15, 15, 0, 0, 0, 15),
-(3, 'Customer', 'customer', 0, 0, 0, 0, 0, 0, 0),
-(4, 'Secretary', 'secretary', 0, 15, 15, 0, 0, 0, 15);
-
-INSERT INTO `ea_settings` (`name`, `value`) VALUES
-('company_working_plan', '{"sunday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"monday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"tuesday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"wednesday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"thursday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"friday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]},"saturday":{"start":"09:00","end":"18:00","breaks":[{"start":"11:20","end":"11:30"},{"start":"14:30","end":"15:00"}]}}'),
-('book_advance_timeout', '240');
-('reminder_days_out', '1,3');

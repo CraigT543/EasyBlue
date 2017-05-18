@@ -157,12 +157,13 @@ element.style {
 						<div id="myMessage" align="center";>
 						<h6 style= "margin-left:20px; margin-right:20px;"><?php echo $this->lang->line('check_availability_msg'); ?><h6>
 						</div>
-
-							<div align="center" id="select-date" >
-								<figure id="waitpreview" class="item">
+						<div>
+							<div align="center" id="select-date" style="position: relative">
+							<figure id="waitpreview" class="item">
 								<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
-								</figure>
+							</figure>
 							</div>
+						</div>	
 							<div align="center" style="padding:10px;">
 								<a href="https://<?php	echo $_SERVER['SERVER_NAME'];?>/wordpress/register/" target="_parent" class="btn button-waitinglist btn-primary">
 									<?php echo $this->lang->line('register'); ?></a>
@@ -246,15 +247,23 @@ element.style {
 
     <script type="text/javascript">
         var GlobalVariables = {
-            availableServices   : <?php echo json_encode($available_services); ?>,
-            availableProviders  : <?php echo json_encode($available_providers); ?>,
-            baseUrl             : <?php echo json_encode($this->config->item('base_url')); ?>,
-            manageMode          : <?php echo ($manage_mode) ? 'true' : 'false'; ?>,
-            dateFormat          : <?php echo json_encode($date_format); ?>,
-            appointmentData     : <?php echo json_encode($appointment_data); ?>,
-            providerData        : <?php echo json_encode($provider_data); ?>,
-            customerData        : <?php echo json_encode($customer_data); ?>,
-            csrfToken           : <?php echo json_encode($this->security->get_csrf_hash()); ?>
+            availableServices   	: <?php echo json_encode($available_services); ?>,
+            availableProviders  	: <?php echo json_encode($available_providers); ?>,
+            baseUrl             	: <?php echo json_encode($this->config->item('base_url')); ?>,
+            manageMode          	: <?php echo ($manage_mode) ? 'true' : 'false'; ?>,
+            dateFormat          	: <?php echo json_encode($date_format); ?>,
+            timeFormat          	: <?php echo json_encode($time_format); ?>,
+            weekStartson        	: <?php echo json_encode($week_starts_on); ?>,
+            maxDate        			: <?php echo json_encode($max_date); ?>,
+            showFreePriceCurrency	: <?php echo json_encode($show_free_price_currency); ?>,
+            showAnyProvider			: <?php echo json_encode($show_any_provider); ?>,
+            appointmentData     	: <?php echo json_encode($appointment_data); ?>,
+            providerData        	: <?php echo json_encode($provider_data); ?>,
+            customerData        	: <?php echo json_encode($customer_data); ?>,
+            csrfToken           	: <?php echo json_encode($this->security->get_csrf_hash()); ?>,
+			show_minimal_details	: <?php echo json_encode($show_minimal_details); ?>,
+			confNotice				: <?php echo json_encode($conf_notice); ?>
+
         };
 
         var EALang = <?php echo json_encode($this->lang->language); ?>;
@@ -307,9 +316,11 @@ element.style {
 		$(document).ready(function(){
 			$(document).ajaxStart(function(){
 				$("#waitpreview").css("display", "block");
+				$(".ui-datepicker").css("opacity", ".2");
 			});
 			$(document).ajaxComplete(function(){
 				$("#waitpreview").css("display", "none");
+				$(".ui-datepicker").css("opacity", "1");
 			});
 			$("button").click(function(){
 				$("#txt").load("demo_ajax_load.asp");
