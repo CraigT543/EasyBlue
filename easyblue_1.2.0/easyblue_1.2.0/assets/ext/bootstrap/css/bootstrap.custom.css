@@ -20,3 +20,8 @@
 		width: 100% !important;
 	}
 }   
+
+textarea[name=cancel_reason]{
+    width: 100%; 
+    height: 48px;
+}

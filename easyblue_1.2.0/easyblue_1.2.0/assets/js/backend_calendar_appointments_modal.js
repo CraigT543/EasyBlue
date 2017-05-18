@@ -23,6 +23,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
     'use strict';
 
     function _bindEventHandlers() {
+		
         /**
          * Event: Manage Appointments Dialog Cancel Button "Click"
          *
@@ -45,7 +46,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
 
             // Prepare appointment data for AJAX request.
             var $dialog = $('#manage-appointment');
-
             // ID must exist on the object in order for the model to update the record and not to perform
             // an insert operation.
 
@@ -60,7 +60,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 notes: $dialog.find('#appointment-notes').val(),
                 is_unavailable: false
             };
-
+			
             if ($dialog.find('#appointment-id').val() !== '') {
                 // Set the id value, only if we are editing an appointment.
                 appointment['id'] = $dialog.find('#appointment-id').val();
@@ -77,6 +77,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 notes: $dialog.find('#customer-notes').val()
             };
 
+						
             if ($dialog.find('#customer-id').val() !== '') {
                 // Set the id value, only if we are editing an appointment.
                 customer['id'] = $dialog.find('#customer-id').val();
@@ -149,6 +150,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                     return false; // exit loop
                 }
             });
+
 
             var start = new Date();
             var currentMin = parseInt(start.toString('mm'));
@@ -324,6 +326,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
      */
     exports.resetAppointmentDialog = function() {
         var $dialog = $('#manage-appointment');
+		
 
         // Empty form fields.
         $dialog.find('input, textarea').val('');
@@ -367,6 +370,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 return false;
             }
         });
+
 
         var startDatetime = new Date().addMinutes(GlobalVariables.bookAdvanceTimeout);
         var endDatetime  = new Date().addMinutes(GlobalVariables.bookAdvanceTimeout).addMinutes(serviceDuration);
@@ -413,12 +417,26 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
 			default:
 				fDaynum = 0;
 				break;
-		}		
-		console.log('NZ-backend_calendar_appointments_modal.js -> fDaynum ' + fDaynum + ' fDay ' + fDay);
+		}
+
+		var timeFormat;
+        switch(GlobalVariables.timeFormat) {
+            case 'AM/PM':
+                timeFormat = 'hh:mm tt';
+                break;
+            case '24HR':
+                timeFormat = 'HH:mm';
+                break;
+            default:
+                throw new Error('Invalid GlobalVariables.timeFormat value.');
+        }	
+
+		console.log('NZ-backend_calendar_appointments_modal.js -> fDaynum ' + fDaynum + ' fDay ' + fDay + ' date/time string = ' + dateFormat + ' ' + timeFormat);
+		
         $dialog.find('#start-datetime').datetimepicker({
-            dateFormat: dateFormat,
-            //timeFormat: 'hh:mm tt', //Craig Tucker am/pm mod 1
 			
+            format: dateFormat +' '+ timeFormat, //Craig Tucker am/pm mod 1
+			timeFormat: timeFormat,
             // Translation
             dayNames: [EALang['sunday'], EALang['monday'], EALang['tuesday'], EALang['wednesday'],
                     EALang['thursday'], EALang['friday'], EALang['saturday']],
@@ -442,13 +460,14 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             hourText: EALang['hour'],
             minuteText: EALang['minutes'],
             firstDay: fDaynum // Monday
+			
         });
         $dialog.find('#start-datetime').datetimepicker('setDate', startDatetime);
 
         $dialog.find('#end-datetime').datetimepicker({
-            dateFormat: dateFormat,
-            //timeFormat: 'hh:mm tt',  //Craig Tucker am/pm mod 2
 			
+			format: dateFormat +' '+ timeFormat, //Craig Tucker am/pm mod 2	
+			timeFormat: timeFormat,
             // Translation
             dayNames: [EALang['sunday'], EALang['monday'], EALang['tuesday'], EALang['wednesday'],
                     EALang['thursday'], EALang['friday'], EALang['saturday']],

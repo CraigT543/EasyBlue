@@ -43,7 +43,6 @@ window.FrontendBook = window.FrontendBook || {};
         bindEventHandlers = bindEventHandlers || true;
         manageMode = manageMode || false;
 
-
         if (window.console === undefined) {
             window.console = function() {}; // IE compatibility
         }
@@ -202,6 +201,7 @@ window.FrontendBook = window.FrontendBook || {};
      * This method binds the necessary event handlers for the book appointments page.
      */
     function _bindEventHandlers() {
+
         /**
          * Event: Selected Provider "Changed"
          *
@@ -248,8 +248,6 @@ window.FrontendBook = window.FrontendBook || {};
 				}	
             }
 
-
-			
 			FrontendBook.googleSync(); //Craig Tucker googleSync mod 2
             FrontendBookApi.getUnavailableDates($('#select-provider').val(), $(this).val(),
                     $('#select-date').datepicker('getDate').toString('yyyy-MM-dd'));
@@ -329,6 +327,27 @@ window.FrontendBook = window.FrontendBook || {};
 			}
 		});
 		//Waiting List Functions end
+
+		/**
+         * Event: Authorization Button "Clicked"
+         */
+		 
+        $('#insert-authorization').click(function() {
+			if (!_validateCustomerForm()) {
+				return; // Validation failed, do not continue.
+			} else {			
+				var $dialog = $('#manage-authorization');
+				$dialog.modal('show');
+				$('.modal-content').css('display','block');
+				
+				var myVar = setInterval(myClassFunction, 300);
+
+				function myClassFunction() {
+					$('#conf-notice').hasClass('required');
+				};
+			}
+        });
+		
 		
         /**
          * Event: Next Step Button "Clicked"
@@ -339,9 +358,6 @@ window.FrontendBook = window.FrontendBook || {};
         $('.button-next').click(function() {
             // If we are on the first step and there is not provider selected do not continue
             // with the next step.
-
-
-
             if ($(this).attr('data-step_index') === '1' && $('#select-provider').val() == null) {
                 return;
             }
@@ -366,9 +382,14 @@ window.FrontendBook = window.FrontendBook || {};
                 if (!_validateCustomerForm()) {
                     return; // Validation failed, do not continue.
                 } else {
+					var $dialog = $('#manage-authorization');
                     FrontendBook.updateConfirmFrame();
+					$dialog.modal('hide');
+					$("#wizard-frame-3").hide();
+					
                 }
             }
+
 
             // Display the next step tab (uses jquery animation effect).
             var nextTabIndex = parseInt($(this).attr('data-step_index')) + 1;
@@ -408,6 +429,7 @@ window.FrontendBook = window.FrontendBook || {};
             FrontendBook.updateConfirmFrame();
         });
 
+		
         if (FrontendBook.manageMode) {
             /**
              * Event: Cancel Appointment Button "Click"
@@ -418,6 +440,7 @@ window.FrontendBook = window.FrontendBook || {};
              *
              * @param {jQuery.Event} event
              */
+			 
             $('#cancel-appointment').click(function(event) {
                 var dialogButtons = {};
                 dialogButtons['OK'] = function() {
@@ -428,67 +451,26 @@ window.FrontendBook = window.FrontendBook || {};
                     $('#cancel-appointment-form textarea').val($('#cancel-reason').val());
                     $('#cancel-appointment-form').submit();
                 };
+				//Craig Tucker has removed the pop up for cacelation infavor of a landing page with options.
+                // dialogButtons[EALang['cancel']] = function() {
+                    // $('#message_box').dialog('close');
+                // };
 
-                dialogButtons[EALang['cancel']] = function() {
-                    $('#message_box').dialog('close');
-                };
+                // GeneralFunctions.displayMessageBox(EALang['cancel_appointment_title'],
+                        // EALang['write_appointment_removal_reason'], dialogButtons);
 
-                GeneralFunctions.displayMessageBox(EALang['cancel_appointment_title'],
-                        EALang['write_appointment_removal_reason'], dialogButtons);
-
-                $('#message_box').append('<textarea id="cancel-reason" rows="3"></textarea>');
-                $('#cancel-reason').css('width', '100%');
-                return false;
+                // $('#message_box').append('<textarea id="cancel-reason" rows="3"></textarea>');
+                // $('#cancel-reason').css('width', '100%');
+                // return false;
+				// end craig tucker edit.
             });
-        }
-
-        // Mod cancel bar to new/modify/delete - start
-		//Craig Tucker, craigtuckerlcsw@gmail
-		
-		var html = $('#select-service option:selected').text();
-		$('#appointment-service').html(html);
-		
-		$("#selectNew").click(function (event) {
-			FrontendBook.manageMode = false;
-			document.getElementById('cancel-appointment-frame').style.display = 'none';
-            // Select Service & Provider
-            //$('#select-service').val(appointment['id_services']).trigger('change');
-            //$('#select-provider').val(appointment['id_users_provider']);
-			$('#select-service').val(); 
-			$('#select-service').trigger('change'); 
-			FrontendBookApi.getAvailableHours($('#select-date').val());// Load the available hours.
-				// Apply Customer's Data
-				$('#last-name').val(GlobalVariables.customerData['last_name']);
-				$('#first-name').val(GlobalVariables.customerData['first_name']);
-				$('#lang').val(EALang['user_lang']);
-				$('#email').val(GlobalVariables.customerData['email']);
-				$('#phone-number').val(GlobalVariables.customerData['phone_number']);
-				$('#cell-carrier').val(GlobalVariables.customerData['id_cellcarrier']);
-				$('#wp-id').val(GlobalVariables.customerData['wp_id']);
-				$('#address').val(GlobalVariables.customerData['address']);
-				$('#city').val(GlobalVariables.customerData['city']);
-				$('#zip-code').val(GlobalVariables.customerData['zip_code']);
-
-			FrontendBook.updateConfirmFrame();
-			var nextTabIndex = 1;	
-			$(this).parents().eq(1).hide('fade', function() {    
-				$('.active-step').removeClass('active-step');
-				$('#step-' + nextTabIndex).addClass('active-step');
-				$('#wizard-frame-' + nextTabIndex).show('fade');
-			});			
-		});
 			
-		$('.radiobox input.anew-appointment').change(function(event) {
-			if ($(".radiobox input[value='0']").is(':checked')) {
+			
+			$("#selectNew").click(function (event) {
 				FrontendBook.manageMode = false;
 				
-				// hide cancel button if new appointment selected by making style.display = 'none'
 				document.getElementById('cancel-appointment-frame').style.display = 'none';
-				// Select Service & Provider
-				$('#select-service').val(appointment['id_services']).trigger('change');
-				$('#select-provider').val(appointment['id_users_provider']);
-				//$('#select-service').val(); 
-				//$('#select-service').trigger('change'); 
+
 				FrontendBookApi.getAvailableHours($('#select-date').val());// Load the available hours.
 					// Apply Customer's Data
 					$('#last-name').val(GlobalVariables.customerData['last_name']);
@@ -496,24 +478,30 @@ window.FrontendBook = window.FrontendBook || {};
 					$('#lang').val(EALang['user_lang']);
 					$('#email').val(GlobalVariables.customerData['email']);
 					$('#phone-number').val(GlobalVariables.customerData['phone_number']);
-					$('#cell-carrier').val(GlobalVariables.customerData['id_cellcarrier']);
-					$('#wp-id').val(GlobalVariables.customerData['wp_id']);
+					$('#cell-carrier').val(GlobalVariables.customerData['id_cellcarrier']); //Craig Tucker Mod
+					$('#wp-id').val(GlobalVariables.customerData['wp_id']); //Craig Tucker Mod
 					$('#address').val(GlobalVariables.customerData['address']);
 					$('#city').val(GlobalVariables.customerData['city']);
 					$('#zip-code').val(GlobalVariables.customerData['zip_code']);
+					$('#conf-notice').val(GlobalVariables.customerData['notifications']); //Craig Tucker Mod
 
+					
 				FrontendBook.updateConfirmFrame();
 				var nextTabIndex = 1;	
 				$(this).parents().eq(1).hide('fade', function() {    
 					$('.active-step').removeClass('active-step');
 					$('#step-' + nextTabIndex).addClass('active-step');
 					$('#wizard-frame-' + nextTabIndex).show('fade');
-				});
-			};
-		});	
+					
+				});			
+			});			
+		}
 
-		
-				
+
+			// Mod cancel bar to new/modify/delete - start
+			//Craig Tucker, craigtuckerlcsw@gmail
+			
+			
 		// Mod cancel bar to new/modify/delete - end
 
         /**
@@ -537,35 +525,6 @@ window.FrontendBook = window.FrontendBook || {};
         $('.captcha-title small').click(function(event) {
             $('.captcha-image').attr('src', GlobalVariables.baseUrl + '/index.php/captcha?' + Date.now());
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         $('#select-date').on('mousedown', '.ui-datepicker-calendar td', function(event) {
             setTimeout(function() {
@@ -623,14 +582,6 @@ window.FrontendBook = window.FrontendBook || {};
 				$('#phone-number').parents('.form-group').removeClass('has-error');
 			}
 
-			// Validate carrier
-            //if (!GeneralFunctions.validateCarrier($('#cell-carrier').val()), $('#phone-number').val()) {
-            //    $('#cell-carrier').parents('.form-group').addClass('has-error');
-            //    // $('#carrier').css('border', '2px solid red');
-            //    throw EALang['waiting_list_valid_carrier'];
-            //} else { 
-			//	$('#cell-carrier').parents('.form-group').removeClass('has-error');
-			//}
 			
             return true;
         } catch(exc) {
@@ -646,7 +597,7 @@ window.FrontendBook = window.FrontendBook || {};
     exports.updateConfirmFrame = function() {
         // Appointment Details
         var selectedDate = $('#select-date').datepicker('getDate');
-
+		var notices = GeneralFunctions.escapeHtml($('#conf-notice option:selected').text()); //mod Craig Tucker
         if (selectedDate !== null) {
             selectedDate = GeneralFunctions.formatDate(selectedDate, GlobalVariables.dateFormat);
         }
@@ -656,7 +607,10 @@ window.FrontendBook = window.FrontendBook || {};
         var serviceCurrency;
 		var show_free_price_currency;
         show_free_price_currency = GlobalVariables.showFreePriceCurrency;
-
+		if (GeneralFunctions.show_minimal_details == 'no'){
+			var html = $('#select-service option:selected').text();
+			$('#appointment-service').html(html);
+		}
 		
         $.each(GlobalVariables.availableServices, function(index, service) {
             if (service.id == selServiceId) {
@@ -688,14 +642,28 @@ window.FrontendBook = window.FrontendBook || {};
                 + '</strong>' +
             '</p>';
 
-        $('#appointment-details').html(html);
+		$('#appointment-details').html(html);
+	
+        var html2 =
+            '<h4>' + $('#select-service option:selected').text() + '</h4>' +
+            '<p>'
+                + '<strong class="text-primary">'
+                    + $('#select-provider option:selected').text() + '<br>'
+                    + selectedDate + ' ' +  $('.selected-hour').text()
+                    + servicePrice + ' ' + serviceCurrency + '</strong><br/>'
+					+ '<b>' + EALang['notice_auth'] 
+					+ ':</b> "<i>' + notices + '</i>"' +
+				'</p>';
+			
+        $('#appointment-details2').html(html2);
+		
 
         // Customer Details
         var firstName = GeneralFunctions.escapeHtml($('#first-name').val());
         var lastName = GeneralFunctions.escapeHtml($('#last-name').val());
         var phoneNumber = GeneralFunctions.escapeHtml($('#phone-number').val());
-        var sms = GeneralFunctions.escapeHtml($('#cell-carrier option:selected').text());
-        var email = GeneralFunctions.escapeHtml($('#email').val());
+        var sms = GeneralFunctions.escapeHtml($('#cell-carrier option:selected').text());  //mod Bullmoose20
+		var email = GeneralFunctions.escapeHtml($('#email').val());
         var address = GeneralFunctions.escapeHtml($('#address').val());
         var city = GeneralFunctions.escapeHtml($('#city').val());
         var zipCode = GeneralFunctions.escapeHtml($('#zip-code').val());
@@ -712,16 +680,15 @@ window.FrontendBook = window.FrontendBook || {};
                 EALang['sms'] + ': ' + sms +
                 '<br/>' +
                 EALang['email'] + ': ' + email +
+				'<br/>'+
+				EALang['address'] + ': ' + address +
                 '<br/>' +
-                EALang['address'] + ': ' + address +
+                EALang['city'] + ': ' + city + '<br/>' +
+                EALang['zip_code'] + ': ' + zipCode + 
                 '<br/>' +
-                EALang['city'] + ': ' + city +
-                '<br/>' +
-                EALang['zip_code'] + ': ' + zipCode +
-				'<br/>' +
                 EALang['notes'] + ': ' + notes +
-            '</p>';
-
+            '</p>';			
+			
         $('#customer-details').html(html);
 
         // Update appointment form data for submission to server when the user confirms
@@ -731,6 +698,7 @@ window.FrontendBook = window.FrontendBook || {};
         postData['customer'] = {
 		    id_cellcarrier: $('#cell-carrier').val(), //Craig Tucker Cell Modification 1
 			wp_id: $('#wp-id').val(), //WP mod Craig Tucker 1
+			notifications: $('#conf-notice').val(),  //mod Craig Tucker
             last_name: $('#last-name').val(),
             first_name: $('#first-name').val(),
 			lang: $('#lang').val(),
@@ -826,6 +794,7 @@ window.FrontendBook = window.FrontendBook || {};
             // Apply Customer's Data
             $('#cell-carrier').val(customer['id_cellcarrier']); //Craig Tucker Cell Modification 2
 			$('#wp-id').val(customer.wp_id); //WP mod Craig Tucker 2
+			$('#conf-notice').val(customer['notifications']); //Craig Tucker -- client notification option.
             $('#last-name').val(customer['last_name']);
             $('#first-name').val(customer['first_name']);
 			$('#lang').val(EALang['user_lang']);

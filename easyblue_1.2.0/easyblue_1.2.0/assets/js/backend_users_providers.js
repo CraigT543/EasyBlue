@@ -143,6 +143,7 @@
          */
         $('#providers').on('click', '#save-provider', function() {
             var provider = {
+				notifications: $('#client-notifications2').val(),  //notifications mod Craig Tucker
                 first_name: $('#provider-first-name').val(),
                 last_name: $('#provider-last-name').val(),
                 email: $('#provider-email').val(),
@@ -373,6 +374,7 @@
      * @param {Object} provider Contains the provider record data.
      */
     ProvidersHelper.prototype.display = function(provider) {
+		$('#client-notifications2').val(provider['notifications']) //Craig Tucker notification mod
         $('#provider-id').val(provider.id);
         $('#provider-first-name').val(provider.first_name);
         $('#provider-last-name').val(provider.last_name);

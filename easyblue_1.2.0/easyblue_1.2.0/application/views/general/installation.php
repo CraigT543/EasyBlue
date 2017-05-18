@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 	$this->load->model('settings_model');			
-	$theme_color = $this->settings_model->get_setting('theme_color');
+	$theme_color = 'green';
 ?>
 <html>
 <head>

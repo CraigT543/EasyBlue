@@ -60,7 +60,7 @@ class Reminders extends CI_Controller {
 				$appointment_link = $this->config->base_url().'index.php/appointments/index/';
 				$time_format = $this->settings_model->get_setting('time_format');
 				$date_format = $this->settings_model->get_setting('date_format');
-		
+				$str = '';
 				$msg = '';
 					switch($date_format) {
 						case 'DMY':
@@ -133,6 +133,7 @@ class Reminders extends CI_Controller {
 						$provider_state = $this->user_model->get_value('state', $provider_id);
 						$provider_zip_code = $this->user_model->get_value('zip_code', $provider_id);
 						$provider_address = $provider_street.', '.$provider_city.', '.$provider_state.' '.$provider_zip_code; 
+						$limitdetails = $this->settings_model->get_setting('show_minimal_details');
 				
 						if ($days[$i] == "1") {
 							$notice = $this->lang->line('notice_reminder');
@@ -184,9 +185,9 @@ class Reminders extends CI_Controller {
 						$date_field = date($dateview,strtotime($appointment->start_datetime));
 						$time_field = date($timeview,strtotime($appointment->start_datetime));
 						if ($time_format == '24HR') {				
-							$appointment_start_date_pre = $date_field . $time_field;
+							$appointment_start_date_pre = $date_field .' ' . $time_field;
 						} else {
-							$appointment_start_date_pre = $longDay . ', ' . $date_field . $time_field;
+							$appointment_start_date_pre = $longDay . ', ' . $date_field .' ' . $time_field;
 						}			
 						$longDay = $this->lang->line(strtolower(date('l',strtotime($appointment->end_datetime))));
 						$date_field = date($dateview,strtotime($appointment->end_datetime));
@@ -194,9 +195,11 @@ class Reminders extends CI_Controller {
 													   
 																 
 						if ($time_format == '24HR') {
-							$appointment_end_date_pre = $date_field . $time_field;
+							$appointment_end_date_pre = $date_field .' ' . $time_field;
+							$end_time = $time_field;
 						} else {
-							$appointment_end_date_pre = $longDay . ', ' . $date_field . $time_field;
+							$appointment_end_date_pre = $longDay . ', ' . $date_field .' ' . $time_field;
+							$end_time = $time_field;
 						}					
 						$config['mailtype'] = 'html';
 						$this->email->initialize($config);
@@ -209,13 +212,12 @@ class Reminders extends CI_Controller {
 							}
 						$this->email->from($appointment->provider_email, $company_name);
 						$this->email->subject($notice);
-						$email_message .= $this->lang->line('reminder_your_appt_with') . ' ' . $appointment->provider_first_name . ' ' . $appointment->provider_last_name . ' ' .  $this->lang->line('is_on') . ' ' . $startdatetime . '<br>';
-						$email_message .=  '<br>';
-						$email_message .=  $this->lang->line('notes') . ':' . '<br>';
-						$email_message .=  $notes_field . '<br>';
-						$email_message .=  '<br>';					  
-						$email_message .= $this->lang->line('msg_line3') . '<br>';
-						$email_message .= $appointment_link.$appointment->hash . '<br>';
+				
+						
+						$str .= strtoupper($company_name) . '--' . $notice . PHP_EOL;
+						$str .= $this->lang->line('provider') . '--' . $provider . PHP_EOL;
+						$str .= $provider_address . PHP_EOL;
+						
 						$msg .= '<html>';
 						$msg .= '<head>';
 						$msg .= '    <title>' . $notice . '</title>';
@@ -233,16 +235,8 @@ class Reminders extends CI_Controller {
 						$msg .= '            <h2>' . $this->lang->line('appointment_details_title') . '</h2>';
 						$msg .= '            <table id="appointment-details">';
 						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('service') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $appointment_service . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
 						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('provider') . '</td>';
 						$msg .= '                    <td style="padding: 3px;">' . $provider . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('price') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $appointment_price_currency . '</td>';
 						$msg .= '                </tr>';
 						$msg .= '				 <!--Google Maps Mod Craig Tucker start -->';
 						$msg .= '                <tr>';
@@ -250,6 +244,30 @@ class Reminders extends CI_Controller {
 						$msg .= '                    <td style="padding: 3px;"><a href="www.google.com/maps/place/' . $provider_address . '">' . $provider_address . '</a></td>';
 						$msg .= '				 </tr>';
 						$msg .= '				 <!--Google Maps Mod Craig Tucker end -->';
+
+						if ($limitdetails == 'no') {
+						
+							$str .= $appointment_service. PHP_EOL;
+							$str .= $this->lang->line('price') . ' '  . $appointment_price_currency. PHP_EOL;
+							
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('service') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $appointment_service . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('duration_minutes') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $appointment_duration . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('price') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $appointment_price_currency . '</td>';
+							$msg .= '                </tr>';
+						}
+
+						$str .= $appointment_start_date_pre. '--'. $end_time . PHP_EOL;
+						$str .= $this->lang->line('edit_reschedule_cancel_appointment') . PHP_EOL;
+						$str .= $appointment_link.$appointment->hash . PHP_EOL . PHP_EOL;
+						
 						$msg .= '                <tr>';
 						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('start') . '</td>';
 						$msg .= '                    <td style="padding: 3px;">' . $appointment_start_date_pre . '</td>';
@@ -259,49 +277,79 @@ class Reminders extends CI_Controller {
 						$msg .= '                    <td style="padding: 3px;">' . $appointment_end_date_pre . '</td>';
 						$msg .= '                </tr>';
 						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('duration_minutes') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $appointment_duration . '</td>';
+						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">&#9724;</td>';
+						$msg .= '                    <td style="padding: 3px;"><a href="' . $appointment_link.$appointment->hash . '">' . $this->lang->line('edit_reschedule_cancel_appointment') . '</td>';
 						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;"></td>';
-						$msg .= '                    <td style="padding: 3px;"><a href="' . $appointment_link . '">' . $this->lang->line('edit_reschedule_cancel_appointment') . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '            </table>';
-						$msg .= '            <h2>' . $this->lang->line('customer_details_title') . '</h2>';
-						$msg .= '            <table id="customer-details">';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('name') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $customer_name . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('email') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $email_field . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('phone') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $sms_field . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('address') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $customer_address . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('city') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $customer_city . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('zip_code') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $customer_zip_code . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('notes') . '</td>';
-						$msg .= '                    <td style="padding: 3px;">' . $notes_field . '</td>';
-						$msg .= '                </tr>';
-						$msg .= '            </table>';
-						$msg .= '        </div>';
+						if (!empty($this->lang->line('msg_line1'))) {
+							
+							$str .= $this->lang->line('msg_line1') . PHP_EOL;
+							$str .= $this->lang->line('url_line1') . PHP_EOL;
+							
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">&#9724;</td>';
+							$msg .= '                    <td style="padding: 3px;"><a href="' . $this->lang->line('url_line1') . '">' .$this->lang->line('msg_line1') .  '</td>';
+							$msg .= '                </tr>';
+						}
+						if (!empty($this->lang->line('msg_line2'))) {
+							
+							$str .= $this->lang->line('msg_line2') . PHP_EOL;
+							$str .= $this->lang->line('url_line2') . PHP_EOL;
+							
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">&#9724;</td>';
+							$msg .= '                    <td style="padding: 3px;"><a href="' . $this->lang->line('url_line2') . '">' .$this->lang->line('msg_line2') . '</td>';
+							$msg .= '                </tr>';							
+							$msg .= '            </table>';
+						}
+						if ($limitdetails == 'no') {
+							
+							$str .= strtoupper($this->lang->line('customer_details_title')) . PHP_EOL;
+							$str .= $customer_name . PHP_EOL;
+							$str .= $email_field . PHP_EOL;
+							$str .= $sms_field . PHP_EOL;
+							$str .= $customer_address . ', ' . $customer_city . ', ' . $customer_zip_code . PHP_EOL;
+							$str .= $notes_field . PHP_EOL;
+							
+							
+							$msg .= '            <h2>' . $this->lang->line('customer_details_title') . '</h2>';
+							$msg .= '            <table id="customer-details">';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('name') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $customer_name . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('email') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $email_field . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('phone') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $sms_field . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('address') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $customer_address . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('city') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $customer_city . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('zip_code') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $customer_zip_code . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '                <tr>';
+							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('notes') . '</td>';
+							$msg .= '                    <td style="padding: 3px;">' . $notes_field . '</td>';
+							$msg .= '                </tr>';
+							$msg .= '            </table>';
+							$msg .= '        </div>';
+						}
+						
+						$str .= $this->lang->line('powered_by') . ' Easy!Appointments' . PHP_EOL;
+						
 						$msg .= '        <div id="footer" style="padding: 10px; text-align: center; margin-top: 10px;';
 						$msg .= '                border-top: 1px solid #EEE; background: #FAFAFA;">';
-						$msg .= '            ' . $this->lang->line('powered_by') . '';
+						$msg .= '            ' . $this->lang->line('powered_by') . ' ';
 						$msg .= '            <a href="http://easyappointments.org" style="text-decoration: none;">Easy!Appointments</a>';
 						$msg .= '            |';
 						$msg .= '            <a href="' . $company_link . '" style="text-decoration: none;">' . $company_name . '</a>';
@@ -311,7 +359,7 @@ class Reminders extends CI_Controller {
 						$msg .= '</html>';
 						$msg .= '';
 
-
+						$this->email->set_alt_message($str);
 						$this->email->message($msg);
 						$this->email->send();
 						$msg = '';

@@ -70,7 +70,13 @@ class Preview extends CI_Controller {
             $available_providers = $this->providers_model->get_available_providers();
             $company_name        = $this->settings_model->get_setting('company_name');
             $date_format         = $this->settings_model->get_setting('date_format');
-
+            $time_format         		= $this->settings_model->get_setting('time_format');
+            $week_starts_on      		= $this->settings_model->get_setting('week_starts_on');
+            $max_date            		= $this->settings_model->get_setting('max_date');
+            $show_free_price_currency 	= $this->settings_model->get_setting('show_free_price_currency');
+            $show_any_provider 			= $this->settings_model->get_setting('show_any_provider');
+			$show_minimal_details		= $this->settings_model->get_setting('show_minimal_details');
+			$conf_notice				= $this->settings_model->get_setting('conf_notice');
 			// Remove the data that are not needed inside the $available_providers array.
 			foreach ($available_providers as $index=>$provider) {
 				$stripped_data = array(
@@ -136,9 +142,16 @@ class Preview extends CI_Controller {
                 'company_name'          => $company_name,
                 'manage_mode'           => $manage_mode,
 				'date_format'           => $date_format,
+				'time_format'           	=> $time_format,
+				'week_starts_on'        	=> $week_starts_on,
+				'max_date'        			=> $max_date,
+				'show_free_price_currency'	=> $show_free_price_currency,
+				'show_any_provider'			=> $show_any_provider,
                 'appointment_data'      => $appointment,
                 'provider_data'         => $provider,
-                'customer_data'         => $customer
+                'customer_data'         => $customer,
+				'show_minimal_details'		=> $show_minimal_details,
+				'conf_notice'				=> $conf_notice
             );
         } catch(Exception $exc) {
             $view['exceptions'][] = $exc;
@@ -224,6 +237,7 @@ class Preview extends CI_Controller {
 
 				$send_customer = filter_var($this->settings_model->get_setting('customer_notifications'),
 						FILTER_VALIDATE_BOOLEAN);
+
 
 				if ($send_customer === TRUE) {
 					$email->sendDeleteAppointment($appointment, $provider,

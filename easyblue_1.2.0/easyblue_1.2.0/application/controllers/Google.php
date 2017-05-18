@@ -10,6 +10,9 @@
  * @link        http://easyappointments.org
  * @since       v1.0.0
  * ---------------------------------------------------------------------------- */
+use \EA\Engine\Types\Text;
+use \EA\Engine\Types\Email;
+use \EA\Engine\Types\Url;
 
 /**
  * Google Controller
@@ -220,7 +223,7 @@ class Google extends CI_Controller {
 							'id_google_calendar' => $event->getId(),
 							'id_users_customer' => $customer,
 							'id_services' => $service,
-							'hash' => md5($event->getId()),
+
 						);
                     $this->appointments_model->add($appointment);
                 }
@@ -230,7 +233,9 @@ class Google extends CI_Controller {
 			$this->db->query("DELETE `e2`.* FROM `ea_appointments` AS `e1`, `ea_appointments` AS `e2` WHERE `e1`.`id` > `e2`.`id`".
 			" AND LEFT(`e1`.`id_google_calendar`,26) = LEFT(`e2`.`id_google_calendar`,26)". 
 			" AND `e2`.`start_datetime` = `e1`.`start_datetime`");
-
+			
+			//Add hash.  This should be done in active record form above but 'hash' => md5($event->getId()); produced odd results for me
+			$this->db->query("UPDATE `ea_appointments` SET `hash` = MD5(`id_google_calendar`) WHERE CHAR_LENGTH(`id_google_calendar`) > 26");
             echo json_encode(AJAX_SUCCESS);
         } catch(Exception $exc) {
             echo json_encode(array(
@@ -260,6 +265,7 @@ class Google extends CI_Controller {
 		// The user must be logged in.
 		$this->load->library('email');
 		$this->load->library('session');
+        $this->config->load('email');
 		if ($this->session->userdata('user_id') == FALSE) return;
 
 		$startsynctime = date('h:i:sa');
@@ -268,32 +274,35 @@ class Google extends CI_Controller {
 		* Based on Amine Hamdi  https://groups.google.com/forum/#!searchin/easy-appointments/sync_past_days/easy-appointments/
 		*/
 		$full_sync_past_days = 0;  //limits sync x# of days to prior to today
-		$full_sync_future_days = 62; //Limits the sync period to x# of days after today	
+		$full_sync_future_days = $this->settings_model->get_setting('max_date') + 2; //Limits the sync period to x# of days after today	
 
 		$this->syncgoogle($provider_id, $full_sync_past_days, $full_sync_future_days);
 		
 	    /**
 		* This is an email notification of a successful sync
-		* To use, remove the // marks and fill in your information for email.
-		*/		
-		
- 		// $config['mailtype'] = 'text';
-		// $this->email->initialize($config);
-		// $this->email->to('example@email.com');
-		// $this->email->from('example2@email.com', 'Sync Update');
-		// $this->email->subject('Backend sync complete');
-		// $this->email->message('Backend sync db started '.$startsynctime.' and completed '. date('h:i:sa'));
-		// $this->email->send();
-		
+		* The rest of the code for the notification is found in /engine/Notifications/Email.php.
+		* in syncComplete().
+		*/	
+		$synctype = 'Backend';
+		$endsynctime = date('h:i:sa');
+		if ($this->settings_model->get_setting('google_sync_notice') == 'yes') {
+			$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+			$email->syncComplete($startsynctime, $endsynctime, $synctype);
+
+		}		
 	}	
 
 	public function sync3() {
+		
+		$this->load->model('settings_model');
+		
 		if(!$this->input->is_cli_request()) {
 			echo "This script can only be accessed via the command line" . PHP_EOL;
 			return;
 		}
 		$this->load->library('email');
 		$this->load->model('providers_model');
+        $this->config->load('email');
 		$providers = NULL;
 		$provider_id = NULL; 
 		$providers = $this->providers_model->get_all_provider_ids();
@@ -304,9 +313,9 @@ class Google extends CI_Controller {
 		* Based on Amine Hamdi  https://groups.google.com/forum/#!searchin/easy-appointments/sync_past_days/easy-appointments/
 		*/
 		$full_sync_past_days = 0;  //limits sync x# of days to prior to today
-		$full_sync_future_days = 62; //Limits the sync period to x# of days after today	
+		$full_sync_future_days = $this->settings_model->get_setting('max_date') + 2; //Limits the sync period to x# of days after today	
 									 //I tend to go a couple days longer than I allow people to book out
-									 //just incase I have a sync error, I have a day grace to fix it.
+									 //just incase I have a sync error, I have couple days of grace to fix it.
 		foreach ($providers as $provider_id) {
             $google_sync = $this->providers_model->get_setting('google_sync', $provider_id);
             if ($google_sync) {
@@ -316,16 +325,15 @@ class Google extends CI_Controller {
 
 	    /**
 		* This is an email notification of a successful sync
-		* To use, remove the // marks and fill in your information for email.
+		* The rest of the code for the notification is found in /engine/Notifications/Email.php.
+		* in syncComplete().
 		*/		
-		
- 		// $config['mailtype'] = 'text';
-		// $this->email->initialize($config);
-		// $this->email->to('example@email.com');
-		// $this->email->from('example2@email.com', 'Sync Update');
-		// $this->email->subject('Chron sync complete');
-		// $this->email->message('Chron sync db started '.$startsynctime.' and completed '. date('h:i:sa'));
-		// $this->email->send();
+		$synctype = 'Cronjob';
+		$endsynctime = date('h:i:sa');
+		if ($this->settings_model->get_setting('google_sync_notice') == 'yes') {
+			$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+			$email->syncComplete($startsynctime, $endsynctime, $synctype);
+		}		
 	} 
 }
 

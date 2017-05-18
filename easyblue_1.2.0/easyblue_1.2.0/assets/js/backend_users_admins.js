@@ -132,6 +132,7 @@
          */
         $('#admins').on('click', '#save-admin', function() {
             var admin = {
+				notifications: $('#client-notifications').val(), //Craig Tucker notification modification
                 first_name: $('#admin-first-name').val(),
                 last_name: $('#admin-last-name').val(),
                 email: $('#admin-email').val(),
@@ -311,6 +312,7 @@
      * @param {Object} admin Contains the admin record data.
      */
     AdminsHelper.prototype.display = function(admin) {
+		$('#client-notifications').val(admin['notifications']) //Craig Tucker notification mod
         $('#admin-id').val(admin.id);
         $('#admin-first-name').val(admin.first_name);
         $('#admin-last-name').val(admin.last_name);

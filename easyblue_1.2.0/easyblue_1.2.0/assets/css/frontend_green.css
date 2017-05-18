@@ -224,6 +224,7 @@ body {
 
 #book-appointment-wizard .captcha-image {
     float: right;
+	width: 250px;
     margin-bottom: 20px;
     border-radius: 3px;
     box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
@@ -236,14 +237,23 @@ body {
 
 /*Loading dots mod Craig Tucker start 1*/
 #wait.item {
-  display: flex;
-  align-items: center;
-  justify-content: center
+	position: absolute; 
+	left:0; 
+	right:0; 
+	top:0; 
+	bottom:0; 
+	margin:auto;
 	}
 
 img {
-	width:64px;
-	height:64px;
+	width:150px;
+	height:150px;
+	position: absolute; 
+	left:0; 
+	right:0; 
+	top:0; 
+	bottom:0; 
+	margin:auto;
 }
 
 .caption {
@@ -251,14 +261,23 @@ img {
 }
 
 #waitpreview.item {
-  display: flex;
-  align-items: center;
-  justify-content: center
+	position: absolute; 
+	left:0; 
+	right:0; 
+	top:0; 
+	bottom:0; 
+	margin:auto;
 	}
 
 img {
-	width:64px;
-	height:64px;
+	width:150px;
+	height:150px;
+	position: absolute; 
+	left:0; 
+	right:0; 
+	top:0; 
+	bottom:0; 
+	margin:auto;
 }
 
 .caption {
@@ -303,15 +322,7 @@ img {
 
 @media(max-width:991px) {
 
-	/*Loading dots mod Craig Tucker start 2*/
 
-	#wait.item {
-
-		top:50%;
-		left:35%;
-	}	
-
-	/*Loading dots mod Craig Tucker end 2*/	
 	
 /* MOBILE DEVICES
    ------------------------------------------------------------------------- */
@@ -469,21 +480,6 @@ img {
     }
 }
 
-	/*Loading dots mod Craig Tucker start 3*/
-
-	#wait.item {
-
-		top:50%;
-		left:25%;
-	}
-	
-	#waitpreview.item {
-    top:45%;
-	left:22%;
-	}
-	/*Loading dots mod Craig Tucker end 3*/	
-
-
 @media(max-width:480px) {
     body {
         background-color: #FAFAFA;
@@ -515,16 +511,4 @@ img {
     #success-frame {
         height: 100%;
     }
-	/*Loading dots mod Craig Tucker start 4*/
-
-	#wait.item {
-
-		top:50%;
-		left:21%;
-	}	
-
-
-	
-	/*Loading dots mod Craig Tucker end 4*/	
-	
 }
