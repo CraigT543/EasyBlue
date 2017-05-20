@@ -604,10 +604,10 @@ class Appointments extends CI_Controller {
 				}
 				
 				//MaxDate mod Craig Tucker 2 start
-				//if ($current_date > new DateTime(date('Y-m-d 00:00:00', strtotime('+'.$max_date.'days')))) { // Dates past maxDate become immediately unavailable.
-				//	$unavailable_dates[] = $current_date->format('Y-m-d');
-				//	continue;
-				//}
+				if ($current_date > new DateTime(date('Y-m-d 00:00:00', strtotime('+'.$max_date.'days')))) { // Dates past maxDate become immediately unavailable.
+					$unavailable_dates[] = $current_date->format('Y-m-d');
+					continue;
+				}
 				//MaxDate mod Craig Tucker 2 end
 
 				$empty_periods = $this->_get_provider_available_time_periods($provider_id,

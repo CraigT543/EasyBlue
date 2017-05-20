@@ -245,7 +245,7 @@ body {
 	margin:auto;
 	}
 
-img {
+#wait img {
 	width:150px;
 	height:150px;
 	position: absolute; 
@@ -269,7 +269,7 @@ img {
 	margin:auto;
 	}
 
-img {
+#waitpreview img {
 	width:150px;
 	height:150px;
 	position: absolute; 

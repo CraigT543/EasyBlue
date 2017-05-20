@@ -245,7 +245,7 @@ body {
 	margin:auto;
 	}
 
-img {
+#wait img {
 	width:150px;
 	height:150px;
 	position: absolute; 
@@ -255,6 +255,7 @@ img {
 	bottom:0; 
 	margin:auto;
 }
+
 
 .caption {
     display: block;
@@ -269,7 +270,7 @@ img {
 	margin:auto;
 	}
 
-img {
+#waitpreview img {
 	width:150px;
 	height:150px;
 	position: absolute; 
@@ -280,12 +281,10 @@ img {
 	margin:auto;
 }
 
-
 .caption {
     display: block;
 }
 /*Loading dots mod Craig Tucker end 1*/
-
 /* BOOK SUCCESS & MESSAGE
    ------------------------------------------------------------------------- */
 #message-frame,
@@ -479,8 +478,6 @@ img {
         font-size: 1.2em;
     }
 }
-
-
 
 @media(max-width:480px) {
     body {
