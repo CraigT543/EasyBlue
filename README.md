@@ -1,9 +1,34 @@
-# EasyBlue
+# EasyBlue + Bullmoose20
 <h1>Modifications for Easy!Appointments</h1>
 
-This is my latest build of Easy!Appointments by Alex Tselegidis found at http://easyappointments.org/ and at https://github.com/alextselegidis/easyappointments.  Alex has been very generous to share this. My modifications are a little hacky and ammeture but they work to do some things that are necessary for a clinical practice to flow smoothely.  
+This is my latest build of Easy!Appointments by Alex Tselegidis found at http://easyappointments.org/ and at https://github.com/alextselegidis/easyappointments.  Alex has been very generous to share this. My modifications are a little hacky and ammeture but they work to do some things that are necessary for a clinical practice to flow smoothly.
 
-<h1>What I have addded that does not exist in the standard Easy!Appointments</h1>
+The most current repository is merged with some really great modifications by Bullmoose20. Bullmoose20 has added:
+<ul>
+<li>A considerably enhanced the settings page. 
+<li>Options for date and time format that more accurately are reflected throughout the program
+<li>Option for "All Providers" to be removed or added in settings
+<li>Options theme colors (red, green, blue).  He has made it very easy to theme the program.
+<li>Better integration of the language file throughout the program including my reminders and waiting list
+<li>Added HTML to my waiting list notifications and reminder notifications.  
+<li>He added the ability to modify many of my modifications within the settings page for example # of days out to allow to book, number of days out to send reminders (a nice addition too to allow for multiple reminders over time)
+<li>Reorganized the sql files so that all data input are in the data file.
+<li>Updated and corrected some of my mistakes.  
+</ul>
+These are really lovely.
+
+I have added:
+<ul>
+<li>A consent to receive notifications so users can opt out on the front end individually it they choose.  This is better for HIPAA if you are a health care provider.  Modify the notice for your practice. This can be turned off or on in the settings.  And the clients selection can be modified in the users profile.
+<li>I have added alternate text only formatting for SMS to the Bullmoose20 features.
+<li>I have added the ability to show minimal information in notices and reminders, just provider date and time, rather than service.  Again adding more privacy protection for health-care. This can be turned off or on in settings.
+<li>Repaired several little glitches.
+</ul>
+
+The notes below are mostly true with the latest build.  However, now most of the settings can be done in the settings page and do not need to be hard coded in.  I was not able to meticulously document the most recent changes listed above. And some things have changed below and I have not kept track. Nevertheless . . .
+
+
+<h1>What I have added that does not exist in the standard Easy!Appointments</h1>
 
 First, a fully booked calender loads a little slow so I have added a <b>loading spinner</b>.  I do not like people booking more than 60 days out so I made it possible to <b>limit the range of days for booking</b>. I added the ability to send appointment <b>reminders xDays before appointments by cell messaging and Email</b>. I added a <b>waiting list</b> application.  I have my clients log into my word press page to book  but I also wanted potential clients to see my availability so I made a <b>preview screen</b> that can go on my front end with out being booked in.  I <b>modified the return to schedule</b> button so that when people push return to book their personal data from the last booking loads automatically.  I made several significant changes for <b>better integration with Google calender</b>. The Sync part of the application allows the client information to be better represented on Google Calendar and so that if I make an appointment recurring in Google Calendar the client information for those recurring appointments will sync back to Easy!Appointments. I made several Date/Time modifications to <b>comply with US AM/PM, Sun-Sat, M/D/Y formatting</b> on front end and partially on back end, and also in the notifications. I <b>enhanced the email booking notification</b> to include more information such as business address with a google maps link and I added an iCal file so that booking will auto fill into Outlook and Thunderbird as well as Gmail if users turn on iCal import.  I also made modifications for <b>better integration with Wordpress</b>. I can coordinate Wordpress user database with Easy!Appointments database such that when a user is logged in their information will auto fill.  And last of all I explain some <b>Gmail modifications</b> I have made to correct some intermittent email problems I was having on my server.
 
@@ -21,7 +46,7 @@ First, a fully booked calender loads a little slow so I have added a <b>loading 
 
 •	<b>Language File</b>: I added and changed a few things in the English language file.  Most of my entries are at the bottom of the file.  Unfortunately I have not been so careful about documenting these additions but I think they are fairly clear there.
  
-These changes work fine for me as a solo practicitoner but they may not work well for you. I am comfortable going back and forth between Google Callendar and Easy!Appointments for doing tasks.  For example if using my Google sync mods, I only set recurring appointments in Google Calendar.  I only schedule new appointments in Easy!Appointments. Rescheduling can be done in Google Calendar but you must run sync immediately afterward for the change to manifest in EA. As long as these things are done it runs great.  If you try to schedule a new client in Google Calendar you risk messing up the codes in the notes section of your appoitment.  If that happens, you have to rebuild the calendar in Easy!Appointments.  That requires the following--First disable the sync in EA, then delete the appointment database in Easy!Appointments, find out where the code got messed up in Google Calendar, fix it, and then restart the sync with Google Calendar in EA. If you are building this for someone else they may not be so patient with that.  Also, to get the waiting list and the reminders to send out you must set up a cronjob and that may be frustrating for some.  I do not find it to be a problem but people who what a slick smoothe foolproof system may be disappointed so play with it first.
+These changes work fine for me as a solo practitioner but they may not work well for you. I am comfortable going back and forth between Google Calendar and Easy!Appointments for doing tasks.  For example if using my Google sync mods, I only set recurring appointments in Google Calendar.  I only schedule new appointments in Easy!Appointments. Rescheduling can be done in Google Calendar but you must run sync immediately afterward for the change to manifest in EA. As long as these things are done it runs great.  If you try to schedule a new client in Google Calendar you risk messing up the codes in the notes section of your appointment.  If that happens, you have to rebuild the calendar in Easy!Appointments.  That requires the following--First disable the sync in EA, then delete the appointment database in Easy!Appointments, find out where the code got messed up in Google Calendar, fix it, and then restart the sync with Google Calendar in EA. If you are building this for someone else they may not be so patient with that.  Also, to get the waiting list and the reminders to send out you must set up a cronjob and that may be frustrating for some.  I do not find it to be a problem but people who what a slick smooth foolproof system may be disappointed so play with it first.
 
 <h1 id"My Modification Notes">My Modification Notes</h1>
 This is an outline of my modifications and where you can find them in my build by the comment line.  I have tried to comment the changes as much as possible for my benefit, so that when updates come to EA I can more quickly update the files. I have not documented the changes for the color theme because that is all basic CSS and there are good resources for that already. Here the rest of the mods I made:
@@ -168,7 +193,7 @@ In /assets/js/backend_customers.js I added:
 	$('#cell-carrier').val(customer['id_cellcarrier']); //Cell-carrier mod Craig Tucker 2
 
 <h2 id="Sending Appointment Reminders">Sending Appointment Reminders</h2>
-The reminders require that the cellphone field is working first. The reminders are triggered by a script that is launched by cron tab.  
+The reminders require that the cell-phone field is working first. The reminders are triggered by a script that is launched by cron tab.  
 Create a directory for scripts in /application/controllers/cli
 
 You can copy over the Reminders.php file and the HowToUseCLI.txt file.  The HowToUseCLI.txt file will explain how to set up your Chron job in Crontab.
