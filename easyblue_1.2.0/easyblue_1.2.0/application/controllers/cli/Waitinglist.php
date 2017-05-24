@@ -87,11 +87,11 @@ class Waitinglist extends CI_Controller {
 				$appointment_price = $this->services_model->get_value('price', $appointment_service_id);
 				$appointment_currency = $this->services_model->get_value('currency', $appointment_service_id);
 				$appointment_price_currency = $appointment_price . ' ' . $appointment_currency;
-				$provider_street = $this->user_model->get_value('address', $provider_id);
-				$provider_city = $this->user_model->get_value('city', $provider_id);
-				$provider_state = $this->user_model->get_value('state', $provider_id);
-				$provider_zip_code = $this->user_model->get_value('zip_code', $provider_id);
-				$provider_address = $provider_street.', '.$provider_city.', '.$provider_state.' '.$provider_zip_code; 
+				// $provider_street = $this->user_model->get_value('address', $provider_id);
+				// $provider_city = $this->user_model->get_value('city', $provider_id);
+				// $provider_state = $this->user_model->get_value('state', $provider_id);
+				// $provider_zip_code = $this->user_model->get_value('zip_code', $provider_id);
+				// $provider_address = $provider_street.', '.$provider_city.', '.$provider_state.' '.$provider_zip_code; 
 				$emailphone = $notice->notes;
 				$this_lang = $notice->lang;
 				
