@@ -104,12 +104,11 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
   `id_roles` bigint(20) unsigned NOT NULL,
   `id_cellcarrier` bigint(20) DEFAULT NULL,
   `wp_id` bigint(20) DEFAULT NULL,
-  `notifications` tinyint(4) DEFAULT '0',
+  `notifications` tinyint(4) DEFAULT '1',
   `conf_notice` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `id_roles` (`id_roles`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=84 ;
-
 
 CREATE TABLE IF NOT EXISTS `ea_user_settings` (
   `id_users` bigint(20) unsigned NOT NULL,

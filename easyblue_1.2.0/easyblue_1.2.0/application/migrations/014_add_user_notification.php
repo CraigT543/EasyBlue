@@ -21,7 +21,7 @@ class Migration_Add_user_notification extends CI_Migration {
 				'notifications' => [ 
 					'type' => 'tinyint',
 					'constraint' => '4',
-					'default' => 0,
+					'default' => 1,
 	                'after' => 'lang'
 				
 				]
