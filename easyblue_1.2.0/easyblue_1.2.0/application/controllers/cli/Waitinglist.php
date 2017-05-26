@@ -117,6 +117,7 @@ class Waitinglist extends CI_Controller {
 				}else{
 
 				}
+				
 				echo "lang: " . $this_lang . PHP_EOL;
 				echo "email: " . $email_field . PHP_EOL;
 				echo "sms: " . $sms_field . PHP_EOL;
@@ -127,28 +128,53 @@ class Waitinglist extends CI_Controller {
 				$this->lang->load('translations', $this_lang);
 				
 				$subject = $this->lang->line('waiting_list_update') . ' ' .  $company_name;
+				$sms_subject = $this->lang->line('waiting_list_sms');
 				$availability = $this->availabilitylist($provider_id);
+				
+				if (!empty ($sms_field)){
+					$config['mailtype'] = 'text';
+					$this->email->initialize($config);
+					$this->email->set_newline(PHP_EOL);
+					$this->email->from($pemail, $company_name);
+					$this->email->to($sms_field);
+					$this->email->subject($sms_subject);
+					
+					if (empty($availability[0])){
+						$str .= strtoupper($subject) . PHP_EOL . $provider . ' ' . $this->lang->line('waiting_list_no_avail') . ' ';
+						$str .= $this->lang->line('view_current_sched'). PHP_EOL;
+					}else{
+						$str .= strtoupper($subject). PHP_EOL  . $provider .' ' . $this->lang->line('waiting_list_has_avail') . PHP_EOL . $availability[1] . PHP_EOL;
+						$str .= $this->lang->line('make_appointment') . PHP_EOL;
+						
+					$str .= PHP_EOL;
+					$str .= $currentsched . PHP_EOL;
+					$str .= $this->lang->line('remove_from_wl') . PHP_EOL;
+					$str .= $appointment_link.$notice->hash . PHP_EOL;
+					$str .= 'Powered by Easy!Appointments';
+
+					$this->email->message($str);
+					$this->email->send();
+					$str = '';
+					echo $this->email->print_debugger();  
+					}
+				}				
+				
+				
 				$config['mailtype'] = 'html';
 				$this->email->initialize($config);
 				$this->email->set_newline(PHP_EOL);
 				$this->email->from($pemail, $company_name);
 				$this->email->to($email_field);
-				$this->email->bcc($sms_field);
 				$this->email->subject($subject);
 				
 				if (empty($availability[0])){
-					$str .= strtoupper($subject) . PHP_EOL . $provider . ' ' . $this->lang->line('waiting_list_no_avail') . ' ';
-					$str .= $this->lang->line('view_current_sched'). PHP_EOL;
-
 					$email_message .= $provider . ' ' . $this->lang->line('waiting_list_no_avail') . '<br>';
 					$email_message .= '<br>';
 					$email_message .= $this->lang->line('view_current_sched') . '<br>';
 					$email_message .= '<a href="' . $currentsched . '" style="text-decoration: none;">' . $this->lang->line('view_now') . '</a><br>';
 					
 				}else{
-					$str .= strtoupper($subject). PHP_EOL  . $provider .' ' . $this->lang->line('waiting_list_has_avail') . PHP_EOL . $availability[1] . PHP_EOL;
-					$str .= $this->lang->line('make_appointment') . PHP_EOL;
-					
+				
 					$email_message .= $provider . ' ' . $this->lang->line('waiting_list_has_avail') . '<br>';
 					$email_message .= '<br>';
 					$email_message .= '<font size="2">'.$availability[0].'</font><br>';
@@ -161,12 +187,6 @@ class Waitinglist extends CI_Controller {
 				$email_message .= '<a href="' . $appointment_link.$notice->hash . '" style="text-decoration: none;">' . $this->lang->line('del_waiting'). '</a><br>';
 				$email_message .= '<br>';
 
-				$str .= '
-'.$currentsched.'
-'. $this->lang->line('remove_from_wl') .'
-'. $appointment_link.$notice->hash.'
-Powered by Easy!Appointments';
-				
 				$msg .= '<html>';
 				$msg .= '<head>';
 				$msg .= '    <title>' . $subject . '</title>';
@@ -198,14 +218,12 @@ Powered by Easy!Appointments';
 				$msg .= '    </div>';
 				$msg .= '</body>';
 				$msg .= '</html>';
-
-
 				
 				$this->email->message($msg);
-				$this->email->set_alt_message($str);
 				$this->email->send();
 				$msg = '';
-				echo $this->email->print_debugger();  
+				echo $this->email->print_debugger(); 
+
 			}
 		}
     }

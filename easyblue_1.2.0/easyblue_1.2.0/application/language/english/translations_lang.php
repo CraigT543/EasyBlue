@@ -313,7 +313,8 @@ $lang['waitinglist_canceled_title'] = 'Waiting List Cancelled';
 $lang['waitinglist_cancelled'] = 'You have been successfully taken off of the waiting list.';
 
 //Waiting List Notice
-$lang['waiting_list_update'] = 'Waiting List Update from';
+$lang['waiting_list_sms'] = "Waiting List Update"; //Limit to 20 characters only.
+$lang['waiting_list_update'] = "Waiting List Update from";
 $lang['waiting_list_update1'] = 'Update:'; 
 $lang['waiting_list_no_avail'] = 'has no availabilty at this time.';
 $lang['view_current_sched'] = 'View the current schedule here:';
@@ -368,21 +369,23 @@ $lang['google_sync_to_hint'] = 'The address to wich you will be sending the goog
 //Appointment Reminders
 $lang['edit_reschedule_cancel_appointment'] = 'Click here to edit, reschedule, or cancel the appointment';
 $lang['notice_reminder']= 'One more day until your appointment.';
+$lang['notice_reminder_sms']= '1 day reminder'; //20 character limit
 $lang['notice_reminder_days']= 'more days until your appointment.';
+$lang['notice_reminder_days_sms']= ' day reminder'; //20 character limit
 $lang['reminder_your_appt_with']= 'REMINDER: Your appointment with'; 
 $lang['is_on']= 'is on'; 
-$lang['msg_line1']= ''; //Text line
-$lang['url_line1']= ''; //URL line
-$lang['msg_line2']= ''; //Text line
-$lang['url_line2']= ''; //URL line
+$lang['msg_line1']= 'Attend on line at craigtuckerlcsw.com > My Appointments tab'; 
+$lang['url_line1']= 'https://www.craigtuckerlcsw.com/wordpress/myappointments/'; 
+$lang['msg_line2']= 'Craig Tucker, LCSW is listed on HealthGrades';
+$lang['url_line2']= 'https://www.healthgrades.com/review/XGVRC';
 
 //Text for the Confidentiality Notice and Authorization Pannel for Frontend
 $lang['conf_title'] = 'Confidentiality Notice';
-$lang['conf_text1'] = 'Text and email are non-secure methods for transmition of personal health care information. It is higly recommended that you use personal email and SMS/MMS addresses only. Do not use addresses associated with work accounts. Individuals who have access to your email and SMS/MMS accounts will also have access to the following information about your care:';
+$lang['conf_text1'] = 'Text and email are non-secure methods for transmition of personal health care information. It is higly recommended that you use personal email and SMS/MMS addresses only. Do not use addresses associated with work accounts. Individuals who have access to your email and SMS/MMS accounts will also have access to the following information about your care with Mr. Tucker:';
 $lang['conf_bullet1'] = '<b>Information related to the scheduling of meetings or other appointment dates and times</b> (not to include the type of session or purpose of our meeting).';
 $lang['conf_bullet2'] = '<b>Information related to appointment billing and payment amounts due</b> (not to include any financial or claims-related identifiers including, but not limited to, credit card numbers, insurance plan numbers, diagnosis codes, or procedure codes.)';
-$lang['conf_bullet3'] = '<b>Notices of communication on the secure message board from this site</b>. All online communication with Mr. Tucker should be done on his secure message board rather than through email or text.  Replies to you will will be in an email that will only state the following "You have received a new message, follow this link to view it:';
-$lang['conf_text2'] = 'You may refuse email and sms notices and reminders and still book appointments.  However if you refuse notifications, you will need to regularly check the message board for any general notices regarding your care.  If reminders and notifications are refused, you can still see upcomming appointments, and book, cancel, and reschedule appointments through the website.';
+$lang['conf_bullet3'] = '<b>Notices of communication on the secure message board from this site</b>. All online communication with Mr. Tucker should be done on his secure message board rather than through email or text.  When Mr. Tucker replies you will recieve an email that will only state the following "You have received a new message from craigtuckerlcsw, follow this link to view it: https://www.craigtuckerlcsw.com/wordpress/private-messaging/"';
+$lang['conf_text2'] = 'You may refuse email and sms notices and reminders and still book appointments.  However if you refuse notifications, you will need to regularly check the message board for any general notices from Mr. Tucker.  If reminders and notifications are refused, you can still see upcomming appointments, and book, cancel, and reschedule appointments through the website.';
 $lang['notice_auth'] = 'Email/SMS Notice/Reminder Authorization';
 $lang['notice_auth_y'] = 'I want to recieve email/sms notices and appointment reminders';
 $lang['notice_auth_n'] = 'Do not send me sms/email notices and appointment reminders';
