@@ -222,7 +222,7 @@ class Google extends CI_Controller {
 							'id_users_provider' => $provider_id,
 							'id_google_calendar' => $event->getId(),
 							'id_users_customer' => $customer,
-							'id_services' => $service,
+							'id_services' => $service
 
 						);
                     $this->appointments_model->add($appointment);
@@ -263,6 +263,7 @@ class Google extends CI_Controller {
 	
     public function sync2($provider_id = NULL) {
 		// The user must be logged in.
+		$this->load->model('settings_model');
 		$this->load->library('email');
 		$this->load->library('session');
         $this->config->load('email');
@@ -288,7 +289,6 @@ class Google extends CI_Controller {
 		if ($this->settings_model->get_setting('google_sync_notice') == 'yes') {
 			$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
 			$email->syncComplete($startsynctime, $endsynctime, $synctype);
-
 		}		
 	}	
 
