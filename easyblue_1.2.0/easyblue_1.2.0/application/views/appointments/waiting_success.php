@@ -50,9 +50,11 @@
                         echo '<h3>' . $this->lang->line('waitinglist_registered') . '</h3>';
 						echo '<p>' . $this->lang->line('waitinglist_details') . '</p>';						
                     ?>
+					<div id="hideInIframe">
 						<form action="<?php echo $this->config->base_url()?>">
 							<input type="submit" value="<?php echo $this->lang->line('return_to_book') ?>" class="btn btn-primary">
 						</form>
+					</div>
                 </div>
             </div>
         </div>
@@ -90,6 +92,9 @@
         };
 
         var EALang = <?php echo json_encode($this->lang->language); ?>;
+		if ( window.self !== window.top ) {
+		  $("#hideInIframe").css('display','none');
+		}
     </script>
 
     <script

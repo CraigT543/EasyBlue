@@ -11,9 +11,19 @@ body {
     background: #fff!important;
 }
 
-element.style {
-    display: block;
-    padding-left: 0px!important; 
+#manage-waitinglist.modal.fade.in {
+    padding: 0px!important;
+	overflow-y: hidden !important;	
+}
+
+.form-group {
+    margin-bottom: 0px!important; 
+}
+
+p {
+    line-height: 105%;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 			</style>
@@ -185,24 +195,21 @@ element.style {
     
 	<!-- MANAGE WAITING LIST Modification Start
 	Craig Tucker, craigtuckerlcsw@gmail.com	 -->
-	<div id="manage-waitinglist" class="modal fade" >
-		
+	<div id="manage-waitinglist" class="modal fade">
+		<div class="modal-dialog">
 			<div class="modal-content">
-				<div>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3 style= "margin-left:10px;" class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
-					<h6 style= "margin-left:20px; margin-right:20px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?><br><br>
-					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
-					</h6><br><br>
+				<div class="modal-header">
+					<h3 class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
+					<p style= "margin-left:10px; margin-right:10px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?></p>
+					<p style= "margin-left:10px; margin-right:10px;"><b><u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u></b><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
+					</p>
 				</div>
-				
+				<div>
 					<div class="modal-message alert" style="display: none;"></div>
-					<div class="container-fluid" style= "margin-left:20px; margin-right:20px;">
+					<div class="container-fluid" style= "margin-left:10px; margin-right:10px;">
 						<div class="form-group">
-							<label for="email2" class="control-label"><?php echo $this->lang->line('email'); ?></label>
+							<label for="email2" class="control-label">*<?php echo $this->lang->line('email'); ?></label>
 							<input type="text" id="email2" class="form-control" maxlength="250" />
-						</div>
-						<div class="form-group">
 							<label for="cell-carrier2">
 									<strong><?php echo $this->lang->line('cell_carrier'); ?></strong>
 								</label>
@@ -214,15 +221,16 @@ element.style {
 													. $carrier['cellco'] . '</option>';
 										}
 									?>
-								</select><br>
-							<div class="form-group">
+								</select>
 								<label for="phone-number2" class="control-label"><?php echo $this->lang->line('phone_number'); ?></label>
 								<input type="text" id="phone-number2" class="form-control" maxlength="60" />
-							</div>
-								
-						</div>					
+								<em id="form-message" class="text-danger"><?php echo $this->lang->line('fields_are_required'); ?></em>
+							</div>					
 					</div>
+				</div>
+				
 					<div class="modal-footer">
+
                     <form id="save-waitinglist-form" style="display:inline-block" method="post">
 						<button id="save-waitinglist" type="button" name="submit2" class="btn btn-success" >
 						<span class="glyphicon glyphicon-ok"></span>
@@ -235,10 +243,14 @@ element.style {
 						<button id="cancel-waitinglist" class="btn" data-dismiss="modal">
 							<?php echo $this->lang->line('cancel'); ?>
 						</button>
+
 					</div>				
+					
 			</div>
+		</div>								
 	</div>		
 	<!-- MANAGE WAITING LIST Modification End -->	
+
 	
     <?php
         // ------------------------------------------------------------
@@ -313,14 +325,21 @@ element.style {
         });
 		
 		<!-- Craig Tucker mod start 2-->
+		window.onload = function () {
+			$(document).ajaxStart(function(){
+				$(".ui-datepicker").css("opacity", ".2");
+				$("#waitpreview").css("display", "block");
+			});
+		}	
+		
 		$(document).ready(function(){
 			$(document).ajaxStart(function(){
-				$("#waitpreview").css("display", "block");
 				$(".ui-datepicker").css("opacity", ".2");
+				$("#waitpreview").css("display", "block");
 			});
 			$(document).ajaxComplete(function(){
-				$("#waitpreview").css("display", "none");
 				$(".ui-datepicker").css("opacity", "1");
+				$("#waitpreview").css("display", "none");
 			});
 			$("button").click(function(){
 				$("#txt").load("demo_ajax_load.asp");
