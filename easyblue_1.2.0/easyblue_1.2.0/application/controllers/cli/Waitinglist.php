@@ -52,7 +52,6 @@ class Waitinglist extends CI_Controller {
 		$appointment_link = $this->config->base_url().'index.php/appointments/index/';
 		$msg = '';
 		$str = '';
-		$email_message = '';
 		$waiting_notices = $this->appointments_model->get_waitinglist();		
 		$theme_color = $this->settings_model->get_setting('theme_color');
 		switch($theme_color) {
@@ -99,21 +98,10 @@ class Waitinglist extends CI_Controller {
 				if ($pos > 0) {
 					$addresses = explode(';', $emailphone);
 					echo "array_size: " . (sizeof($addresses)-1) . PHP_EOL;					
-					switch (sizeof($addresses)-1) //to remove the trailing ";"
-					{
-						case 1:
-						$email_field = $addresses[0];
-						break;
-						
-						case 2:
-						$email_field = $addresses[0];
-						$sms_field = $addresses[1];
-						break;
-						
-						default:
-						$this_lang = $addresses[0];
-						break;
-					}
+					sizeof($addresses)-1; //to remove the trailing ";"
+					$email_field = $addresses[0];
+					$sms_field = $addresses[1];
+				
 				}else{
 
 				}
@@ -139,13 +127,18 @@ class Waitinglist extends CI_Controller {
 					$this->email->to($sms_field);
 					$this->email->subject($sms_subject);
 					
-					if (empty($availability[0])){
+					if (empty($availability[1])){
 						$str .= strtoupper($subject) . PHP_EOL . $provider . ' ' . $this->lang->line('waiting_list_no_avail') . ' ';
 						$str .= $this->lang->line('view_current_sched'). PHP_EOL;
 					}else{
-						$str .= strtoupper($subject). PHP_EOL  . $provider .' ' . $this->lang->line('waiting_list_has_avail') . PHP_EOL . $availability[1] . PHP_EOL;
+						$str .= strtoupper($subject). PHP_EOL;
+						$str .= PHP_EOL;						
+						$str .= $provider .' ' . $this->lang->line('waiting_list_has_avail') . PHP_EOL;
+						$str .= PHP_EOL;
+						$str .= $availability[1] . PHP_EOL;
 						$str .= $this->lang->line('make_appointment') . PHP_EOL;
-						
+					}	
+					
 					$str .= PHP_EOL;
 					$str .= $currentsched . PHP_EOL;
 					$str .= $this->lang->line('remove_from_wl') . PHP_EOL;
@@ -156,9 +149,8 @@ class Waitinglist extends CI_Controller {
 					$this->email->send();
 					$str = '';
 					echo $this->email->print_debugger();  
-					}
+					
 				}				
-				
 				
 				$config['mailtype'] = 'html';
 				$this->email->initialize($config);
@@ -167,26 +159,6 @@ class Waitinglist extends CI_Controller {
 				$this->email->to($email_field);
 				$this->email->subject($subject);
 				
-				if (empty($availability[0])){
-					$email_message .= $provider . ' ' . $this->lang->line('waiting_list_no_avail') . '<br>';
-					$email_message .= '<br>';
-					$email_message .= $this->lang->line('view_current_sched') . '<br>';
-					$email_message .= '<a href="' . $currentsched . '" style="text-decoration: none;">' . $this->lang->line('view_now') . '</a><br>';
-					
-				}else{
-				
-					$email_message .= $provider . ' ' . $this->lang->line('waiting_list_has_avail') . '<br>';
-					$email_message .= '<br>';
-					$email_message .= '<font size="2">'.$availability[0].'</font><br>';
-					$email_message .= $this->lang->line('make_appointment') . '<br>';
-					$email_message .= '<a href="' . $currentsched . '" style="text-decoration: none;">' . $this->lang->line('book_now') . '</a><br>';
-					}
-				
-				$email_message .= '<br>';
-				$email_message .= $this->lang->line('remove_from_wl') . '<br>';
-				$email_message .= '<a href="' . $appointment_link.$notice->hash . '" style="text-decoration: none;">' . $this->lang->line('del_waiting'). '</a><br>';
-				$email_message .= '<br>';
-
 				$msg .= '<html>';
 				$msg .= '<head>';
 				$msg .= '    <title>' . $subject . '</title>';
@@ -204,7 +176,28 @@ class Waitinglist extends CI_Controller {
 				$msg .= '            <table id="waitinglist-details">';
 				$msg .= '                <tr>';
 				$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;"></td>';
-				$msg .= '                    <td style="padding: 3px;">' . $email_message . '</td>';
+				$msg .= '                    <td style="padding: 3px;">';
+
+				if (empty($availability[0])){
+					$msg .= $provider . ' ' . $this->lang->line('waiting_list_no_avail') . '<br>';
+					$msg .= '<br>';
+					$msg .= $this->lang->line('view_current_sched') . '<br>';
+					$msg .= '<a href="' . $currentsched . '" style="text-decoration: none;">' . $this->lang->line('view_now') . '</a><br>';
+					
+				}else{
+					$msg .= $provider . ' ' . $this->lang->line('waiting_list_has_avail') . '<br>';
+					$msg .= '<br>';
+					$msg .= '<font size="2">'.$availability[0].'</font><br>';
+					$msg .= $this->lang->line('make_appointment') . '<br>';
+					$msg .= '<a href="' . $currentsched . '" style="text-decoration: none;">' . $this->lang->line('book_now') . '</a><br>';
+				}
+				
+				$msg .= '<br>';
+				$msg .= $this->lang->line('remove_from_wl') . '<br>';
+				$msg .= '<a href="' . $appointment_link.$notice->hash . '" style="text-decoration: none;">' . $this->lang->line('del_waiting'). '</a><br>';
+				$msg .= '<br>';				
+
+				$msg .= '				 </td>';
 				$msg .= '                </tr>';
 				$msg .= '            </table>';
 				$msg .= '        </div>';
