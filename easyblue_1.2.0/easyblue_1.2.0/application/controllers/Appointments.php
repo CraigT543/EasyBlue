@@ -250,7 +250,7 @@ class Appointments extends CI_Controller {
 						FILTER_VALIDATE_BOOLEAN);
 				$clientnotification = $this->settings_model->get_setting('conf_notice');
 
-				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes')) {
 					$go_customer = TRUE;
 				}
 				
@@ -516,7 +516,7 @@ class Appointments extends CI_Controller {
 						
 				$clientnotification = $this->settings_model->get_setting('conf_notice');		
 
-				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+				if (($send_customer === TRUE) && ( $clientnotification == 'yes')) {
 					$go_customer = TRUE;
 				}
 				

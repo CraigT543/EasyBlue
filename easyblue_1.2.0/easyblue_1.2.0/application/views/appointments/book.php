@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
  <!-- WP Mod 1 Craig Tucker start -->
+
  <?php
 	if (Config::WP_HEADER_FOOTER== TRUE) {
 	global $current_user;
@@ -10,9 +11,11 @@
 		 headTag = document.getElementsByTagName("head")[0].innerHTML;
 		 var frameCSS = headTag + '<style type="text/css">#main .wrapper {height: 0!important; vertical-align: top!important;}</style>';
 		 document.getElementsByTagName('head')[0].innerHTML = frameCSS;
+		 
 	</script> <?php	
 	get_header();
 	}
+	
 	$this->load->model('settings_model');			
 	$theme_color = $this->settings_model->get_setting('theme_color');
  ?> 
@@ -28,7 +31,8 @@
     <?php
         // ------------------------------------------------------------
         // INCLUDE CSS FILES
-        // ------------------------------------------------------------ ?>
+        // ------------------------------------------------------------ 
+	?>
 	<!-- CSS mod Craig Tucker start-->
 	<link
         rel="stylesheet"
@@ -56,7 +60,8 @@
         type="text/css"
         href="<?php echo base_url('assets/css/general_' . $theme_color . '.css'); ?>">
     <?php
-        // ------------------------------------------------------------
+
+		// ------------------------------------------------------------
         // WEBPAGE FAVICON
         // ------------------------------------------------------------ ?>
 
@@ -344,7 +349,7 @@
                             <div class="col-md-6">
 								<div align="center" id="select-date" >
 								<figure id="wait" class="item">
-									<img src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
+									<img id='spinner' src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
 								</figure>
 								</div>
                             </div>
@@ -501,13 +506,13 @@
 									<div class="modal-content">
 										<div class="modal-header">
 											<h3 class="modal-title"><?php echo $this->lang->line('conf_title'); ?></h3>
-											<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_text1'); ?><br><br>
-											<ul>
-												<li><?php echo $this->lang->line('conf_bullet1'); ?></li>
-												<li><?php echo $this->lang->line('conf_bullet2'); ?></li>
-												<li><?php echo $this->lang->line('conf_bullet3'); ?></li>
-											</ul>
-										<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_text2'); ?><br><br>
+											<p style= "margin-left: 30px; margin-right:30px;"><?php echo $this->lang->line('conf_text1'); ?></p>
+
+												<li style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_bullet1'); ?></li><br>
+												<li style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_bullet2'); ?></li><br>
+												<li style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_bullet3'); ?></li><br>
+											
+										<p style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('conf_text2'); ?></p>
 										</div>
 										<div class="modal-body">
 			                                <div class="form-group">
@@ -515,9 +520,9 @@
 												<select id="conf-notice" class="form-control" ?>
 													<option value="" <?php if (Config::WP_HEADER_FOOTER== FALSE):?> selected <?php endif; ?> > 
 													<?php echo $this->lang->line('select'); ?></option>	 
-													<option value="1" <?php if ((Config::WP_HEADER_FOOTER== TRUE) && ($current_user->notifications == 1)):?> selected <?php endif; ?> >
+													<option value="1" <?php if ((Config::WP_HEADER_FOOTER== TRUE) && ($current_user->notification == 1)):?> selected <?php endif; ?> >
 													<?php echo $this->lang->line('notice_auth_y'); ?></option>
-													<option value="0" <?php if ((Config::WP_HEADER_FOOTER== TRUE) && ($current_user->notifications == 0)):?> selected <?php endif; ?> >
+													<option value="0" <?php if ((Config::WP_HEADER_FOOTER== TRUE) && ($current_user->notification == 0)):?> selected <?php endif; ?> >
 													<?php echo $this->lang->line('notice_auth_n'); ?></option>
 												</select><br><br>
 											</div>	
@@ -642,9 +647,9 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 class="modal-title"><?php echo $this->lang->line('waiting_list'); ?></h3>
-					<h6 style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?><br><br>
-					<u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
-					</h6><br><br>
+					<p style= "margin-left:30px; margin-right:30px;"><?php echo $this->lang->line('waiting_list_msg_top1'); ?><?php echo ' ' . $max_date . ' '; ?><?php echo $this->lang->line('waiting_list_msg_top2'); ?></p>
+					<p style= "margin-left:30px; margin-right:30px;"><b><u><?php echo $this->lang->line('waiting_list_msg_bottom_header'); ?></u></b><br><?php echo $this->lang->line('waiting_list_msg_bottom'); ?>
+					</p>
 				</div>
 				<div class="modal-body">
 					<div class="modal-message alert" style="display: none;"></div>
@@ -730,7 +735,6 @@
         // ------------------------------------------------------------
         // INCLUDE JAVASCRIPT FILES
         // ------------------------------------------------------------ ?>
-
     <script
         type="text/javascript"
         src="<?php echo base_url('assets/js/general_functions.js'); ?>"></script>
@@ -767,17 +771,17 @@
             FrontendBook.initialize(true, GlobalVariables.manageMode);
             GeneralFunctions.enableLanguageSelection($('#select-language'));
         });
-		
-		
+
+	
 		<!-- Craig Tucker mod start 2-->
 		$(document).ready(function(){
 			$(document).ajaxStart(function(){
-				$("#wait").css("display", "block");
 				$(".ui-datepicker").css("opacity", ".2");
+				$("#wait").css("display", "block");
 			});
 			$(document).ajaxComplete(function(){
-				$("#wait").css("display", "none");
 				$(".ui-datepicker").css("opacity", "1");
+				$("#wait").css("display", "none");
 			});
 			$("button").click(function(){
 				$("#txt").load("demo_ajax_load.asp");
