@@ -133,9 +133,9 @@ class Email {
 			$date_field = date($dateview,strtotime($appointment['start_datetime']));
 			$time_field = date($timeview,strtotime($appointment['start_datetime']));
 			if ($time_format == '24HR') {				
-				$appointment_start_date_pre = $date_field . $time_field;
+				$appointment_start_date_pre = $date_field .' '. $time_field;
 			} else {
-				$appointment_start_date_pre = $longDay . ', ' . $date_field . $time_field;
+				$appointment_start_date_pre = $longDay . ', ' . $date_field .' '. $time_field;
 			}			
 			$longDay = $this->framework->lang->line(strtolower(date('l',strtotime($appointment['end_datetime']))));
 			$date_field = date($dateview,strtotime($appointment['end_datetime']));
@@ -323,9 +323,9 @@ class Email {
 			$date_field = date($dateview,strtotime($appointment['start_datetime']));
 			$time_field = date($timeview,strtotime($appointment['start_datetime']));
 			if ($time_format == '24HR') {				
-				$appointment_start_date_pre = $date_field . $time_field;
+				$appointment_start_date_pre = $date_field .' '. $time_field;
 			} else {
-				$appointment_start_date_pre = $longDay . ', ' . $date_field . $time_field;
+				$appointment_start_date_pre = $longDay . ', ' . $date_field .' '. $time_field;
 			}			
 			$longDay = $this->framework->lang->line(strtolower(date('l',strtotime($appointment['end_datetime']))));
 			$date_field = date($dateview,strtotime($appointment['end_datetime']));
