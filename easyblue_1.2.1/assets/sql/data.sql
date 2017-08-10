@@ -46,7 +46,7 @@ INSERT INTO `ea_cellcarrier` (`id`, `cellco`, `cellurl`) VALUES
 	(18, 'Tracfone', '@mmst5.tracfone.com'),
 	(19, 'Metro PCS', '@mymetropcs.com'),
 	(20, 'Boost Mobile', '@myboostmobile.com'),
-	(21, 'Cricket', '@sms.mycricket.com'),
+	(21, 'Cricket', '@mms.cricketwireless.net'),
 	(22, 'Alltel', '@message.alltel.com'),
 	(23, 'Ptel', '@ptel.com'),
 	(24, 'Suncom', '@tms.suncom.com'),
