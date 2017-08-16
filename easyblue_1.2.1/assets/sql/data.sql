@@ -23,7 +23,7 @@ INSERT INTO `ea_settings` (`name`, `value`) VALUES
 	('conf_notice', 'no'),
 	('google_sync_notice', 'no'),
 	('google_sync_from', ''),
-	('google_sync_to', '')
+	('google_sync_to', '');
 
 INSERT INTO `ea_cellcarrier` (`id`, `cellco`, `cellurl`) VALUES
 	(1, 'Bell', '@txt.bell.ca'),  
