@@ -527,8 +527,19 @@ class Appointments extends CI_Controller {
 				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==0)) {
 					$go_customer = FALSE;
 				}
-				
-				
+
+				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
+				$go_customer = TRUE;
+				}
+
+				if (($send_customer === TRUE) && ( $clientnotification == 'no') && ($customer['notifications']==1)) {
+					$go_customer = TRUE;
+				}
+
+				if (($send_customer === TRUE) && ( $clientnotification == 'no') && ($customer['notifications']==0)) {
+					$go_customer = FALSE;
+				}	    
+
 				if ($go_customer === TRUE) {
 						$email->sendAppointmentDetails($appointment, $provider,
 								$service, $customer,$company_settings, $customer_title,
