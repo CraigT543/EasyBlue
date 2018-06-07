@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------------------- */
 
 //This was based upon http://glennstovall.com/blog/2013/01/07/writing-cron-jobs-and-command-line-scripts-in-codeigniter/ with modifications for Easy!Appointments by Craig Tucker, 7/18/2014.
-class Reminders extends CI_Controller {
+class Announcement extends CI_Controller {
     public function __construct() {
         parent::__construct();
 		
@@ -36,13 +36,13 @@ class Reminders extends CI_Controller {
 		$this->load->model('user_model');
 		$this->load->model('services_model');
 		
-		$d = $this->settings_model->get_setting('reminder_days_out'); //Number of days out for the reminder
+		$d = '2018-05-29'; //Days I am announcing cancellation or change in the format of 2017-05-29 or YYYY-MM-DD
+		$notice_sms = 'Cancellation Notice'; //20 charactor limit
+		$notice = 'Mr. Tucker will be away from the office May 29, 2018.'; //Limit to 75 characters is best for sms
+		$canceldetails = 'Your appointment on the following date will need to be canceled:'; //Text of the announcement I am sending
+
+		$reschedule = 'I will see you at your next scheduled appointment.  You are welcome schedule for another day to make up for this session if available at www.craigtuckerlcsw.com.'; //notice about reschedulling
 		
-		if ($d =='') {
-			$d = '3,'; //default number of days out is 3
-		}else{
-			$d;
-		}
 		//Check if rightmost character is a comma
 		if (substr($d, -1, 1) != ',') {
 			$d = $d .',';
@@ -52,7 +52,7 @@ class Reminders extends CI_Controller {
 			$days = explode(',', $d);
 			for($i = 0; $i < count($days); $i++){
 				echo 'Piece' . $i . ' = ' . $days[$i] . PHP_EOL;
-				$timestamp = strtotime("+".$days[$i]." days");
+				$timestamp = strtotime($days[$i]);
 				$appointments = $this->reminders_model->get_days_appointments($timestamp);
 				$baseurl = $this->config->base_url();
 				$company_name = $this->settings_model->get_setting('company_name');
@@ -87,7 +87,7 @@ class Reminders extends CI_Controller {
 						default:
 							$timeview=' H:i';
 							break;
-					}			
+					}	
 				if(!empty($appointments)) {
 					foreach($appointments as $appointment) {
 						//$aptdatetime=date('D g:i a',strtotime($appointment->start_datetime));
@@ -135,13 +135,6 @@ class Reminders extends CI_Controller {
 						$provider_address = $provider_street.', '.$provider_city.', '.$provider_state.' '.$provider_zip_code; 
 						$limitdetails = $this->settings_model->get_setting('show_minimal_details');
 				
-						if ($days[$i] == "1") {
-							$notice = $this->lang->line('notice_reminder');
-							$notice_sms = $this->lang->line('notice_reminder_sms');
-						} else {
-							$notice = $days[$i] . ' ' . $this->lang->line('notice_reminder_days');
-							$notice_sms = $days[$i] . ' ' . $this->lang->line('notice_reminder_days_sms');
-						}
 
 						$longDay = $this->lang->line(strtolower(date('l',strtotime($appointment->start_datetime))));
 						$date_field = date($dateview,strtotime($appointment->start_datetime));
@@ -205,46 +198,44 @@ class Reminders extends CI_Controller {
 						}
 
 						if (!empty($appointment->customer_cellurl)){
+							// $config['mailtype'] = 'text';
+							// $this->email->initialize($config);
+							// $this->email->set_newline(PHP_EOL);
+							// $this->email->from($pemail, $company_name);
 							$phone = $appointment->customer_phone_number;
 							$phone = preg_replace('/[^\dxX]/', '', $phone);
 							$sms_field = $phone.$appointment->customer_cellurl;
+							// $this->email->to($phone.$appointment->customer_cellurl);
+							// $this->email->from($appointment->provider_email, $company_name);
+							// $this->email->subject($notice_sms);
 							$sms_subject = $notice_sms;
-
-							$str .= strtoupper($company_name) . '--' . $notice . PHP_EOL;
+							$str .= strtoupper($company_name). PHP_EOL;
+							$str .= $notice . PHP_EOL;
+							$str .= $canceldetails . PHP_EOL;
 							$str .= $this->lang->line('provider') . '--' . $provider . PHP_EOL;
-							$str .= $provider_address . PHP_EOL;
 							if ($limitdetails == 'no') {
 								$str .= $appointment_service. PHP_EOL;
 								$str .= $this->lang->line('price') . ' '  . $appointment_price_currency. PHP_EOL;
 							}
 							$str .= $appointment_start_date_pre. '--'. $end_time . PHP_EOL;
-							$str .= $this->lang->line('edit_reschedule_cancel_appointment') . PHP_EOL;
-							$str .= $appointment_link.$appointment->hash . PHP_EOL . PHP_EOL;
-
-							if (!empty($this->lang->line('msg_line1'))) {
-								$str .= $this->lang->line('msg_line1') . PHP_EOL;
-								$str .= $this->lang->line('url_line1') . PHP_EOL;
-							}
-							if (!empty($this->lang->line('msg_line2'))) {
-								$str .= $this->lang->line('msg_line2') . PHP_EOL;
-								$str .= $this->lang->line('url_line2') . PHP_EOL;
-							}
-							if ($limitdetails == 'no') {
-								$str .= strtoupper($this->lang->line('customer_details_title')) . PHP_EOL;
-								$str .= $customer_name . PHP_EOL;
-								$str .= $email_field . PHP_EOL;
-								$str .= $sms_field . PHP_EOL;
-								$str .= $customer_address . ', ' . $customer_city . ', ' . $customer_zip_code . PHP_EOL;
-								$str .= $notes_field . PHP_EOL;
-							}
+							
+							$str .= $reschedule. PHP_EOL;
 							$str .= $this->lang->line('powered_by') . ' Easy!Appointments' . PHP_EOL;
 
+							// $this->email->message($str);
+							// $this->email->send();
 							$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
 							$email->sendTxtMail($pemail, $company_name, $sms_field, $sms_subject, $str);
 							$str = '';
+							// echo $this->email->print_debugger();  							
 						}						
 						
-						$email_field = $appointment->customer_email;
+						// $config['mailtype'] = 'html';
+						// $this->email->initialize($config);
+						// $this->email->set_newline(PHP_EOL);
+						$this->email->to($appointment->customer_email);
+						// $this->email->from($appointment->provider_email, $company_name);
+						// $this->email->subject($notice);
 						$subject = $notice;
 						
 						$msg .= '<html>';
@@ -260,19 +251,13 @@ class Reminders extends CI_Controller {
 						$msg .= '                    ' . $company_name . '</strong>';
 						$msg .= '        </div>';
 						$msg .= '        <div id="content" style="padding: 10px 15px;">';
-						$msg .= '            <h2>' . $notice . '</h2>';
+						$msg .= '            <h2>' . $notice . ' ' . $canceldetails . '</h2>';
 						$msg .= '            <h2>' . $this->lang->line('appointment_details_title') . '</h2>';
 						$msg .= '            <table id="appointment-details">';
 						$msg .= '                <tr>';
 						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('provider') . '</td>';
 						$msg .= '                    <td style="padding: 3px;">' . $provider . '</td>';
 						$msg .= '                </tr>';
-						$msg .= '				 <!--Google Maps Mod Craig Tucker start -->';
-						$msg .= '                <tr>';
-						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('address') . '</td>';
-						$msg .= '                    <td style="padding: 3px;"><a href="www.google.com/maps/place/' . $provider_address . '">' . $provider_address . '</a></td>';
-						$msg .= '				 </tr>';
-						$msg .= '				 <!--Google Maps Mod Craig Tucker end -->';
 
 						if ($limitdetails == 'no') {
 							
@@ -300,56 +285,10 @@ class Reminders extends CI_Controller {
 						$msg .= '                </tr>';
 						$msg .= '                <tr>';
 						$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">&#9724;</td>';
-						$msg .= '                    <td style="padding: 3px;"><a href="' . $appointment_link.$appointment->hash . '">' . $this->lang->line('edit_reschedule_cancel_appointment') . '</td>';
+						$msg .= '                    <td style="padding: 3px;">' . $reschedule . '</td>';
 						$msg .= '                </tr>';
-						if (!empty($this->lang->line('msg_line1'))) {
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">&#9724;</td>';
-							$msg .= '                    <td style="padding: 3px;"><a href="' . $this->lang->line('url_line1') . '">' .$this->lang->line('msg_line1') .  '</td>';
-							$msg .= '                </tr>';
-						}
-						if (!empty($this->lang->line('msg_line2'))) {
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">&#9724;</td>';
-							$msg .= '                    <td style="padding: 3px;"><a href="' . $this->lang->line('url_line2') . '">' .$this->lang->line('msg_line2') . '</td>';
-							$msg .= '                </tr>';							
-							$msg .= '            </table>';
-						}
-						if ($limitdetails == 'no') {
-							$msg .= '            <h2>' . $this->lang->line('customer_details_title') . '</h2>';
-							$msg .= '            <table id="customer-details">';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('name') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $customer_name . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('email') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $email_field . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('phone') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $sms_field . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('address') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $customer_address . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('city') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $customer_city . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('zip_code') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $customer_zip_code . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '                <tr>';
-							$msg .= '                    <td class="label" style="padding: 3px;font-weight: bold;">' . $this->lang->line('notes') . '</td>';
-							$msg .= '                    <td style="padding: 3px;">' . $notes_field . '</td>';
-							$msg .= '                </tr>';
-							$msg .= '            </table>';
-							$msg .= '        </div>';
-						}
-						
+						$msg .= '            </table>';
+						$msg .= '        </div>';												
 						$msg .= '        <div id="footer" style="padding: 10px; text-align: center; margin-top: 10px;';
 						$msg .= '                border-top: 1px solid #EEE; background: #FAFAFA;">';
 						$msg .= '            ' . $this->lang->line('powered_by') . ' ';
@@ -362,14 +301,17 @@ class Reminders extends CI_Controller {
 						$msg .= '</html>';
 						$msg .= '';
 
+						// $this->email->message($msg);
+						// $this->email->send();
 						$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
 						$email->sendHtmlMail($pemail, $company_name, $email_field, $subject, $msg);
 						$msg = '';
+						// echo $this->email->print_debugger();  
 					}
 				}
 			}
 		}
 	}
 }
-/* End of file reminders.php */
-/* Location: ./application/controllers/cli/reminders.php */
+/* End of file Announcement.php */
+/* Location: ./application/controllers/cli/Announcement.php */

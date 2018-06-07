@@ -120,13 +120,7 @@ class Waitinglist extends CI_Controller {
 				$availability = $this->availabilitylist($provider_id);
 				
 				if (!empty ($sms_field)){
-					$config['mailtype'] = 'text';
-					$this->email->initialize($config);
-					$this->email->set_newline(PHP_EOL);
-					$this->email->from($pemail, $company_name);
-					$this->email->to($sms_field);
-					$this->email->subject($sms_subject);
-					
+					$str = PHP_EOL;
 					if (empty($availability[1])){
 						$str .= strtoupper($subject) . PHP_EOL . $provider . ' ' . $this->lang->line('waiting_list_no_avail') . ' ';
 						$str .= $this->lang->line('view_current_sched'). PHP_EOL;
@@ -144,20 +138,12 @@ class Waitinglist extends CI_Controller {
 					$str .= $this->lang->line('remove_from_wl') . PHP_EOL;
 					$str .= $appointment_link.$notice->hash . PHP_EOL;
 					$str .= 'Powered by Easy!Appointments';
-
-					$this->email->message($str);
-					$this->email->send();
-					$str = '';
-					echo $this->email->print_debugger();  
 					
+					$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+					$email->sendTxtMail($pemail, $company_name, $sms_field, $sms_subject, $str);
+					$str = '';
+					echo $this->email->print_debugger();
 				}				
-				
-				$config['mailtype'] = 'html';
-				$this->email->initialize($config);
-				$this->email->set_newline(PHP_EOL);
-				$this->email->from($pemail, $company_name);
-				$this->email->to($email_field);
-				$this->email->subject($subject);
 				
 				$msg .= '<html>';
 				$msg .= '<head>';
@@ -212,11 +198,10 @@ class Waitinglist extends CI_Controller {
 				$msg .= '</body>';
 				$msg .= '</html>';
 				
-				$this->email->message($msg);
-				$this->email->send();
+				$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+				$email->sendHtmlMail($pemail, $company_name, $email_field, $subject, $msg);
 				$msg = '';
-				echo $this->email->print_debugger(); 
-
+				echo $this->email->print_debugger();
 			}
 		}
     }

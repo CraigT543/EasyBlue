@@ -77,6 +77,10 @@ class Appointments extends CI_Controller {
             $show_any_provider 			= $this->settings_model->get_setting('show_any_provider');
 			$show_minimal_details		= $this->settings_model->get_setting('show_minimal_details');
 			$conf_notice				= $this->settings_model->get_setting('conf_notice');
+			$wp_invoice					= $this->settings_model->get_setting('wp_invoice');
+			$company_link 				= $this->settings_model->get_setting('company_link');
+
+			
 
 			// Remove the data that are not needed inside the $available_providers array.
 			foreach ($available_providers as $index=>$provider) {
@@ -134,7 +138,10 @@ class Appointments extends CI_Controller {
                 $provider = array();
                 $customer = array();
             }
-
+			
+			
+			$session_id = md5(microtime().rand());
+			
             // Load the book appointment view.
             $view = array (
 				'cell_services'				=> $cell_services,  //Craig Tucker cell carrier modification
@@ -152,15 +159,18 @@ class Appointments extends CI_Controller {
                 'provider_data'         => $provider,
                 'customer_data'         => $customer,
 				'show_minimal_details'		=> $show_minimal_details,
-				'conf_notice'				=> $conf_notice
+				'conf_notice'				=> $conf_notice,
+				'wp_invoice'				=> $wp_invoice,
+				'session_id'				=> $session_id,
+				'company_link'				=> $company_link
             );
-        } catch(Exception $exc) {
+        } catch(Exception $exc) {	
             $view['exceptions'][] = $exc;
         }
 
         $this->load->view('appointments/book', $view);
     }
-
+	
     /**
      * Cancel an existing appointment.
      *
@@ -390,6 +400,7 @@ class Appointments extends CI_Controller {
             ));
         }
     }
+	
 
     /**
      * [AJAX] Register the appointment to the database.
@@ -477,7 +488,10 @@ class Appointments extends CI_Controller {
                 log_message('error', $exc->getMessage());
                 log_message('error', $exc->getTraceAsString());
             }
-
+			
+		$wp_invoice = $this->settings_model->get_setting('wp_invoice');
+		if ($wp_invoice == 'no'){
+			
             // :: SEND NOTIFICATION EMAILS TO BOTH CUSTOMER AND PROVIDER
             try {
                 $this->config->load('email');
@@ -513,6 +527,11 @@ class Appointments extends CI_Controller {
 				$provider_link = new Url(site_url('backend/index/' . $appointment['hash']));
 				$send_customer = filter_var($this->settings_model->get_setting('customer_notifications'),
 						FILTER_VALIDATE_BOOLEAN);
+
+
+				$clientnotification = $this->settings_model->get_setting('conf_notice');
+				$send_provider = filter_var($this->providers_model ->get_setting('notifications', $provider['id']),
+					FILTER_VALIDATE_BOOLEAN);					
 						
 				$clientnotification = $this->settings_model->get_setting('conf_notice');		
 
@@ -527,27 +546,12 @@ class Appointments extends CI_Controller {
 				if (($send_customer === TRUE) && ( $clientnotification == 'yes') && ($customer['notifications']==0)) {
 					$go_customer = FALSE;
 				}
-
-				if (($send_customer === TRUE) && ( $clientnotification == 'no')) {
-				$go_customer = TRUE;
-				}
-
-				if (($send_customer === TRUE) && ( $clientnotification == 'no') && ($customer['notifications']==1)) {
-					$go_customer = TRUE;
-				}
-
-				if (($send_customer === TRUE) && ( $clientnotification == 'no') && ($customer['notifications']==0)) {
-					$go_customer = FALSE;
-				}	    
-
+				
 				if ($go_customer === TRUE) {
 						$email->sendAppointmentDetails($appointment, $provider,
 								$service, $customer,$company_settings, $customer_title,
 								$customer_message, $customer_link, new Email($customer['email']));
 				}						
-
-				$send_provider = filter_var($this->providers_model ->get_setting('notifications', $provider['id']),
-						FILTER_VALIDATE_BOOLEAN);
 
                 if ($send_provider === TRUE) {
                     $email->sendAppointmentDetails($appointment, $provider,
@@ -558,7 +562,7 @@ class Appointments extends CI_Controller {
                 log_message('error', $exc->getMessage());
                 log_message('error', $exc->getTraceAsString());
             }
-
+		}
             echo json_encode(array(
                     'appointment_id' => $appointment['id']
                 ));

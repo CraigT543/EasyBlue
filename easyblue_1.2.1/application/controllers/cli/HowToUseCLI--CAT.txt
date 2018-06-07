@@ -1,0 +1,18 @@
+From Command Line:
+use a space as a separator
+php56 /volume1/web/PathToE!A/index.php cli/[script]
+
+/var/packages/PHP5.6/target/usr/local/bin/php56 /volume1/web/wordpress/easy/index.php cli/waitinglist
+/var/packages/PHP5.6/target/usr/local/bin/php56 /volume1/web/wordpress/easy/index.php cli/reminders
+/var/packages/PHP5.6/target/usr/local/bin/php56 /volume1/web/wordpress/easy/index.php google/sync3
+/var/packages/PHP5.6/target/usr/local/bin/php56 /volume1/web/wordpress/easy/index.php cli/test
+/var/packages/PHP5.6/target/usr/local/bin/php56 /volume1/web/wordpress/easy/index.php cli/announcement
+
+
+From crontab
+Use tab as separator.  There must be a blank CR at the end of the file.
+0	22	*	*	*	root	/var/packages/PHP5.6/target/usr/local/bin/php56	/volume1/web/PathToE!A/index.php cli/waitinglist
+30	7	*	*	*	root	/var/packages/PHP5.6/target/usr/local/bin/php56	/volume1/web/PathToE!A/index.php cli/reminders
+30	21	*	*	*	root	/var/packages/PHP5.6/target/usr/local/bin/php56	/volume1/web/PathToE!A/index.php google/sync3
+
+Remember that different Linux installations handle crontab a little different.  Be sure to look up your system.
