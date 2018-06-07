@@ -205,15 +205,10 @@ class Reminders extends CI_Controller {
 						}
 
 						if (!empty($appointment->customer_cellurl)){
-							$config['mailtype'] = 'text';
-							$this->email->initialize($config);
-							$this->email->set_newline(PHP_EOL);
-							$this->email->from($pemail, $company_name);
 							$phone = $appointment->customer_phone_number;
 							$phone = preg_replace('/[^\dxX]/', '', $phone);
-							$this->email->to($phone.$appointment->customer_cellurl);
-							$this->email->from($appointment->provider_email, $company_name);
-							$this->email->subject($notice_sms);
+							$sms_field = $phone.$appointment->customer_cellurl;
+							$sms_subject = $notice_sms;
 
 							$str .= strtoupper($company_name) . '--' . $notice . PHP_EOL;
 							$str .= $this->lang->line('provider') . '--' . $provider . PHP_EOL;
@@ -244,18 +239,13 @@ class Reminders extends CI_Controller {
 							}
 							$str .= $this->lang->line('powered_by') . ' Easy!Appointments' . PHP_EOL;
 
-							$this->email->message($str);
-							$this->email->send();
+							$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+							$email->sendTxtMail($pemail, $company_name, $sms_field, $sms_subject, $str);
 							$str = '';
-							echo $this->email->print_debugger();  							
 						}						
 						
-						$config['mailtype'] = 'html';
-						$this->email->initialize($config);
-						$this->email->set_newline(PHP_EOL);
-						$this->email->to($appointment->customer_email);
-						$this->email->from($appointment->provider_email, $company_name);
-						$this->email->subject($notice);
+						$email_field = $appointment->customer_email;
+						$subject = $notice;
 						
 						$msg .= '<html>';
 						$msg .= '<head>';
@@ -372,10 +362,9 @@ class Reminders extends CI_Controller {
 						$msg .= '</html>';
 						$msg .= '';
 
-						$this->email->message($msg);
-						$this->email->send();
+						$email = new \EA\Engine\Notifications\Email($this, $this->config->config);
+						$email->sendHtmlMail($pemail, $company_name, $email_field, $subject, $msg);
 						$msg = '';
-						echo $this->email->print_debugger();  
 					}
 				}
 			}

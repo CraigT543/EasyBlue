@@ -357,14 +357,18 @@ $lang['green'] = 'Green';
 $lang['blue'] = 'Blue';
 $lang['red'] = 'Red';
 $lang['show_minimal_details'] = 'Show minimal details in notifications.';
+$lang['show_minimal_details_hint'] = 'Show minimal details in notifications for greater confidentiality.';
 $lang['conf_notice'] = 'Show Confidentiality Notice and Agreement';
 $lang['conf_notice_hint'] = 'The client is given the option to refuse notifications and reminders.';
 $lang['google_sync_notice'] = 'Email me notification of successful Google-Sync';
 $lang['google_sync_notice_hint'] = 'If yes, an email notification will be sent of successful Google-Sync';
 $lang['google_sync_from'] = 'Google-Sync "from" email';
-$lang['google_sync_from_hint'] = 'The address from wich you will be sending the google sync notice.';
+$lang['google_sync_from_hint'] = 'The address from which you will be sending the google sync notice.';
 $lang['google_sync_to'] = 'Google-Sync "to" email';
-$lang['google_sync_to_hint'] = 'The address to wich you will be sending the google sync notice';
+$lang['google_sync_to_hint'] = 'The address to which you will be sending the Google sync notice';
+$lang['wp_invoice'] = 'WP-Invoice Integration (In WP with WP-Invoice Plugin installed only)';
+$lang['wp_invoice_hint'] = 'Integrate with WP-Invoice Single Page Payment on confirmation page';
+$lang['wp_invoice_see_at'] = 'CTLCSW-Service';
 
 //Appointment Reminders
 $lang['edit_reschedule_cancel_appointment'] = 'Click here to edit, reschedule, or cancel the appointment';

@@ -141,9 +141,9 @@ class Email {
 			$date_field = date($dateview,strtotime($appointment['end_datetime']));
 			$time_field = date($timeview,strtotime($appointment['end_datetime']));
 			if ($ci->settings_model->get_setting('time_format') == '24HR') {
-				$appointment_end_date_pre = $date_field . $time_field;
+				$appointment_end_date_pre = $date_field  .' '.  $time_field;
 			} else {
-				$appointment_end_date_pre = $longDay . ', ' . $date_field . $time_field;
+				$appointment_end_date_pre = $longDay . ', ' . $date_field .' '. $time_field;
 			}
 			//AM/PM long date mod Craig Tucker, end
 			$theme_color = $ci->settings_model->get_setting('theme_color');
@@ -333,9 +333,9 @@ class Email {
 													   
 																 
 			if ($time_format == '24HR') {
-				$appointment_end_date_pre = $date_field . $time_field;
+				$appointment_end_date_pre = $date_field .' '. $time_field;
 			} else {
-				$appointment_end_date_pre = $longDay . ', ' . $date_field . $time_field;
+				$appointment_end_date_pre = $longDay . ', ' . $date_field .' '. $time_field;
 			}
 			//AM/PM long date mod Craig Tucker, end
 			$theme_color = $ci->settings_model->get_setting('theme_color');
@@ -527,6 +527,35 @@ class Email {
                 . $mailer->ErrorInfo);
         }		
 	}
+	
+    public function sendHtmlMail($pemail, $company_name, $email_field, $subject, $msg){
+        $mailer = $this->_createMailer();
+        $mailer->From = $pemail;
+        $mailer->FromName = $company_name;
+        $mailer->AddAddress($email_field); 
+        $mailer->Subject = $subject;
+		$mailer->IsHTML(true);
+        $mailer->Body = $msg;
+        if (!$mailer->Send()) {
+            throw new \RuntimeException('Email could not be sent. Mailer Error (Line ' . __LINE__ . '): ' 
+                . $mailer->ErrorInfo);
+        }
+	}	
+	
+    public function sendTxtMail($pemail, $company_name, $sms_field, $sms_subject, $str){
+        $mailer = $this->_createMailer();
+        $mailer->From = $pemail;
+        $mailer->FromName = $company_name;
+        $mailer->AddAddress($sms_field); 
+        $mailer->Subject = $sms_subject;
+        $mailer->IsHTML(false);
+        $mailer->Body = $str;
+        if (!$mailer->Send()) {
+            throw new \RuntimeException('Email could not be sent. Mailer Error (Line ' . __LINE__ . '): ' 
+                . $mailer->ErrorInfo);
+        }
+	}	
+	
 	
     /**
      * Create PHP Mailer Instance
