@@ -521,12 +521,41 @@ class Email {
         $mailer->SetFrom($ci->settings_model->get_setting('google_sync_from'), 'Easy!Appointment Sync');
         $mailer->AddAddress($ci->settings_model->get_setting('google_sync_to'));
         $mailer->Subject = $synctype.' Sync Completed';
-		$mailer->Body = $synctype.' Sync started '.$startsynctime.', completed '.$endsynctime;
+		$mailer->Body = $synctype.' Stuart Sync started '.$startsynctime.', completed '.$endsynctime;
         if (!$mailer->Send()) {
             throw new \RuntimeException('Email could not been sent. Mailer Error (Line ' . __LINE__ . '): ' 
                 . $mailer->ErrorInfo);
         }		
 	}
+	
+    public function sendHtmlMail($pemail, $company_name, $email_field, $subject, $msg){
+        $mailer = $this->_createMailer();
+        $mailer->From = $pemail;
+        $mailer->FromName = $company_name;
+        $mailer->AddAddress($email_field); 
+        $mailer->Subject = $subject;
+		$mailer->IsHTML(true);
+        $mailer->Body = $msg;
+        if (!$mailer->Send()) {
+            throw new \RuntimeException('Email could not be sent. Mailer Error (Line ' . __LINE__ . '): ' 
+                . $mailer->ErrorInfo);
+        }
+	}	
+	
+    public function sendTxtMail($pemail, $company_name, $sms_field, $sms_subject, $str){
+        $mailer = $this->_createMailer();
+        $mailer->From = $pemail;
+        $mailer->FromName = $company_name;
+        $mailer->AddAddress($sms_field); 
+        $mailer->Subject = $sms_subject;
+        $mailer->IsHTML(false);
+        $mailer->Body = $str;
+        if (!$mailer->Send()) {
+            throw new \RuntimeException('Email could not be sent. Mailer Error (Line ' . __LINE__ . '): ' 
+                . $mailer->ErrorInfo);
+        }
+	}	
+	
 	
     /**
      * Create PHP Mailer Instance
