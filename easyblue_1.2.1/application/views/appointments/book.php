@@ -4,8 +4,9 @@
 
  <?php
 	if (Config::WP_HEADER_FOOTER== TRUE) {
+	//require_once('../wp-load.php');
 	global $current_user;
-	wp_get_current_user();
+	//wp_get_current_user();
 	?>
 	 <script>
 		 headTag = document.getElementsByTagName("head")[0].innerHTML;
@@ -19,6 +20,19 @@
 	$this->load->model('settings_model');			
 	$theme_color = $this->settings_model->get_setting('theme_color');
  ?> 
+ 
+	<style>
+	
+	.ui-datepicker{
+		opacity:.2;
+	}
+		
+	#selectprovider {
+		display: none;
+	}	
+	
+	
+	</style> 
  <!-- WP Mod 1 Craig Tucker end -->
  
 <head>
@@ -307,7 +321,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" id="selectprovider">
                                 <label for="select-provider">
                                     <strong><?php echo $this->lang->line('select_provider'); ?></strong>
                                 </label>
@@ -318,7 +332,6 @@
                             <div id="service-description" style="display:none;"></div>
                         </div>
                     </div>
-
                     <div class="command-buttons">
                         <button type="button" id="button-next-1" class="btn button-next btn-primary"  
                                 data-step_index="1">
@@ -369,10 +382,7 @@
 								</div>                            
 							</div>
 							<!--Waiting List Button end-->
-                            <div class="col-xs-12 col-sm-6">
-                                <div id="available-hours"></div>
-								<?php // Available hours are going to be fetched via ajax call. ?>
-                            </div>
+                            <div class="col-xs-12 col-sm-6"></div>
                         </div>
                     </div>
 
@@ -463,7 +473,7 @@
 										   foreach($cell_services as $carrier) {
 											//WP integration code start    
 										   	if (Config::WP_HEADER_FOOTER== TRUE) {
-												if ($current_user->cell_carrier == $carrier[id]) { 
+												if ($current_user->cell_carrier == $carrier['id']) { 
 												echo '<option selected value="' . $carrier['id'] . '">' 
 															. $carrier['cellco'] . '</option>';
 											    } 
@@ -580,7 +590,8 @@
 							<?php else : ?>	
 								id="appointment-details"
 							<?php endif; ?>	
-							class="col-xs-12 col-sm-6"></div>
+							class="col-xs-12 col-sm-6">
+						</div>
                             <div id="customer-details" class="col-xs-12 col-sm-6"></div>
                         </div>
                         <?php if ($this->settings_model->get_setting('require_captcha') === '1'): ?>
@@ -597,7 +608,6 @@
                         </div>
                         <?php endif; ?>
                     </div>
-
                     <div class="command-buttons">
                         <button type="button" id="button-back-4" class="btn button-back btn-default"
                                 data-step_index="4">
@@ -616,6 +626,7 @@
                             <input type="hidden" name="post_data" />
                         </form>
                     </div>
+					<div id='paypalprocessing' style='display:none'><h2>Preparing Payment . . .</h2></div>
                 </div>
 
                 <?php
@@ -724,7 +735,10 @@
             customerData        	: <?php echo json_encode($customer_data); ?>,
             csrfToken           	: <?php echo json_encode($this->security->get_csrf_hash()); ?>,
 			show_minimal_details	: <?php echo json_encode($show_minimal_details); ?>,
-			confNotice				: <?php echo json_encode($conf_notice); ?>
+			confNotice				: <?php echo json_encode($conf_notice); ?>,
+			wpInvoice				: <?php echo json_encode($wp_invoice); ?>,
+			sessionId				: <?php echo json_encode($session_id); ?>,
+			seeAt					: <?php echo json_encode($this->lang->line('wp_invoice_see_at')); ?>			
         };
 
         var EALang = <?php echo json_encode($this->lang->language); ?>;
@@ -759,8 +773,6 @@
     <script
         type="text/javascript"
         src="<?php echo base_url('assets/js/frontend_book.js'); ?>"></script>
-
-
     <?php
         // ------------------------------------------------------------
         // VIEW FILE JAVASCRIPT CODE
@@ -770,27 +782,8 @@
     $(document).ready(function() {
             FrontendBook.initialize(true, GlobalVariables.manageMode);
             GeneralFunctions.enableLanguageSelection($('#select-language'));
-        });
+	});
 
-	
-		<!-- Craig Tucker mod start 2-->
-		$(document).ready(function(){
-			$(document).ajaxStart(function(){
-				$(".ui-datepicker").css("opacity", ".2");
-				$("#wait").css("display", "block");
-			});
-			$(document).ajaxComplete(function(){
-				$(".ui-datepicker").css("opacity", "1");
-				$("#wait").css("display", "none");
-			});
-			$("button").click(function(){
-				$("#txt").load("demo_ajax_load.asp");
-			});
-		});
-		
-
-		<!-- Craig Tucker mod end 2-->
-	
     </script>
 
     <?php google_analytics_script(); ?>

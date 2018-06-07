@@ -296,7 +296,19 @@
                             <span class="help-block">
                                 <?php echo $this->lang->line('google_sync_to_hint'); ?>
                             </span>							
-                        </div>						
+                        </div>
+						<div class="form-group">
+                            <label for="wp-invoice">
+                                <?php echo $this->lang->line('wp_invoice'); ?>
+                            </label>
+                            <select class="form-control" id="wp-invoice" data-field="wp_invoice">
+                                <option value="yes"><?php echo $this->lang->line('yes'); ?></option>
+                                <option value="no"><?php echo $this->lang->line('no'); ?></option>
+                            </select>
+                            <span class="help-block">
+                                <?php echo $this->lang->line('wp_invoice_hint'); ?>
+                            </span>
+                        </div>							
                     </div>
                 </div>
             </fieldset>

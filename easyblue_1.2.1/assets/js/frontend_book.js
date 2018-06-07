@@ -386,7 +386,6 @@ window.FrontendBook = window.FrontendBook || {};
                     FrontendBook.updateConfirmFrame();
 					$dialog.modal('hide');
 					$("#wizard-frame-3").hide();
-					
                 }
             }
 
@@ -487,12 +486,12 @@ window.FrontendBook = window.FrontendBook || {};
 
 					
 				FrontendBook.updateConfirmFrame();
+
 				var nextTabIndex = 1;	
 				$(this).parents().eq(1).hide('fade', function() {    
 					$('.active-step').removeClass('active-step');
 					$('#step-' + nextTabIndex).addClass('active-step');
 					$('#wizard-frame-' + nextTabIndex).show('fade');
-					
 				});			
 			});			
 		}
@@ -515,6 +514,7 @@ window.FrontendBook = window.FrontendBook || {};
          */
         $('#book-appointment-submit').click(function(event) {
             FrontendBookApi.registerAppointment();
+						
         });
 
         /**
@@ -602,7 +602,7 @@ window.FrontendBook = window.FrontendBook || {};
             selectedDate = GeneralFunctions.formatDate(selectedDate, GlobalVariables.dateFormat);
         }
 
-        var selServiceId = $('#select-service').val();
+        var selServiceId = $('#select-service option:selected').val();
         var servicePrice;
         var serviceCurrency;
 		var show_free_price_currency;
@@ -710,6 +710,18 @@ window.FrontendBook = window.FrontendBook || {};
             zip_code: $('#zip-code').val()
         };
 
+			if (( GlobalVariables.wpInvoice ==='yes' ) && (!GlobalVariables.manageMode)){
+									
+				var optionValue = $('#select-service').val();	
+				var paypalcbfid = "[wpi_checkout item='" + optionValue + GlobalVariables.seeAt + "' title='" + GlobalVariables.sessionId + "' callback_function='ea_paypalcallback']";				
+				
+			} else {
+				paypalcbfid = '';				
+			}
+
+			    
+
+			
         postData['appointment'] = {
             start_datetime: $('#select-date').datepicker('getDate').toString('yyyy-MM-dd')
 		//AM/PM Modification 1 start
@@ -720,7 +732,9 @@ window.FrontendBook = window.FrontendBook || {};
             notes: $('#notes').val(),
             is_unavailable: false,
             id_users_provider: $('#select-provider').val(),
-            id_services: $('#select-service').val()
+            id_services: $('#select-service').val(),
+			pending: paypalcbfid
+			
         };
 
         postData['manage_mode'] = FrontendBook.manageMode;

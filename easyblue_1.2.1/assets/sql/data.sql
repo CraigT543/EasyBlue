@@ -23,7 +23,8 @@ INSERT INTO `ea_settings` (`name`, `value`) VALUES
 	('conf_notice', 'no'),
 	('google_sync_notice', 'no'),
 	('google_sync_from', ''),
-	('google_sync_to', '');
+	('google_sync_to', ''),
+	('wp_invoice','no')
 
 INSERT INTO `ea_cellcarrier` (`id`, `cellco`, `cellurl`) VALUES
 	(1, 'Bell', '@txt.bell.ca'),  
@@ -46,7 +47,7 @@ INSERT INTO `ea_cellcarrier` (`id`, `cellco`, `cellurl`) VALUES
 	(18, 'Tracfone', '@mmst5.tracfone.com'),
 	(19, 'Metro PCS', '@mymetropcs.com'),
 	(20, 'Boost Mobile', '@myboostmobile.com'),
-	(21, 'Cricket', '@mms.cricketwireless.net'),
+	(21, 'Cricket', '@sms.mycricket.com'),
 	(22, 'Alltel', '@message.alltel.com'),
 	(23, 'Ptel', '@ptel.com'),
 	(24, 'Suncom', '@tms.suncom.com'),
@@ -54,4 +55,4 @@ INSERT INTO `ea_cellcarrier` (`id`, `cellco`, `cellurl`) VALUES
 	(26, 'U.S. Cellular', '@email.uscc.net');	
 	
 INSERT INTO `migrations` (`version`) VALUES
-(17);	
+(18);	

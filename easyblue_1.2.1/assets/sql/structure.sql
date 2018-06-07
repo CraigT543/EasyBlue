@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `ea_appointments` (
   `id_users_customer` bigint(20) unsigned DEFAULT NULL,
   `id_services` bigint(20) unsigned DEFAULT NULL,
   `id_google_calendar` text,
+  `pending` text,
   PRIMARY KEY (`id`),
   KEY `id_users_customer` (`id_users_customer`),
   KEY `id_services` (`id_services`),

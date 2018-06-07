@@ -35,7 +35,6 @@ window.FrontendBookApi = window.FrontendBookApi || {};
      * @param {String} selDate The selected date of which the available hours we need to receive.
      */
     exports.getAvailableHours = function(selDate) {
-        $('#available-hours').empty();
 
         // Find the selected service duration (it is going to be send within the "postData" object).
         var selServiceDuration = 15; // Default value of duration (in minutes).
@@ -64,7 +63,10 @@ window.FrontendBookApi = window.FrontendBookApi || {};
             if (!GeneralFunctions.handleAjaxExceptions(response)) {
                 return;
             }
-
+ 
+			$(".ui-datepicker").css("opacity", "1");
+			$("#wait").css("display", "none");
+			
 			var time_format;
 			time_format = GlobalVariables.timeFormat;
             // The response contains the available hours for the selected provider and
@@ -190,9 +192,27 @@ window.FrontendBookApi = window.FrontendBookApi || {};
 
                     return false;
                 }
+				
+				if (( GlobalVariables.wpInvoice ==='yes' ) && (!GlobalVariables.manageMode)){
+					var selServiceId = $('#select-service').val();
+					$('.frame-container').hide(); //Paypal modification C. Tucker
+					$('.command-buttons').hide(); 
+					$("#paypalprocessing").show();
+					
+					function wpDir(the_url)
+					{
+						var the_arr = the_url.split('/');
+						the_arr.pop();
+						return( the_arr.join('/') );
+					}
 
-                window.location.replace(GlobalVariables.baseUrl
-                    + '/index.php/appointments/book_success/' + response.appointment_id);
+					var newdir = wpDir(GlobalVariables.baseUrl) + '/processingpayment/';
+					window.location.replace(newdir);
+					
+				} else {
+					window.location.replace(GlobalVariables.baseUrl
+						+ '/index.php/appointments/book_success/' + response.appointment_id);
+				} 
             })
             .fail(function(jqxhr, textStatus, errorThrown) {
                 $('.captcha-title small').trigger('click');
@@ -273,7 +293,7 @@ window.FrontendBookApi = window.FrontendBookApi || {};
 	};
 	//Waiting list post Craig Tucker end
 	
-
+	
     /**
      * Get the unavailable dates of a provider.
      *
@@ -289,6 +309,9 @@ window.FrontendBookApi = window.FrontendBookApi || {};
         if (processingUnavailabilities) {
             return;
         }
+		$('#available-hours').empty();
+		$("#wait").css("display", "block");
+		$(".ui-datepicker").css("opacity", ".2");
 		
 		var max_date;
 		max_date = GlobalVariables.maxDate; //MaxDate mod Craig Tucker 1
@@ -311,9 +334,12 @@ window.FrontendBookApi = window.FrontendBookApi || {};
             .done(function(response) {
                 unavailableDatesBackup = response;
                 selectedDateStringBackup = selectedDateString;
-                _applyUnavailableDates(response, selectedDateString, true); 
+                _applyUnavailableDates(response, selectedDateString, true);
+				
             })
-            .fail(GeneralFunctions.ajaxFailureHandler);
+
+			.fail(GeneralFunctions.ajaxFailureHandler);
+			
     };
     exports.applyPreviousUnavailableDates = function() {
         _applyUnavailableDates(unavailableDatesBackup, selectedDateStringBackup);
@@ -342,6 +368,8 @@ window.FrontendBookApi = window.FrontendBookApi || {};
         // If all the days are unavailable then hide the appointments hours.
         if (unavailableDates.length === numberOfDays) {
             $('#available-hours').text(EALang['no_available_hours']);
+			$(".ui-datepicker").css("opacity", "1");
+			$("#wait").css("display", "none");
         }
 
         // Grey out unavailable dates.
@@ -354,5 +382,4 @@ window.FrontendBookApi = window.FrontendBookApi || {};
 
         processingUnavailabilities = false;
     }
-
 })(window.FrontendBookApi);
