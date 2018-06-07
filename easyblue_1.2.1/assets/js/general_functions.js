@@ -326,6 +326,7 @@ window.GeneralFunctions = window.GeneralFunctions || {};
         }
 
         return true;
+
     };
 
     /**
@@ -390,11 +391,18 @@ window.GeneralFunctions = window.GeneralFunctions || {};
      * @param {Object} errorThrown
      */
     exports.ajaxFailureHandler = function(jqxhr, textStatus, errorThrown) {
-        var exceptions = [
+
+		//C. Tucker added check of jqxhr to not through error if the page is just being reloaded.
+		if (jqxhr.status === 0 || jqxhr.readyState === 0) {
+			return;
+		}			
+	
+		var exceptions = [
             {
                 message: 'AJAX Error: ' + errorThrown
             }
         ];
+		
         GeneralFunctions.displayMessageBox(GeneralFunctions.EXCEPTIONS_TITLE, GeneralFunctions.EXCEPTIONS_MESSAGE);
         $('#message_box').append(GeneralFunctions.exceptionsToHtml(exceptions));
     };

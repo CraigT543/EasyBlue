@@ -87,10 +87,14 @@
 
                         // Display exceptions (if any).
                         if (isset($exceptions)) {
-                            echo '<div style="margin: 10px">';
+                            echo '<div style="margin: 10px" id="errorbox">';
                             echo '<h4>Unexpected Errors</h4>';
                             foreach($exceptions as $exception) {
-                                echo exceptionToHtml($exception);
+								if (strpos($exception, 'Engine\Types\Type->__construct(NULL)') !== FALSE) {  //added by C. Tucker to cut off error reporting for missing reason here.
+									echo '<style>#errorbox{display:none;}</style>';
+								} else {
+									echo exceptionToHtml($exception);
+								}	
                             }
                             echo '</div>';
                         }
