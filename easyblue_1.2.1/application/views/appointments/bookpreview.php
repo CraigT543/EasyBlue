@@ -169,7 +169,7 @@ p {
 						</div>
 						<div>
 							<div align="center" id="select-date" style="position: relative">
-							<figure id="waitpreview" class="item">
+							<figure id="wait" class="item">
 								<img  src="<?php echo $this->config->item('base_url'); ?>/assets/img/loading.gif" />
 							</figure>
 							</div>
@@ -324,29 +324,6 @@ p {
             GeneralFunctions.enableLanguageSelection($('#select-language'));
         });
 		
-		<!-- Craig Tucker mod start 2-->
-		window.onload = function () {
-			$(document).ajaxStart(function(){
-				$(".ui-datepicker").css("opacity", ".2");
-				$("#waitpreview").css("display", "block");
-			});
-		}	
-		
-		$(document).ready(function(){
-			$(document).ajaxStart(function(){
-				$(".ui-datepicker").css("opacity", ".2");
-				$("#waitpreview").css("display", "block");
-			});
-			$(document).ajaxComplete(function(){
-				$(".ui-datepicker").css("opacity", "1");
-				$("#waitpreview").css("display", "none");
-			});
-			$("button").click(function(){
-				$("#txt").load("demo_ajax_load.asp");
-			});
-		});
-		<!-- Craig Tucker mod end 2-->
-
     </script>
 
     <?php google_analytics_script(); ?>
